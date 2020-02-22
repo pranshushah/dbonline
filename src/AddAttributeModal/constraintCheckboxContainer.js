@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import constraintCheckBoxList from '../utils/constraintCheckBox';
 import { Checkbox } from 'react-ui-lib-pranshu';
 
-function ConstraintCheckBoxContainer(props) {
-  const [checkedItems, updateCheckedItems] = useState(new Map());
+/**
+ * @param {{checkedConstraintObj:Object,onConstraintChecked:Function}} props
+ */
 
-  function checkBoxChangeHandler(e) {
-    console.log(checkedItems);
-    updateCheckedItems(checkedItems =>
-      checkedItems.set(e.target.name, e.target.checked),
-    );
-  }
-
+function ConstraintCheckBoxContainer({
+  checkedConstraintObj,
+  onConstraintChecked,
+  ...props
+}) {
   const style = {
     display: 'flex',
     alignItems: 'center',
@@ -24,8 +23,12 @@ function ConstraintCheckBoxContainer(props) {
         label={item.label}
         key={item.name}
         name={item.name}
-        checked={checkedItems.get(item.name)}
-        onChange={checkBoxChangeHandler}
+        checked={
+          checkedConstraintObj[item.name]
+            ? checkedConstraintObj[item.name]
+            : false
+        }
+        onChange={onConstraintChecked}
       />
     );
   });

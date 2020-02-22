@@ -1,4 +1,7 @@
+import React from 'react';
 import styled from 'styled-components';
+/**
+ * @typedef{ import('react').HTMLProps<HTMLAnchorElement>} anchorProps */
 
 const TableCard = styled.div`
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -40,10 +43,24 @@ const TableContentContainer = styled.div`
   padding: 3px;
 `;
 
-const AddAttributeLink = styled.a`
+const AttributeLink = styled.a`
   text-decoration: none;
   color: ${props => props.fontColor};
   cursor: pointer;
 `;
+
+/**
+ * @param {{tableDndDetail:Object} & anchorProps} props*/
+
+function AddAttributeLink({ onClick, tableDndDetail, children, ...props }) {
+  function linkClickHandler() {
+    onClick(tableDndDetail);
+  }
+  return (
+    <AttributeLink {...props} onClick={linkClickHandler}>
+      {children}
+    </AttributeLink>
+  );
+}
 
 export { TableCard, TableHeader, TableContentContainer, AddAttributeLink };

@@ -57,37 +57,48 @@ function MainGround({ showGrid, tableDndDetails, onTableDndDetailsChange }) {
   });
 
   const [showModal, updateShowModal] = useState(false);
+  const [
+    selectedTableDetailsForModal,
+    updateSelectedTableDetailsForModal,
+  ] = useState({});
 
   function cancelModalHandler() {
     updateShowModal(false);
+    updateSelectedTableDetailsForModal({});
   }
 
   function confirmModalHandler() {
     updateShowModal(false);
+    updateSelectedTableDetailsForModal({});
   }
 
-  function AddAttributeLinkClickHandler() {
+  function AddAttributeLinkClickHandler(tableDndDetail) {
     updateShowModal(true);
+    updateSelectedTableDetailsForModal(tableDndDetail);
   }
 
-  const tables = tableDndDetails.map(tableDndDetail => (
-    <TableContainer tableDndDetail={tableDndDetail} key={tableDndDetail.id}>
-      <AddAttributeLink
-        onClick={AddAttributeLinkClickHandler}
-        fontColor={tableDndDetail.color}>
-        Add Attribute
-      </AddAttributeLink>
+  const tables = tableDndDetails.map(tableDndDetail => {
+    return (
+      <TableContainer tableDndDetail={tableDndDetail} key={tableDndDetail.id}>
+        <AddAttributeLink
+          tableDndDetail={tableDndDetail}
+          onClick={AddAttributeLinkClickHandler}
+          fontColor={tableDndDetail.color}>
+          Add Attribute
+        </AddAttributeLink>
+      </TableContainer>
+    );
+  });
+  return (
+    <Grid ref={drop} showGrid={showGrid}>
+      {tables}
       <AddAttributeModal
         showModalState={showModal}
         onModalConfirmed={confirmModalHandler}
         onModalClosed={cancelModalHandler}
-        tableName={tableDndDetail.tableName}
+        tableName={selectedTableDetailsForModal.tableName}
+        allTableDndDetails={tableDndDetails}
       />
-    </TableContainer>
-  ));
-  return (
-    <Grid ref={drop} showGrid={showGrid}>
-      {tables}
     </Grid>
   );
 }
