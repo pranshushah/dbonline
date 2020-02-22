@@ -1,17 +1,21 @@
 const type = [
   {
     tableName: '',
-    Attributes: [{ name: '', dataType: '', size: '', precision: '' }],
+    attributes: [{ name: '', dataType: '', size: '', precision: '' }],
     tableLevelConstraint: {
-      primaryKey: 'AttributeName',
+      PRIMARYKEY: 'AttributeName',
       FOREIGNKEY: [
         {
-          refrencedAtt: '',
-          ReferenceingTable: '',
-          ReferenceingAtt: '',
+          referencedAtt: '',
+          ReferencingTable: '',
+          ReferencingAtt: '',
           lineColor: '',
         },
       ],
+    },
+    columnLevelConstraint: {
+      NOTNULL: [],
+      UNIQUE: [],
     },
   },
 ];

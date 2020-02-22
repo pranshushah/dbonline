@@ -14,12 +14,7 @@ import Select from 'react-select';
  * @param {{currentTable:string,otherTables:tableDndDetailsObj[],onTableSelected:Function}} props
  */
 
-function TableNameDropDown({
-  currentTable,
-  otherTables,
-  onTableSelected,
-  ...props
-}) {
+function TableNameDropDown({ currentTable, otherTables, onTableSelected }) {
   const options = [];
   for (let i = 0; i < otherTables.length; i++) {
     if (currentTable !== otherTables[i].tableName) {
@@ -36,7 +31,7 @@ function TableNameDropDown({
     <Select
       options={options}
       onChange={tableSelectedHandler}
-      placeholder='Select Referncing Table'
+      placeholder='Select Referencing Table'
     />
   );
 }

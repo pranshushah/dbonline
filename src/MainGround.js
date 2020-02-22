@@ -5,24 +5,22 @@ import ItemDndTypes from './utils/dndTypes';
 import { useDrop, DropTargetMonitor } from 'react-dnd';
 import { AddAttributeLink } from './components/TableComponent/TableComponents';
 import AddAttributeModal from './AddAttributeModal/AddAttributeModal';
-
-/**
- * @typedef {object} tableDndDetailsObj
- * @property {number} top
- * @property {number} left
- * @property {string} tableName
- * @property {string} id
- * @property {string} color
- */
+import './utils/Types';
 
 /**
  * @param {{
  * showGrid:boolean,
  * tableDndDetails:tableDndDetailsObj[],
+ * mainTableDetails:mainTableDetailsType[],
  * onTableDndDetailsChange:Function,
  * }} props
  */
-function MainGround({ showGrid, tableDndDetails, onTableDndDetailsChange }) {
+function MainGround({
+  showGrid,
+  tableDndDetails,
+  mainTableDetails,
+  onTableDndDetailsChange,
+}) {
   /**
    * @param {tableDndDetailsObj} item
    * @param {number} left
@@ -56,27 +54,26 @@ function MainGround({ showGrid, tableDndDetails, onTableDndDetailsChange }) {
     },
   });
 
-  const [showModal, updateShowModal] = useState(false);
+  const [addAttributeShowModal, updateAddAttributeShowModal] = useState(false);
   const [
     selectedTableDetailsForModal,
     updateSelectedTableDetailsForModal,
   ] = useState({});
 
   function cancelModalHandler() {
-    updateShowModal(false);
+    updateAddAttributeShowModal(false);
     updateSelectedTableDetailsForModal({});
   }
 
   function confirmModalHandler() {
-    updateShowModal(false);
+    updateAddAttributeShowModal(false);
     updateSelectedTableDetailsForModal({});
   }
 
   function AddAttributeLinkClickHandler(tableDndDetail) {
-    updateShowModal(true);
+    updateAddAttributeShowModal(true);
     updateSelectedTableDetailsForModal(tableDndDetail);
   }
-
   const tables = tableDndDetails.map(tableDndDetail => {
     return (
       <TableContainer tableDndDetail={tableDndDetail} key={tableDndDetail.id}>
@@ -93,11 +90,12 @@ function MainGround({ showGrid, tableDndDetails, onTableDndDetailsChange }) {
     <Grid ref={drop} showGrid={showGrid}>
       {tables}
       <AddAttributeModal
-        showModalState={showModal}
+        showModalState={addAttributeShowModal}
         onModalConfirmed={confirmModalHandler}
         onModalClosed={cancelModalHandler}
         tableName={selectedTableDetailsForModal.tableName}
         allTableDndDetails={tableDndDetails}
+        mainTableDetails={mainTableDetails}
       />
     </Grid>
   );

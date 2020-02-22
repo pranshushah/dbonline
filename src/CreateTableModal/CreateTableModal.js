@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Input } from 'react-ui-lib-pranshu';
 import uuid from 'uuid/v4';
 import TableColorPickerList from '../components/TableColorPickerList/TableColorPickerList';
+import '../utils/Types';
 /**
  * @param {{showModalState:boolean,
  * onModalConfirmed:Function,
@@ -25,18 +26,32 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
     if (createTableInputValue.trim().length === 0) {
       updateTableColor('gray');
       updateCreateTableInputValue('');
-      onModalConfirmed(null);
+      onModalConfirmed();
     } else {
-      const newTable = {
+      const newTableDndDetails = {
         left: 20,
         top: 20,
         tableName: createTableInputValue,
         id: uuid(),
         color: tableColor,
       };
+      /**
+       * @type {mainTableDetailsType}
+       */
+      const mainTableDetails = {
+        tableName: createTableInputValue,
+        attributes: [],
+        tableLevelConstraint: {
+          FOREIGNKEY: [],
+        },
+        columnLevelConstraint: {
+          NOTNULL: [],
+          UNIQUE: [],
+        },
+      };
       updateTableColor('gray');
       updateCreateTableInputValue('');
-      onModalConfirmed(newTable);
+      onModalConfirmed(newTableDndDetails, mainTableDetails);
     }
   }
 

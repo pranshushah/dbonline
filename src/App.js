@@ -8,15 +8,7 @@ import { DndProvider } from 'react-dnd';
 import backend from 'react-dnd-html5-backend';
 import TABLECOLORS from './utils/tableColors';
 import CreateTableModal from './CreateTableModal/CreateTableModal';
-
-/**
- * @typedef {object} tableDndDetailsObj
- * @property {number} top
- * @property {number} left
- * @property {string} tableName
- * @property {string} id
- * @property {string} color
- */
+import './utils/Types';
 
 export default function App() {
   const [showGrid, toggleShowGrid] = useState(true);
@@ -26,16 +18,54 @@ export default function App() {
     {
       top: 20,
       left: 350,
-      tableName: 'pranshu23',
+      tableName: 'student',
       id: uuid(),
       color: TABLECOLORS.GREEN,
     },
     {
       top: 250,
       left: 350,
-      tableName: 'pranshu1',
+      tableName: 'result',
       id: uuid(),
       color: TABLECOLORS.DARKBROWN,
+    },
+  ]);
+
+  /**
+   *@type {[mainTableDetailsType[],Function]} mainTableDetails
+   */
+  const [mainTableDetails, updateMainTableDetails] = useState([
+    {
+      tableName: 'result',
+      attributes: [
+        { name: 'result id', dataType: 'VARCHAR', size: 255 },
+        { name: 'student id', dataType: 'VARCHAR', size: 255 },
+        { name: 'percentage', dataType: 'DOUBLE', size: 5, precision: 3 },
+      ],
+      tableLevelConstraint: {
+        PRIMARYKEY: 'result id',
+        FOREIGNKEY: [],
+      },
+      columnLevelConstraint: {
+        NOTNULL: ['result id', 'student id'],
+        UNIQUE: ['result id', 'student id'],
+      },
+    },
+    {
+      tableName: 'student',
+      attributes: [
+        { name: 'student id', dataType: 'VARCHAR', size: 255 },
+        { name: 'name', dataType: 'VARCHAR', size: 255 },
+        { name: 'age', dataType: 'INTEGER', size: 255 },
+      ],
+      tableLevelConstraint: {
+        PRIMARYKEY: 'result id',
+        FOREIGNKEY: [],
+      },
+      columnLevelConstraint: {
+        NOTNULL: ['student id', 'name', 'age'],
+        UNIQUE: ['student id'],
+      },
     },
   ]);
 
@@ -56,9 +86,14 @@ export default function App() {
 
   /**
    * @param {tableDndDetailsObj} newTable
+   * @param {mainTableDetailsType} newMainTableDetail
    */
-  function confirmCreateTableModalHandler(newTable) {
+  function confirmCreateTableModalHandler(newTable, newMainTableDetail) {
     if (newTable) {
+      updateMainTableDetails(mainTableDetails => [
+        ...mainTableDetails,
+        newMainTableDetail,
+      ]);
       updateTableDndDetails(tableDetails => [...tableDetails, newTable]);
     }
     updateShowModal(false);
@@ -90,6 +125,7 @@ export default function App() {
         <DndProvider backend={backend}>
           <MainGround
             showGrid={showGrid}
+            mainTableDetails={mainTableDetails}
             tableDndDetails={tableDndDetails}
             onTableDndDetailsChange={tableDndDetailsHandler}
           />

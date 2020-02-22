@@ -3,27 +3,17 @@ import { Modal, Input } from 'react-ui-lib-pranshu';
 import ConstraintCheckBoxContainer from './constraintCheckboxContainer';
 import DataTypeDropDown from './DataTypeDropDown';
 import TableNameDropDown from './SelectTableDropDown';
-import {
-  numericTypes,
-  stringTypes,
-  dateAndTimeTypes,
-} from '../utils/attributeDataTypes';
-
-/**
- * @typedef {object} tableDndDetailsObj
- * @property {number} top
- * @property {number} left
- * @property {string} tableName
- * @property {string} id
- * @property {string} color
- */
+import { numericTypes, stringTypes } from '../utils/attributeDataTypes';
+import SelectReferencingAttr from './SelectReferencingAttr';
+import '../utils/Types';
 
 /** @param {{
  * showModalState:boolean,
  * onModalConfirmed:Function,
  * onModalClosed:Function,
  * tableName:string,
- * allTableDndDetails:tableDndDetailsObj[]
+ * allTableDndDetails:tableDndDetailsObj[],
+ * mainTableDetails:mainTableDetailsType[]
  * }} props
  */
 function AddAttributeModal({
@@ -31,12 +21,14 @@ function AddAttributeModal({
   onModalClosed,
   tableName,
   allTableDndDetails,
+  mainTableDetails,
   onModalConfirmed,
 }) {
   const [AddAttributeInputValue, updateAddAttributeInputValue] = useState('');
   const [checkedItems, updateCheckedItems] = useState({});
   const [selectedDataType, updateSelectedDataType] = useState('');
   const [selectedReferencingTable, updateSelectedReferencingTable] = useState();
+  const [selectedReferencingAttr, updateSelectedReferencingAttr] = useState();
   const [sizeInputValue, updateSizeInputValue] = useState('');
   const [
     precisionAfterDecimalInputValue,
@@ -54,7 +46,9 @@ function AddAttributeModal({
       ...checkedItems,
       [e.target.name]: e.target.checked,
     }));
-    console.log(checkedItems);
+    if (!checkedItems['FOREIGN-KEY'] && selectedReferencingTable) {
+      updateSelectedReferencingTable('');
+    }
   }
   function ModalCloseHandler() {
     updateAddAttributeInputValue('');
@@ -104,7 +98,7 @@ function AddAttributeModal({
   function dataTypeSelectedHandler(value) {
     updateShowSizeInput(false);
     updateShowPrecisionAfterDecimalInput(false);
-    updateSelectedDataType(value.value);
+    updateSelectedDataType(value);
   }
 
   function whenDataTypeisUpdated() {
@@ -116,7 +110,6 @@ function AddAttributeModal({
   useEffect(whenDataTypeisUpdated, [selectedDataType]);
 
   function referencingTableSelectedHandler(value) {
-    console.log(value);
     updateSelectedReferencingTable(value);
   }
 
@@ -127,6 +120,10 @@ function AddAttributeModal({
   function precisionAfterDecimalInputValueChangeHandler(e) {
     if (e.target.value >= 0)
       updatePrecisionAfterDecimalInputValue(e.target.value);
+  }
+
+  function selectedReferencingAttrHandler(value) {
+    updateSelectedReferencingAttr(value);
   }
 
   return (
@@ -156,12 +153,21 @@ function AddAttributeModal({
           marginTop: '15px',
           fontWeight: 'inherit',
         }}>
-        Add constriants :-
+        Select DataType :-
       </h2>
       <div style={{ width: '40%' }}>
         <DataTypeDropDown onNewDataSelected={dataTypeSelectedHandler} />
       </div>
-      <div style={{ margin: '5px', marginTop: '10px', marginBottom: '15px' }}>
+      <div
+        style={{
+          marginTop: '10px',
+          marginBottom: '15px',
+          marginLeft: '5px',
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          justifyContent: 'flex-start',
+        }}>
         {showSizeInput && (
           <Input
             value={sizeInputValue}
@@ -172,30 +178,52 @@ function AddAttributeModal({
             color='blue'
           />
         )}
-        <div style={{ marginTop: '16px' }}>
+        <div style={{ width: '100%', marginLeft: '20px' }}>
           {showprecisionAfterDecimalInput && (
             <Input
               value={precisionAfterDecimalInputValue}
               onChange={precisionAfterDecimalInputValueChangeHandler}
               type='number'
               label='Precision after Decimal'
-              size='medium'
+              size='large'
               color='blue'
             />
           )}
         </div>
       </div>
+      <h2
+        style={{
+          color: '#27292a',
+          margin: '5px',
+          marginTop: '15px',
+          fontWeight: 'inherit',
+        }}>
+        Add constriants :-
+      </h2>
       <ConstraintCheckBoxContainer
         checkedConstraintObj={checkedItems}
         onConstraintChecked={checkBoxChangeHandler}
       />
-      {checkedItems['FOREIGN-KEY'] && (
-        <TableNameDropDown
-          currentTable={tableName}
-          otherTables={allTableDndDetails}
-          onTableSelected={referencingTableSelectedHandler}
-        />
-      )}
+      <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'row' }}>
+        {checkedItems['FOREIGN-KEY'] && (
+          <div style={{ width: '100%' }}>
+            <TableNameDropDown
+              currentTable={tableName}
+              otherTables={allTableDndDetails}
+              onTableSelected={referencingTableSelectedHandler}
+            />
+          </div>
+        )}
+        <div style={{ width: '100%', marginLeft: '10px' }}>
+          {checkedItems['FOREIGN-KEY'] && selectedReferencingTable && (
+            <SelectReferencingAttr
+              selectedTable={selectedReferencingTable}
+              mainTableDetails={mainTableDetails}
+              onAttrSelected={selectedReferencingAttrHandler}
+            />
+          )}
+        </div>
+      </div>
     </Modal>
   );
 }
