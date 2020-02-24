@@ -54,6 +54,7 @@ function TableColorPickerList(props) {
       />
     );
   });
+  console.log(typeof React.memo);
   return (
     <>
       <TableHeading>*Pick Your Color</TableHeading>
