@@ -6,6 +6,7 @@ import { useDrop, DropTargetMonitor } from 'react-dnd';
 import { AddAttributeLink } from './components/TableComponent/TableComponents';
 import AddAttributeModal from './AddAttributeModal/AddAttributeModal';
 import './utils/Types';
+import MainTable from './components/TableComponent/MainTable';
 
 /**
  * @param {{
@@ -13,6 +14,7 @@ import './utils/Types';
  * tableDndDetails:tableDndDetailsObj[],
  * mainTableDetails:mainTableDetailsType[],
  * onTableDndDetailsChange:Function,
+ * onMainTableDetailsChange:Function
  * }} props
  */
 function MainGround({
@@ -20,6 +22,7 @@ function MainGround({
   tableDndDetails,
   mainTableDetails,
   onTableDndDetailsChange,
+  onMainTableDetailsChange,
 }) {
   /**
    * @param {tableDndDetailsObj} item
@@ -28,7 +31,7 @@ function MainGround({
    */
   function moveTable(newItem) {
     const updatedTableDndDetails = tableDndDetails.filter(
-      tableDndDetail => tableDndDetail.id !== newItem.id,
+      (tableDndDetail) => tableDndDetail.id !== newItem.id,
     );
     updatedTableDndDetails.push(newItem);
     onTableDndDetailsChange(updatedTableDndDetails);
@@ -56,27 +59,64 @@ function MainGround({
 
   const [addAttributeShowModal, updateAddAttributeShowModal] = useState(false);
   const [
+    selectedTableDndDetailsForModal,
+    updateSelectedTableDndDetailsForModal,
+  ] = useState({});
+  const [
     selectedTableDetailsForModal,
     updateSelectedTableDetailsForModal,
   ] = useState({});
 
   function cancelModalHandler() {
     updateAddAttributeShowModal(false);
-    updateSelectedTableDetailsForModal({});
+    updateSelectedTableDndDetailsForModal({});
   }
 
-  function confirmModalHandler() {
+  function confirmModalHandler(newObj) {
     updateAddAttributeShowModal(false);
-    updateSelectedTableDetailsForModal({});
+    updateSelectedTableDndDetailsForModal({});
+    let newTable = JSON.parse(
+      JSON.stringify({ ...selectedTableDetailsForModal }),
+    );
+    console.log(newTable);
+    newTable.attributes.push(newObj.attributes);
+    if (newObj['NOTNULL']) {
+      newTable.columnLevelConstraint.NOTNULL.push(newObj.attributes.name);
+    }
+    if (newObj['UNIQUE']) {
+      newTable.columnLevelConstraint.UNIQUE.push(newObj.attributes.name);
+    }
+    if (newObj['PRIMARYKEY']) {
+      newTable.tableLevelConstraint['PRIMARYKEY'] = newObj.attributes.name;
+    }
+    if (newObj['FOREIGNKEY']) {
+      newTable.tableLevelConstraint.FOREIGNKEY.push(newObj['FOREIGNKEY']);
+    }
+    console.log(newTable);
+    const newMainTableDetails = [...mainTableDetails];
+    const index = newMainTableDetails.findIndex(
+      (table) => table.tableName === newTable.tableName,
+    );
+    newMainTableDetails.splice(index, 1, newTable);
+    onMainTableDetailsChange(newMainTableDetails);
   }
 
   function AddAttributeLinkClickHandler(tableDndDetail) {
     updateAddAttributeShowModal(true);
-    updateSelectedTableDetailsForModal(tableDndDetail);
+    updateSelectedTableDndDetailsForModal(tableDndDetail);
+    const index = mainTableDetails.findIndex(
+      (table) => table.tableName === tableDndDetail.tableName,
+    );
+    updateSelectedTableDetailsForModal(mainTableDetails[index]);
   }
-  const tables = tableDndDetails.map(tableDndDetail => {
+
+  const tables = tableDndDetails.map((tableDndDetail) => {
     return (
       <TableContainer tableDndDetail={tableDndDetail} key={tableDndDetail.id}>
+        <MainTable
+          mainTableDetails={mainTableDetails}
+          tableName={tableDndDetail.tableName}
+        />
         <AddAttributeLink
           tableDndDetail={tableDndDetail}
           onClick={AddAttributeLinkClickHandler}
@@ -93,12 +133,12 @@ function MainGround({
         showModalState={addAttributeShowModal}
         onModalConfirmed={confirmModalHandler}
         onModalClosed={cancelModalHandler}
-        tableName={selectedTableDetailsForModal.tableName}
+        tableName={selectedTableDndDetailsForModal.tableName}
         allTableDndDetails={tableDndDetails}
         mainTableDetails={mainTableDetails}
+        givenTable={selectedTableDetailsForModal}
       />
     </Grid>
   );
 }
-
 export default MainGround;

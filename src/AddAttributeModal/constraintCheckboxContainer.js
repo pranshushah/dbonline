@@ -3,12 +3,13 @@ import constraintCheckBoxList from '../utils/constraintCheckBox';
 import { Checkbox } from 'react-ui-lib-pranshu';
 
 /**
- * @param {{checkedConstraintObj:Object,onConstraintChecked:Function}} props
+ * @param {{checkedConstraintObj:Object,onConstraintChecked:Function,checkBoxList:Array}} props
  */
 
 function ConstraintCheckBoxContainer({
   checkedConstraintObj,
   onConstraintChecked,
+  checkBoxList,
   ...props
 }) {
   const style = {
@@ -17,7 +18,7 @@ function ConstraintCheckBoxContainer({
     justifyContent: 'flex-start',
   };
 
-  const checkboxContainer = constraintCheckBoxList.map(item => {
+  const checkboxContainer = checkBoxList.map((item) => {
     return (
       <Checkbox
         label={item.label}

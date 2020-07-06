@@ -13,3 +13,27 @@
   height: 100%;
   align-items: stretch;
 }
+
+.ReactVirtualized__Table {
+  font-size: 14px;
+  outline: 0;
+  border-top: 1px solid rgb(66, 66, 66);
+}
+.ReactVirtualized__Table__row {
+  border-bottom: 1px solid rgb(66, 66, 66);
+}
+.firstColumn {
+  margin: 0 4px 0 4px !important;
+}
+.border {
+  border-left: 1px solid rgb(66, 66, 66);
+  padding-left: 3px;
+}
+.lastBorder {
+  border-left: 1px solid rgb(66, 66, 66);
+  padding-left: 4px;
+  margin: 0px !important;
+}
+.ReactVirtualized__Table__rowColumn {
+  height: 100%;
+}

@@ -12,7 +12,7 @@ import './utils/Types';
 
 export default function App() {
   const [showGrid, toggleShowGrid] = useState(true);
-  const [showSidebar, toggleSideBar] = useState(true);
+  const [showSidebar, toggleSideBar] = useState(false);
   const [showModal, updateShowModal] = useState(false);
   const [tableDndDetails, updateTableDndDetails] = useState([
     {
@@ -40,7 +40,12 @@ export default function App() {
       attributes: [
         { name: 'result id', dataType: 'VARCHAR', size: 255 },
         { name: 'student id', dataType: 'VARCHAR', size: 255 },
-        { name: 'percentage', dataType: 'DOUBLE', size: 5, precision: 3 },
+        {
+          name: 'percentagepranshu',
+          dataType: 'DOUBLE',
+          size: 125,
+          precision: 13,
+        },
       ],
       tableLevelConstraint: {
         PRIMARYKEY: 'result id',
@@ -56,10 +61,10 @@ export default function App() {
       attributes: [
         { name: 'student id', dataType: 'VARCHAR', size: 255 },
         { name: 'name', dataType: 'VARCHAR', size: 255 },
-        { name: 'age', dataType: 'INTEGER', size: 255 },
+        { name: 'age', dataType: 'INTEGER' },
       ],
       tableLevelConstraint: {
-        PRIMARYKEY: 'result id',
+        PRIMARYKEY: 'student id',
         FOREIGNKEY: [],
       },
       columnLevelConstraint: {
@@ -77,6 +82,10 @@ export default function App() {
     updateTableDndDetails(newTableDndDetails);
   }
 
+  function mainTableDetailsChangeHandler(newMainTableDetails) {
+    updateMainTableDetails(newMainTableDetails);
+  }
+
   function newTableCreatedHandler() {
     updateShowModal(true);
   }
@@ -90,21 +99,21 @@ export default function App() {
    */
   function confirmCreateTableModalHandler(newTable, newMainTableDetail) {
     if (newTable) {
-      updateMainTableDetails(mainTableDetails => [
+      updateMainTableDetails((mainTableDetails) => [
         ...mainTableDetails,
         newMainTableDetail,
       ]);
-      updateTableDndDetails(tableDetails => [...tableDetails, newTable]);
+      updateTableDndDetails((tableDetails) => [...tableDetails, newTable]);
     }
     updateShowModal(false);
   }
 
   function showGridHandler() {
-    toggleShowGrid(prevShowGrid => !prevShowGrid);
+    toggleShowGrid((prevShowGrid) => !prevShowGrid);
   }
 
   function showSidebarHandler() {
-    toggleSideBar(prevShowSidebar => !prevShowSidebar);
+    toggleSideBar((prevShowSidebar) => !prevShowSidebar);
   }
 
   return (
@@ -127,6 +136,7 @@ export default function App() {
             showGrid={showGrid}
             mainTableDetails={mainTableDetails}
             tableDndDetails={tableDndDetails}
+            onMainTableDetailsChange={mainTableDetailsChangeHandler}
             onTableDndDetailsChange={tableDndDetailsHandler}
           />
         </DndProvider>

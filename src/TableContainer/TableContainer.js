@@ -17,10 +17,11 @@ import { useDrag, DragSourceMonitor } from 'react-dnd';
 
 /**
  * @param {{
- * tableDndDetail:tableDndDetailsObj
+ * tableDndDetail:tableDndDetailsObj,
+ * className:string
  * }} props
  */
-function TableContainer({ tableDndDetail, children, ...props }) {
+function TableContainer({ tableDndDetail, children, className, ...props }) {
   const [{ isDragging }, drag, preview] = useDrag({
     item: { ...tableDndDetail, type: ItemDndTypes.TABLE },
     /**
@@ -37,6 +38,7 @@ function TableContainer({ tableDndDetail, children, ...props }) {
       left={tableDndDetail.left}
       isDragging={isDragging}
       top={tableDndDetail.top}
+      className={className}
       ref={preview}>
       <TableHeader ref={drag} bgColor={tableDndDetail.color}>
         {tableDndDetail.tableName}

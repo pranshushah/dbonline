@@ -6,24 +6,23 @@ import styled from 'styled-components';
 const TableCard = styled.div`
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.2s;
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
-  width: 20%;
+  border: 1px solid rgb(66, 66, 66);
+  border-radius: 1px;
   margin: 10px;
   position: absolute;
-  left: ${props => `${props.left}px`};
-  top: ${props => `${props.top}px`};
+  left: ${(props) => `${props.left}px`};
+  top: ${(props) => `${props.top}px`};
   &:hover {
     box-shadow: 0 0px 24px 8px rgba(0, 0, 0, 0.2);
   }
   max-height: 30vh;
-  opacity: ${props => (props.isDragging ? 0.5 : 1)};
+  opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 
 const TableHeader = styled.h3`
   color: rgb(226, 226, 226);
   width: 100%;
-  background: ${props => props.bgColor};
+  background: ${(props) => props.bgColor};
   text-align: left;
   padding: 2px;
   padding-left: 8px;
@@ -36,16 +35,18 @@ const TableHeader = styled.h3`
 `;
 
 const TableContentContainer = styled.div`
-  background: rgb(225, 225, 225);
+  background: rgb(240, 240, 240);
   display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 3px;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding: 0 0 3px 0;
 `;
 
 const AttributeLink = styled.a`
   text-decoration: none;
-  color: ${props => props.fontColor};
+  text-align: center;
+  padding-bottom: 5px;
+  color: ${(props) => props.fontColor};
   cursor: pointer;
 `;
 

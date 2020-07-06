@@ -13,7 +13,8 @@ import '../utils/Types';
  * onModalClosed:Function,
  * tableName:string,
  * allTableDndDetails:tableDndDetailsObj[],
- * mainTableDetails:mainTableDetailsType[]
+ * mainTableDetails:mainTableDetailsType[],
+ * givenTable:mainTableDetailsType
  * }} props
  */
 function AddAttributeModal({
@@ -23,8 +24,10 @@ function AddAttributeModal({
   allTableDndDetails,
   mainTableDetails,
   onModalConfirmed,
+  givenTable,
 }) {
   const [AddAttributeInputValue, updateAddAttributeInputValue] = useState('');
+  const [modalError, updateModalError] = useState(true);
   const [checkedItems, updateCheckedItems] = useState({});
   const [selectedDataType, updateSelectedDataType] = useState('');
   const [selectedReferencingTable, updateSelectedReferencingTable] = useState();
@@ -39,31 +42,99 @@ function AddAttributeModal({
     showprecisionAfterDecimalInput,
     updateShowPrecisionAfterDecimalInput,
   ] = useState(false);
+  const [attributeValueError, setAttributeValueError] = useState(true);
+  const [selectDataTypeError, setSelectDataTypeError] = useState(true);
+  const [sizeInputValueError, setSizeInputValueError] = useState(true);
+  const [
+    precisionAfterDecimalInputValueError,
+    setPrecisionAfterDecimalInputValueError,
+  ] = useState(true);
+  const [
+    selectedReferencingTableError,
+    setSelectedReferencingTableError,
+  ] = useState(false);
 
-  function checkBoxChangeHandler(e) {
-    e.persist();
-    updateCheckedItems(checkedItems => ({
-      ...checkedItems,
-      [e.target.name]: e.target.checked,
-    }));
-    if (!checkedItems['FOREIGN-KEY'] && selectedReferencingTable) {
-      updateSelectedReferencingTable('');
-    }
-  }
-  function ModalCloseHandler() {
+  const [
+    selectedReferencingAttrError,
+    setSelectedReferencingAttrError,
+  ] = useState(false);
+
+  function modalCleanUp() {
     updateAddAttributeInputValue('');
     updateSelectedDataType('');
+    updateCheckedItems({});
+    updateSelectedReferencingTable('');
+    updateSelectedReferencingAttr('');
+    updateSizeInputValue('');
+    updatePrecisionAfterDecimalInputValue('');
+    updateShowSizeInput(false);
+    updateShowPrecisionAfterDecimalInput(false);
+    setAttributeValueError(true);
+    setSelectDataTypeError(true);
+    setSizeInputValueError(true);
+    setPrecisionAfterDecimalInputValueError(true);
+    setSelectedReferencingTableError(false);
+  }
+
+  function ModalCloseHandler() {
+    modalCleanUp();
     onModalClosed();
   }
+
   function modalConfirmHandler() {
-    updateAddAttributeInputValue('');
-    updateSelectedDataType('');
-    onModalConfirmed();
+    if (modalError) {
+      modalCleanUp();
+    } else {
+      let addObj = {
+        attributes: {
+          name: AddAttributeInputValue,
+          dataType: selectedDataType,
+        },
+      };
+      if (sizeInputValue) {
+        addObj['attributes'].size = sizeInputValue;
+      }
+      if (precisionAfterDecimalInputValue) {
+        addObj['attributes'].precision = precisionAfterDecimalInputValue;
+      }
+      if (checkedItems['NOT-NULL']) {
+        addObj['NOTNULL'] = true;
+      }
+      if (checkedItems['UNIQUE']) {
+        addObj['UNIQUE'] = true;
+      }
+      if (checkedItems['FOREIGN-KEY']) {
+        addObj['FOREIGNKEY'] = {
+          referencedAtt: AddAttributeInputValue,
+          ReferencingTable: selectedReferencingTable,
+          ReferencingAtt: selectedReferencingAttr,
+        };
+      }
+      if (checkedItems['PRIMARY-KEY']) {
+        addObj['PRIMARYKEY'] = true;
+        addObj['NOTNULL'] = true;
+        addObj['UNIQUE'] = true;
+      }
+      onModalConfirmed(addObj);
+    }
   }
 
-  function addAttributeInputValueHandler(e) {
-    updateAddAttributeInputValue(e.target.value);
-  }
+  const addAttributeInputValueHandler = (e) => {
+    const val = e.target.value;
+    updateAddAttributeInputValue(val);
+    if (val.trim().length > 0) {
+      const attrIndex = givenTable.attributes.findIndex(
+        (attr) => attr.name === val,
+      );
+      attrIndex > -1
+        ? setAttributeValueError(true)
+        : setAttributeValueError(false);
+    } else {
+      setAttributeValueError(true);
+    }
+  };
+
+  // input select type related
 
   function handleNumericSizeAndPrecisionAfterDecimal() {
     if (
@@ -73,63 +144,175 @@ function AddAttributeModal({
     ) {
       updateShowSizeInput(true);
       updateShowPrecisionAfterDecimalInput(true);
+      setSizeInputValueError(true);
+      setPrecisionAfterDecimalInputValueError(true);
+    } else {
+      setSizeInputValueError(false);
+      setPrecisionAfterDecimalInputValueError(false);
     }
   }
 
   function handlerStringSize() {
     if (selectedDataType === 'CHAR' || selectedDataType === 'VARCHAR') {
       updateShowSizeInput(true);
+      setSizeInputValueError(true);
+      setPrecisionAfterDecimalInputValueError(false);
+    } else {
+      setSizeInputValueError(false);
+      setPrecisionAfterDecimalInputValueError(false);
     }
   }
 
   function handleDataTypeRelatedInputs() {
     let index;
-    index = numericTypes.findIndex(type => type.value === selectedDataType);
+    index = numericTypes.findIndex((type) => type.value === selectedDataType);
     if (index !== -1) {
       handleNumericSizeAndPrecisionAfterDecimal();
     } else {
-      index = stringTypes.findIndex(type => type.value === selectedDataType);
+      index = stringTypes.findIndex((type) => type.value === selectedDataType);
       if (index !== -1) {
         handlerStringSize();
+      } else {
+        setSizeInputValueError(false);
+        setPrecisionAfterDecimalInputValueError(false);
       }
     }
-  }
-
-  function dataTypeSelectedHandler(value) {
-    updateShowSizeInput(false);
-    updateShowPrecisionAfterDecimalInput(false);
-    updateSelectedDataType(value);
   }
 
   function whenDataTypeisUpdated() {
     if (selectedDataType.length !== 0) {
       handleDataTypeRelatedInputs();
+      updateSizeInputValue('');
+      updatePrecisionAfterDecimalInputValue('');
     }
   }
   //for immediate effect selectedDataType
   useEffect(whenDataTypeisUpdated, [selectedDataType]);
 
-  function referencingTableSelectedHandler(value) {
-    updateSelectedReferencingTable(value);
+  function dataTypeSelectedHandler(value) {
+    updateShowSizeInput(false);
+    updateShowPrecisionAfterDecimalInput(false);
+    updateSelectedDataType(value);
+    setSelectDataTypeError(false);
   }
 
+  // size and precisionAfterDecimal related
+
   function sizeInputValueChangeHandler(e) {
-    if (e.target.value >= 0) updateSizeInputValue(e.target.value);
+    if (e.target.value >= 0) {
+      updateSizeInputValue(e.target.value);
+      if (e.target.value === '') {
+        setSizeInputValueError(true);
+      } else {
+        setSizeInputValueError(false);
+      }
+    } else {
+      setSizeInputValueError(true);
+    }
   }
 
   function precisionAfterDecimalInputValueChangeHandler(e) {
-    if (e.target.value >= 0)
+    if (e.target.value >= 0) {
       updatePrecisionAfterDecimalInputValue(e.target.value);
+      if (e.target.value === '') {
+        setPrecisionAfterDecimalInputValueError(true);
+      } else {
+        setPrecisionAfterDecimalInputValueError(false);
+      }
+    } else {
+      setPrecisionAfterDecimalInputValueError(true);
+    }
   }
 
+  //checkbox
+
+  function checkBoxChangeHandler(e) {
+    e.persist();
+    updateCheckedItems((checkedItems) => ({
+      ...checkedItems,
+      [e.target.name]: e.target.checked,
+    }));
+    if (!checkedItems['FOREIGN-KEY'] && selectedReferencingTable) {
+      updateSelectedReferencingTable('');
+      updateSelectedReferencingAttr('');
+    }
+  }
+
+  // when checkbox-changes
+  useEffect(() => {
+    if (checkedItems['FOREIGN-KEY']) {
+      if (selectedReferencingAttr && selectedReferencingTable) {
+        setSelectedReferencingTableError(false);
+        setSelectedReferencingAttrError(false);
+      } else {
+        setSelectedReferencingTableError(true);
+        setSelectedReferencingAttrError(true);
+      }
+    } else {
+      setSelectedReferencingTableError(false);
+      setSelectedReferencingAttrError(false);
+    }
+  }, [checkedItems, selectedReferencingAttr, selectedReferencingTable]);
+
+  function getCheckboxList() {
+    let constraintCheckboxList = [
+      { name: 'NOT-NULL', label: 'NOT NULL' },
+      { name: 'UNIQUE', label: 'UNIQUE' },
+      { name: 'PRIMARY-KEY', label: 'PRIMARY KEY' },
+      { name: 'FOREIGN-KEY', label: 'FOREIGN KEY' },
+    ];
+    if (givenTable.tableLevelConstraint) {
+      if (givenTable.tableLevelConstraint['PRIMARYKEY']) {
+        constraintCheckboxList = [
+          { name: 'NOT-NULL', label: 'NOT NULL' },
+          { name: 'UNIQUE', label: 'UNIQUE' },
+          { name: 'FOREIGN-KEY', label: 'FOREIGN KEY' },
+        ];
+      }
+    }
+
+    return constraintCheckboxList;
+  }
+
+  //FOREIGNKEY related
+
+  function referencingTableSelectedHandler(value) {
+    updateSelectedReferencingTable(value);
+    setSelectedReferencingTableError(false);
+  }
   function selectedReferencingAttrHandler(value) {
     updateSelectedReferencingAttr(value);
+    setSelectedReferencingAttrError(false);
   }
+
+  //error
+
+  useEffect(() => {
+    if (
+      !attributeValueError &&
+      !selectDataTypeError &&
+      !sizeInputValueError &&
+      !precisionAfterDecimalInputValueError &&
+      !selectedReferencingTableError &&
+      !selectedReferencingAttrError
+    ) {
+      updateModalError(false);
+    } else {
+      updateModalError(true);
+    }
+  }, [
+    attributeValueError,
+    selectDataTypeError,
+    sizeInputValueError,
+    precisionAfterDecimalInputValueError,
+    selectedReferencingTableError,
+    selectedReferencingAttrError,
+  ]);
 
   return (
     <Modal
       canCancel
-      canConfirm
+      canConfirm={!modalError}
       topAligned
       size='medium'
       show={showModalState}
@@ -172,7 +355,7 @@ function AddAttributeModal({
           <Input
             value={sizeInputValue}
             onChange={sizeInputValueChangeHandler}
-            type='number'
+            type='text'
             label='Size'
             size='medium'
             color='blue'
@@ -183,7 +366,7 @@ function AddAttributeModal({
             <Input
               value={precisionAfterDecimalInputValue}
               onChange={precisionAfterDecimalInputValueChangeHandler}
-              type='number'
+              type='text'
               label='Precision after Decimal'
               size='large'
               color='blue'
@@ -203,6 +386,7 @@ function AddAttributeModal({
       <ConstraintCheckBoxContainer
         checkedConstraintObj={checkedItems}
         onConstraintChecked={checkBoxChangeHandler}
+        checkBoxList={getCheckboxList()}
       />
       <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'row' }}>
         {checkedItems['FOREIGN-KEY'] && (

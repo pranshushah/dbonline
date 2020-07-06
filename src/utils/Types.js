@@ -20,7 +20,6 @@
  * @property {string} referencedAtt
  * @property {string} ReferencingTable
  * @property {string} ReferencingAtt
- * @property {string} lineColor
  */
 
 /**

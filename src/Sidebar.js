@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Resizable } from "re-resizable";
+import React, { useState } from 'react';
+import { Resizable } from 're-resizable';
 
 /**
  *
@@ -16,14 +16,14 @@ function SideBar(props) {
   return (
     <Resizable
       style={{
-        display: "flex",
-        alignItems: "stretch",
-        border: "3px solid black",
-        zIndex: 5
+        display: 'flex',
+        alignItems: 'stretch',
+        border: '3px solid black',
+        zIndex: 5,
       }}
-      minWidth="10%"
-      maxWidth="45%"
-      size={{ width: width, height: "170vh" }}
+      minWidth='10%'
+      maxWidth='31%'
+      size={{ width: width, height: '170vh' }}
       onResizeStop={WidthHandler}
       enable={{
         top: false,
@@ -33,15 +33,14 @@ function SideBar(props) {
         topRight: false,
         bottomRight: false,
         bottomLeft: false,
-        topLeft: false
-      }}
-    >
+        topLeft: false,
+      }}>
       <div
         style={{
-          width: "100%",
-          marginLeft: "5px",
+          width: '100%',
+          marginLeft: '5px',
           zIndex: 5,
-          backgroundColor: "black"
+          backgroundColor: 'black',
         }}
       />
     </Resizable>
