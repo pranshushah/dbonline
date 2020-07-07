@@ -14,6 +14,42 @@
   align-items: stretch;
 }
 
+.tableMenu {
+  background-color: rgb(70, 70, 70);
+  color: whitesmoke;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  text-transform: capitalize;
+  font-size: 1rem;
+}
+
+.menu {
+  background-color: rgb(60, 60, 60);
+  color: whitesmoke;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  text-transform: capitalize;
+  font-size: 1rem;
+  position: relative;
+  width: 250px;
+  height: 160px;
+}
+
+.menuItem {
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background-color: rgb(100, 100, 100);
+}
+
+.shrotcut {
+  text-transform: lowercase;
+  position: absolute;
+  left: 150px;
+}
+
 .ReactVirtualized__Table {
   font-size: 14px;
   outline: 0;

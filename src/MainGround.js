@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import TableContainer from './TableContainer/TableContainer';
 import Grid from './Grid';
 import ItemDndTypes from './utils/dndTypes';
-import { useDrop, DropTargetMonitor } from 'react-dnd';
+import { useDrop } from 'react-dnd';
 import { AddAttributeLink } from './components/TableComponent/TableComponents';
 import AddAttributeModal from './AddAttributeModal/AddAttributeModal';
 import './utils/Types';
 import MainTable from './components/TableComponent/MainTable';
-
+import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
 /**
  * @param {{
  * showGrid:boolean,
@@ -58,25 +58,36 @@ function MainGround({
   });
 
   const [addAttributeShowModal, updateAddAttributeShowModal] = useState(false);
+  const [showDeleteTableModal, setShowDeleteTableModal] = useState(false);
   const [
-    selectedTableDndDetailsForModal,
-    updateSelectedTableDndDetailsForModal,
+    selectedTableDndDetailsForAddModal,
+    updateselectedTableDndDetailsForAddModal,
   ] = useState({});
   const [
-    selectedTableDetailsForModal,
-    updateSelectedTableDetailsForModal,
+    selectedTableDetailsForAddModal,
+    updateselectedTableDetailsForAddModal,
+  ] = useState({});
+  const [
+    selectedTableDndDetailsForDeleteModal,
+    setSelectedTableDndDetailsForDeleteModal,
+  ] = useState({});
+  const [
+    selectedTableDetailsForDeleteModal,
+    setSelectedTableDetailsForDeleteModal,
   ] = useState({});
 
   function cancelModalHandler() {
     updateAddAttributeShowModal(false);
-    updateSelectedTableDndDetailsForModal({});
+    updateselectedTableDndDetailsForAddModal({});
+    updateselectedTableDetailsForAddModal({});
   }
 
   function confirmModalHandler(newObj) {
     updateAddAttributeShowModal(false);
-    updateSelectedTableDndDetailsForModal({});
+    updateselectedTableDndDetailsForAddModal({});
+    updateselectedTableDetailsForAddModal({});
     let newTable = JSON.parse(
-      JSON.stringify({ ...selectedTableDetailsForModal }),
+      JSON.stringify({ ...selectedTableDetailsForAddModal }),
     );
     console.log(newTable);
     newTable.attributes.push(newObj.attributes);
@@ -103,16 +114,60 @@ function MainGround({
 
   function AddAttributeLinkClickHandler(tableDndDetail) {
     updateAddAttributeShowModal(true);
-    updateSelectedTableDndDetailsForModal(tableDndDetail);
+    updateselectedTableDndDetailsForAddModal(tableDndDetail);
     const index = mainTableDetails.findIndex(
       (table) => table.tableName === tableDndDetail.tableName,
     );
-    updateSelectedTableDetailsForModal(mainTableDetails[index]);
+    updateselectedTableDetailsForAddModal(mainTableDetails[index]);
+  }
+
+  function editTableHandler() {}
+
+  function deleteTableHandler(tableDndDetail) {
+    setShowDeleteTableModal(true);
+    setSelectedTableDndDetailsForDeleteModal(tableDndDetail);
+    const index = mainTableDetails.findIndex(
+      (table) => table.tableName === tableDndDetail.tableName,
+    );
+    setSelectedTableDetailsForDeleteModal(mainTableDetails[index]);
+  }
+
+  function deleteTableModalCancelHandler() {
+    setShowDeleteTableModal(false);
+    setSelectedTableDetailsForDeleteModal({});
+    setSelectedTableDndDetailsForDeleteModal({});
+  }
+
+  function deleteTableModalConfirmHandler() {
+    setShowDeleteTableModal(false);
+    setSelectedTableDetailsForDeleteModal({});
+    setSelectedTableDndDetailsForDeleteModal({});
+    const newTableDndDetails = JSON.parse(JSON.stringify([...tableDndDetails]));
+    const newMainTableDetails = JSON.parse(
+      JSON.stringify([...mainTableDetails]),
+    );
+
+    const dndIndex = newTableDndDetails.findIndex(
+      (table) =>
+        table.tableName === selectedTableDndDetailsForDeleteModal.tableName,
+    );
+    const mainIndex = newMainTableDetails.findIndex(
+      (table) =>
+        table.tableName === selectedTableDetailsForDeleteModal.tableName,
+    );
+    newTableDndDetails.splice(dndIndex, 1);
+    newMainTableDetails.splice(mainIndex, 1);
+    onMainTableDetailsChange(newMainTableDetails);
+    onTableDndDetailsChange(newTableDndDetails);
   }
 
   const tables = tableDndDetails.map((tableDndDetail) => {
     return (
-      <TableContainer tableDndDetail={tableDndDetail} key={tableDndDetail.id}>
+      <TableContainer
+        tableDndDetail={tableDndDetail}
+        key={tableDndDetail.id}
+        onEditClick={editTableHandler}
+        onDeleteClick={deleteTableHandler}>
         <MainTable
           mainTableDetails={mainTableDetails}
           tableName={tableDndDetail.tableName}
@@ -133,10 +188,16 @@ function MainGround({
         showModalState={addAttributeShowModal}
         onModalConfirmed={confirmModalHandler}
         onModalClosed={cancelModalHandler}
-        tableName={selectedTableDndDetailsForModal.tableName}
+        tableName={selectedTableDndDetailsForAddModal.tableName}
         allTableDndDetails={tableDndDetails}
         mainTableDetails={mainTableDetails}
-        givenTable={selectedTableDetailsForModal}
+        givenTable={selectedTableDetailsForAddModal}
+      />
+      <DeleteTableModal
+        showModalState={showDeleteTableModal}
+        tableName={selectedTableDndDetailsForDeleteModal.tableName}
+        onModalClosed={deleteTableModalCancelHandler}
+        onModalConfirmed={deleteTableModalConfirmHandler}
       />
     </Grid>
   );

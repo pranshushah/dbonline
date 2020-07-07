@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 import Nav from './Nav';
 import uuid from 'uuid/v4';
@@ -9,6 +9,7 @@ import backend from 'react-dnd-html5-backend';
 import TABLECOLORS from './utils/tableColors';
 import CreateTableModal from './CreateTableModal/CreateTableModal';
 import './utils/Types';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 export default function App() {
   const [showGrid, toggleShowGrid] = useState(true);
@@ -98,13 +99,11 @@ export default function App() {
    * @param {mainTableDetailsType} newMainTableDetail
    */
   function confirmCreateTableModalHandler(newTable, newMainTableDetail) {
-    if (newTable) {
-      updateMainTableDetails((mainTableDetails) => [
-        ...mainTableDetails,
-        newMainTableDetail,
-      ]);
-      updateTableDndDetails((tableDetails) => [...tableDetails, newTable]);
-    }
+    updateMainTableDetails((mainTableDetails) => [
+      ...mainTableDetails,
+      newMainTableDetail,
+    ]);
+    updateTableDndDetails((tableDetails) => [...tableDetails, newTable]);
     updateShowModal(false);
   }
 
@@ -115,6 +114,24 @@ export default function App() {
   function showSidebarHandler() {
     toggleSideBar((prevShowSidebar) => !prevShowSidebar);
   }
+
+  useEffect(() => {
+    function shortcutHandler(e) {
+      // ctrl + b (sidebar toggle)
+      if (e.ctrlKey && e.which === 66) {
+        showSidebarHandler();
+      }
+      // ctrl + i (grid toggle)
+      else if (e.ctrlKey && e.which === 73 && !e.shiftKey) {
+        showGridHandler();
+        //ctrl + shift + s
+      } else if (e.ctrlKey && e.which === 83 && e.shiftKey) {
+        newTableCreatedHandler();
+      }
+    }
+    document.addEventListener('keyup', shortcutHandler);
+    return () => document.removeEventListener('keyup', shortcutHandler);
+  }, []);
 
   return (
     <>
@@ -130,18 +147,34 @@ export default function App() {
         onModalClosed={cancelCreateTableModalHandler}
         onModalConfirmed={confirmCreateTableModalHandler}
       />
-      <div className='App'>
-        <DndProvider backend={backend}>
-          <MainGround
-            showGrid={showGrid}
-            mainTableDetails={mainTableDetails}
-            tableDndDetails={tableDndDetails}
-            onMainTableDetailsChange={mainTableDetailsChangeHandler}
-            onTableDndDetailsChange={tableDndDetailsHandler}
-          />
-        </DndProvider>
-        {showSidebar && <SideBar />}
-      </div>
+
+      <ContextMenuTrigger id='same_unique_identifier'>
+        <div className='App'>
+          <DndProvider backend={backend}>
+            <MainGround
+              showGrid={showGrid}
+              mainTableDetails={mainTableDetails}
+              tableDndDetails={tableDndDetails}
+              onMainTableDetailsChange={mainTableDetailsChangeHandler}
+              onTableDndDetailsChange={tableDndDetailsHandler}
+            />
+            {showSidebar && <SideBar />}
+          </DndProvider>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenu id='same_unique_identifier' className={'menu'}>
+        <MenuItem onClick={newTableCreatedHandler} className={'menuItem'}>
+          Add table <span className={'shrotcut'}>ctrl + shift + s</span>
+        </MenuItem>
+        <MenuItem onClick={showGridHandler} className={'menuItem'}>
+          {showGrid ? 'hide grid' : 'show grid'}{' '}
+          <span className={'shrotcut'}>ctrl + i</span>
+        </MenuItem>
+        <MenuItem onClick={showSidebarHandler} className={'menuItem'}>
+          {showSidebar ? 'hide sidebar' : 'show sidebar'}
+          <span className={'shrotcut'}>ctrl + b</span>
+        </MenuItem>
+      </ContextMenu>
     </>
   );
 }

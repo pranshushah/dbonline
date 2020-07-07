@@ -116,6 +116,7 @@ function AddAttributeModal({
         addObj['UNIQUE'] = true;
       }
       onModalConfirmed(addObj);
+      modalCleanUp();
     }
   }
 

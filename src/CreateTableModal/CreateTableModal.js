@@ -12,22 +12,26 @@ import '../utils/Types';
 function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
   const [createTableInputValue, updateCreateTableInputValue] = useState('');
   const [tableColor, updateTableColor] = useState('gray');
+  const [tableError, setTableError] = useState(true);
 
   function createTableInputValueHandler(e) {
-    updateCreateTableInputValue(e.target.value);
+    if (e.target.value !== '') {
+      updateCreateTableInputValue(e.target.value);
+      setTableError(false);
+    } else {
+      updateCreateTableInputValue(e.target.value);
+      setTableError(true);
+    }
   }
 
   function cancelModalHandler() {
     updateCreateTableInputValue('');
     onModalClosed();
+    setTableError(true);
   }
 
   function confirmModalHandler() {
-    if (createTableInputValue.trim().length === 0) {
-      updateTableColor('gray');
-      updateCreateTableInputValue('');
-      onModalConfirmed();
-    } else {
+    if (!tableError) {
       const newTableDndDetails = {
         left: 20,
         top: 20,
@@ -52,6 +56,7 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
       updateTableColor('gray');
       updateCreateTableInputValue('');
       onModalConfirmed(newTableDndDetails, mainTableDetails);
+      setTableError(true);
     }
   }
 
@@ -59,9 +64,9 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
     <Modal
       theme='blue'
       size='medium'
-      title='Table Name'
+      title='Create Table'
       show={showModalState}
-      canConfirm
+      canConfirm={!tableError}
       canCancel
       topAligned
       modalConfirmed={confirmModalHandler}
@@ -72,7 +77,7 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
         value={createTableInputValue}
         onChange={createTableInputValueHandler}
         focusColor='green'
-        size='medium'
+        size='large'
       />
       <TableColorPickerList onTableColorSelected={updateTableColor} />
     </Modal>

@@ -15,16 +15,16 @@ import 'react-virtualized/styles.css';
  * }} props
  */
 
-function MainTable({ mainTableDetails, relationShipClassName, tableName }) {
+function MainTable({ mainTableDetails, tableName }) {
   let nameWidth = 85;
   let dataTypeWidth = 95;
   let tableWidth = 255;
 
-  const index = mainTableDetails.findIndex(mainTableDetail => {
+  const index = mainTableDetails.findIndex((mainTableDetail) => {
     return mainTableDetail.tableName === tableName;
   });
   const tableData = [];
-  mainTableDetails[index].attributes.forEach(attribute => {
+  mainTableDetails[index].attributes.forEach((attribute) => {
     if (attribute.name.length > 12) {
       nameWidth = 140;
       dataTypeWidth = 105;
