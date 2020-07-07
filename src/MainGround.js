@@ -9,8 +9,7 @@ import './utils/Types';
 import MainTable from './components/TableComponent/MainTable';
 import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
 import EditTableModal from './components/EditTableModal/EditTableModal';
-
-function mainGroundReducer(state, action) {}
+import mainGroundReducer from './utils/reducers/mainGroundReducer';
 
 /**
  * @param {{
@@ -71,53 +70,28 @@ function MainGround({
     selectedTableDetailsForDeleteModal: {},
     selectedTableDndDetailsForEditModal: {},
     selectedTableDetailsForEditModal: {},
-    editTableName: '',
-    editTableColor: '',
   });
 
-  const [addAttributeShowModal, updateAddAttributeShowModal] = useState(false);
-  const [showDeleteTableModal, setShowDeleteTableModal] = useState(false);
-  const [showEditTableModal, setShowEditTableModal] = useState(false);
-
-  const [
+  const {
+    addAttributeShowModal,
+    showDeleteTableModal,
+    showEditTableModal,
     selectedTableDndDetailsForAddModal,
-    updateselectedTableDndDetailsForAddModal,
-  ] = useState({});
-  const [
     selectedTableDetailsForAddModal,
-    updateselectedTableDetailsForAddModal,
-  ] = useState({});
-  const [
     selectedTableDndDetailsForDeleteModal,
-    setSelectedTableDndDetailsForDeleteModal,
-  ] = useState({});
-  const [
     selectedTableDetailsForDeleteModal,
-    setSelectedTableDetailsForDeleteModal,
-  ] = useState({});
-
-  const [
     selectedTableDndDetailsForEditModal,
-    setSelectedTableDndDetailsForEditModal,
-  ] = useState({});
-  const [
     selectedTableDetailsForEditModal,
-    setSelectedTableDetailsForEditModal,
-  ] = useState({});
+  } = state;
 
   const [editTableName, setEditTableName] = useState('');
   const [editTableColor, setEditTableColor] = useState('');
 
-  function cancelModalHandler() {
-    updateAddAttributeShowModal(false);
-    updateselectedTableDndDetailsForAddModal({});
-    updateselectedTableDetailsForAddModal({});
+  function cancelAddModalHandler() {
+    dispatch({ type: 'ADD_MODAL_CANCEL' });
   }
 
-  function confirmModalHandler(newObj) {
-    updateAddAttributeShowModal(false);
-    updateselectedTableDndDetailsForAddModal({});
-    updateselectedTableDetailsForAddModal({});
+  function confirmAddModalHandler(newObj) {
     let newTable = JSON.parse(
       JSON.stringify({ ...selectedTableDetailsForAddModal }),
     );
@@ -141,36 +115,34 @@ function MainGround({
     );
     newMainTableDetails.splice(index, 1, newTable);
     onMainTableDetailsChange(newMainTableDetails);
+    dispatch({ type: 'ADD_MODAL_CONFIRM' });
   }
 
   function AddAttributeLinkClickHandler(tableDndDetail) {
-    updateAddAttributeShowModal(true);
-    updateselectedTableDndDetailsForAddModal(tableDndDetail);
     const index = mainTableDetails.findIndex(
       (table) => table.tableName === tableDndDetail.tableName,
     );
-    updateselectedTableDetailsForAddModal(mainTableDetails[index]);
+    dispatch({
+      type: 'ADD_MODAL_START',
+      payload: { tableDndDetail, mainTableDetail: mainTableDetails[index] },
+    });
   }
 
   function deleteTableHandler(tableDndDetail) {
-    setShowDeleteTableModal(true);
-    setSelectedTableDndDetailsForDeleteModal(tableDndDetail);
     const index = mainTableDetails.findIndex(
       (table) => table.tableName === tableDndDetail.tableName,
     );
-    setSelectedTableDetailsForDeleteModal(mainTableDetails[index]);
+    dispatch({
+      type: 'DELETE_MODAL_START',
+      payload: { tableDndDetail, mainTableDetail: mainTableDetails[index] },
+    });
   }
 
   function deleteTableModalCancelHandler() {
-    setShowDeleteTableModal(false);
-    setSelectedTableDetailsForDeleteModal({});
-    setSelectedTableDndDetailsForDeleteModal({});
+    dispatch({ type: 'DELETE_MODAL_CANCEL' });
   }
 
   function deleteTableModalConfirmHandler() {
-    setShowDeleteTableModal(false);
-    setSelectedTableDetailsForDeleteModal({});
-    setSelectedTableDndDetailsForDeleteModal({});
     const newTableDndDetails = JSON.parse(JSON.stringify([...tableDndDetails]));
     const newMainTableDetails = JSON.parse(
       JSON.stringify([...mainTableDetails]),
@@ -188,29 +160,27 @@ function MainGround({
     newMainTableDetails.splice(mainIndex, 1);
     onMainTableDetailsChange(newMainTableDetails);
     onTableDndDetailsChange(newTableDndDetails);
+    dispatch({ type: 'DELETE_MODAL_CONFIRM' });
   }
 
   function editTableHandler(tableDndDetail) {
-    setShowEditTableModal(true);
-    setSelectedTableDndDetailsForEditModal(tableDndDetail);
     setEditTableColor(tableDndDetail.color);
     setEditTableName(tableDndDetail.tableName);
     const index = mainTableDetails.findIndex(
       (table) => table.tableName === tableDndDetail.tableName,
     );
-    setSelectedTableDetailsForEditModal(mainTableDetails[index]);
+
+    dispatch({
+      type: 'EDIT_MODAL_START',
+      payload: { tableDndDetail, mainTableDetail: mainTableDetails[index] },
+    });
   }
 
   function editTableModalCancelHandler() {
-    setShowEditTableModal(false);
-    setSelectedTableDetailsForEditModal({});
-    setSelectedTableDndDetailsForEditModal({});
+    dispatch({ type: 'EDIT_MODAL_CANCEL' });
   }
 
   function editTableModalConfirmHandler(newColor, newName) {
-    setShowEditTableModal(false);
-    setSelectedTableDetailsForEditModal({});
-    setSelectedTableDndDetailsForEditModal({});
     const newTableDndDetails = JSON.parse(JSON.stringify([...tableDndDetails]));
     const newMainTableDetails = JSON.parse(
       JSON.stringify([...mainTableDetails]),
@@ -227,6 +197,7 @@ function MainGround({
     newTableDndDetails[dndIndex].color = newColor;
     onMainTableDetailsChange(newMainTableDetails);
     onTableDndDetailsChange(newTableDndDetails);
+    dispatch({ type: 'EDIT_MODAL_CONFIRM' });
   }
 
   const tables = tableDndDetails.map((tableDndDetail) => {
@@ -254,8 +225,8 @@ function MainGround({
       {tables}
       <AddAttributeModal
         showModalState={addAttributeShowModal}
-        onModalConfirmed={confirmModalHandler}
-        onModalClosed={cancelModalHandler}
+        onModalConfirmed={confirmAddModalHandler}
+        onModalClosed={cancelAddModalHandler}
         tableName={selectedTableDndDetailsForAddModal.tableName}
         allTableDndDetails={tableDndDetails}
         mainTableDetails={mainTableDetails}
