@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import TableContainer from './TableContainer/TableContainer';
 import Grid from './Grid';
 import ItemDndTypes from './utils/dndTypes';
@@ -9,6 +9,9 @@ import './utils/Types';
 import MainTable from './components/TableComponent/MainTable';
 import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
 import EditTableModal from './components/EditTableModal/EditTableModal';
+
+function mainGroundReducer(state, action) {}
+
 /**
  * @param {{
  * showGrid:boolean,
@@ -56,6 +59,20 @@ function MainGround({
       });
       return;
     },
+  });
+
+  const [state, dispatch] = useReducer(mainGroundReducer, {
+    addAttributeShowModal: false,
+    showDeleteTableModal: false,
+    showEditTableModal: false,
+    selectedTableDndDetailsForAddModal: {},
+    selectedTableDetailsForAddModal: {},
+    selectedTableDndDetailsForDeleteModal: {},
+    selectedTableDetailsForDeleteModal: {},
+    selectedTableDndDetailsForEditModal: {},
+    selectedTableDetailsForEditModal: {},
+    editTableName: '',
+    editTableColor: '',
   });
 
   const [addAttributeShowModal, updateAddAttributeShowModal] = useState(false);

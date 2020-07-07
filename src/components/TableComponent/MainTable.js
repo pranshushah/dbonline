@@ -3,19 +3,19 @@ import Table from 'react-virtualized/dist/commonjs/Table/Table';
 import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import '../../utils/Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faKey, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { faKey, faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import 'react-virtualized/styles.css';
 
 /**
  * @param {{
  * tableName:string,
- * needMoreWidth:Function,
- * relationShipClassName:string
+ * mainTableDetails:mainTableDetailsType[]
+ * onAttrDelete:Function
  * }} props
  */
 
-function MainTable({ mainTableDetails, tableName }) {
+function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
   let nameWidth = 85;
   let dataTypeWidth = 95;
   let tableWidth = 255;
@@ -58,11 +58,18 @@ function MainTable({ mainTableDetails, tableName }) {
     }
   }
 
-  function editCellRendererHandler() {
+  function editCellRendererHandler(attrName, attrIndex, tableName, onDelete) {
     return (
-      <span style={{ paddingLeft: '1px' }}>
-        <FontAwesomeIcon size='sm' icon={faPencilAlt} />
-      </span>
+      <>
+        <span style={{ padding: '1px 3px', cursor: 'pointer' }}>
+          <FontAwesomeIcon size='sm' icon={faPencilAlt} />
+        </span>
+        <span
+          // onClick={onDelete(tableName, attrName, attrIndex)}
+          style={{ padding: '1px 3px', cursor: 'pointer', marginLeft: '2px' }}>
+          <FontAwesomeIcon icon={faTrash} size='sm' />
+        </span>
+      </>
     );
   }
 
@@ -96,9 +103,16 @@ function MainTable({ mainTableDetails, tableName }) {
       <Column
         label='edit'
         dataKey='edit'
-        width={18}
+        width={48}
         className='lastBorder'
-        cellRenderer={editCellRendererHandler}
+        cellRenderer={({ rowData, rowIndex }) =>
+          editCellRendererHandler(
+            rowData.name,
+            rowIndex,
+            tableName,
+            onAttrDelete,
+          )
+        }
       />
     </Table>
   );

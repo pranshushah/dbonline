@@ -5,8 +5,10 @@ import {
   TableContentContainer,
 } from '../components/TableComponent/TableComponents';
 import ItemDndTypes from '../utils/dndTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useDrag, DragSourceMonitor } from 'react-dnd';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
+import Styles from './TableContainer.module.css';
 /**
  * @typedef {object} tableDndDetailsObj
  * @property {number} top
@@ -23,6 +25,23 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
  * onDeleteClick:Function,
  * }} props
  */
+
+function EditButton() {
+  return (
+    <span className={Styles.edit}>
+      <FontAwesomeIcon icon={faPencilAlt} size='xs' />
+    </span>
+  );
+}
+
+function DeleteButton() {
+  return (
+    <span className={Styles.delete}>
+      <FontAwesomeIcon icon={faTrash} size='xs' />
+    </span>
+  );
+}
+
 function TableContainer({
   tableDndDetail,
   children,
@@ -45,6 +64,7 @@ function TableContainer({
     onEditClick(tableDndDetail);
   }
   function deleteClickHandler() {
+    console.log('boom');
     onDeleteClick(tableDndDetail);
   }
   return (
@@ -53,20 +73,18 @@ function TableContainer({
       isDragging={isDragging}
       top={tableDndDetail.top}
       ref={preview}>
-      <ContextMenuTrigger id={tableDndDetail.id}>
+      <div style={{ position: 'relative' }}>
         <TableHeader ref={drag} bgColor={tableDndDetail.color}>
           {tableDndDetail.tableName}
         </TableHeader>
-      </ContextMenuTrigger>
-      <TableContentContainer>{children}</TableContentContainer>
-      <ContextMenu id={tableDndDetail.id} className={'tableMenu'}>
-        <MenuItem className={'menuItem'} onClick={editClickHandler}>
-          edit table
-        </MenuItem>
-        <MenuItem className={'menuItem'} onClick={deleteClickHandler}>
-          <span>Delete Item </span>
-        </MenuItem>
-      </ContextMenu>
+        <span className={Styles.edit} onClick={editClickHandler}>
+          <FontAwesomeIcon icon={faPencilAlt} size='xs' />
+        </span>
+        <span className={Styles.delete} onClick={deleteClickHandler}>
+          <FontAwesomeIcon icon={faTrash} size='xs' />
+        </span>
+        <TableContentContainer>{children}</TableContentContainer>
+      </div>
     </TableCard>
   );
 }

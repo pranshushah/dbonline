@@ -1,0 +1,17 @@
+.edit {
+  position: absolute;
+  right: 10%;
+  top: -1%;
+  padding: 0 4px;
+  color: #e2e2e2;
+  cursor: pointer;
+}
+
+.delete {
+  position: absolute;
+  right: 2%;
+  top: -1%;
+  padding: 0 4px;
+  color: #e2e2e2;
+  cursor: pointer;
+}
