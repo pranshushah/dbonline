@@ -55,6 +55,7 @@ function DeleteTableModal({
       <Input
         label='Table Name'
         color='red'
+        autoFocus
         value={deleteTableInputValue}
         onChange={createTableInputValueHandler}
         focusColor='red'

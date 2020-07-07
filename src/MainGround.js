@@ -8,6 +8,7 @@ import AddAttributeModal from './AddAttributeModal/AddAttributeModal';
 import './utils/Types';
 import MainTable from './components/TableComponent/MainTable';
 import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
+import EditTableModal from './components/EditTableModal/EditTableModal';
 /**
  * @param {{
  * showGrid:boolean,
@@ -59,6 +60,8 @@ function MainGround({
 
   const [addAttributeShowModal, updateAddAttributeShowModal] = useState(false);
   const [showDeleteTableModal, setShowDeleteTableModal] = useState(false);
+  const [showEditTableModal, setShowEditTableModal] = useState(false);
+
   const [
     selectedTableDndDetailsForAddModal,
     updateselectedTableDndDetailsForAddModal,
@@ -75,6 +78,18 @@ function MainGround({
     selectedTableDetailsForDeleteModal,
     setSelectedTableDetailsForDeleteModal,
   ] = useState({});
+
+  const [
+    selectedTableDndDetailsForEditModal,
+    setSelectedTableDndDetailsForEditModal,
+  ] = useState({});
+  const [
+    selectedTableDetailsForEditModal,
+    setSelectedTableDetailsForEditModal,
+  ] = useState({});
+
+  const [editTableName, setEditTableName] = useState('');
+  const [editTableColor, setEditTableColor] = useState('');
 
   function cancelModalHandler() {
     updateAddAttributeShowModal(false);
@@ -103,7 +118,6 @@ function MainGround({
     if (newObj['FOREIGNKEY']) {
       newTable.tableLevelConstraint.FOREIGNKEY.push(newObj['FOREIGNKEY']);
     }
-    console.log(newTable);
     const newMainTableDetails = [...mainTableDetails];
     const index = newMainTableDetails.findIndex(
       (table) => table.tableName === newTable.tableName,
@@ -120,8 +134,6 @@ function MainGround({
     );
     updateselectedTableDetailsForAddModal(mainTableDetails[index]);
   }
-
-  function editTableHandler() {}
 
   function deleteTableHandler(tableDndDetail) {
     setShowDeleteTableModal(true);
@@ -157,6 +169,45 @@ function MainGround({
     );
     newTableDndDetails.splice(dndIndex, 1);
     newMainTableDetails.splice(mainIndex, 1);
+    onMainTableDetailsChange(newMainTableDetails);
+    onTableDndDetailsChange(newTableDndDetails);
+  }
+
+  function editTableHandler(tableDndDetail) {
+    setShowEditTableModal(true);
+    setSelectedTableDndDetailsForEditModal(tableDndDetail);
+    setEditTableColor(tableDndDetail.color);
+    setEditTableName(tableDndDetail.tableName);
+    const index = mainTableDetails.findIndex(
+      (table) => table.tableName === tableDndDetail.tableName,
+    );
+    setSelectedTableDetailsForEditModal(mainTableDetails[index]);
+  }
+
+  function editTableModalCancelHandler() {
+    setShowEditTableModal(false);
+    setSelectedTableDetailsForEditModal({});
+    setSelectedTableDndDetailsForEditModal({});
+  }
+
+  function editTableModalConfirmHandler(newColor, newName) {
+    setShowEditTableModal(false);
+    setSelectedTableDetailsForEditModal({});
+    setSelectedTableDndDetailsForEditModal({});
+    const newTableDndDetails = JSON.parse(JSON.stringify([...tableDndDetails]));
+    const newMainTableDetails = JSON.parse(
+      JSON.stringify([...mainTableDetails]),
+    );
+    const dndIndex = newTableDndDetails.findIndex(
+      (table) =>
+        table.tableName === selectedTableDndDetailsForEditModal.tableName,
+    );
+    const mainIndex = newMainTableDetails.findIndex(
+      (table) => table.tableName === selectedTableDetailsForEditModal.tableName,
+    );
+    newMainTableDetails[mainIndex].tableName = newName;
+    newTableDndDetails[dndIndex].tableName = newName;
+    newTableDndDetails[dndIndex].color = newColor;
     onMainTableDetailsChange(newMainTableDetails);
     onTableDndDetailsChange(newTableDndDetails);
   }
@@ -198,6 +249,15 @@ function MainGround({
         tableName={selectedTableDndDetailsForDeleteModal.tableName}
         onModalClosed={deleteTableModalCancelHandler}
         onModalConfirmed={deleteTableModalConfirmHandler}
+      />
+      <EditTableModal
+        showModalState={showEditTableModal}
+        onModalConfirmed={editTableModalConfirmHandler}
+        onModalClosed={editTableModalCancelHandler}
+        tableColor={editTableColor}
+        tableName={editTableName}
+        onTableColorChange={setEditTableColor}
+        onTableNameChange={setEditTableName}
       />
     </Grid>
   );

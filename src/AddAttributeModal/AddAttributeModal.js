@@ -326,6 +326,7 @@ function AddAttributeModal({
           label='Attribute Name'
           color='blue'
           size='medium'
+          autoFocus
           value={AddAttributeInputValue}
           onChange={addAttributeInputValueHandler}
         />

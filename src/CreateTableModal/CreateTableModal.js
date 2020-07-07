@@ -11,7 +11,7 @@ import '../utils/Types';
  */
 function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
   const [createTableInputValue, updateCreateTableInputValue] = useState('');
-  const [tableColor, updateTableColor] = useState('gray');
+  const [tableColor, updateTableColor] = useState('rgb(105,105,105)');
   const [tableError, setTableError] = useState(true);
 
   function createTableInputValueHandler(e) {
@@ -28,6 +28,7 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
     updateCreateTableInputValue('');
     onModalClosed();
     setTableError(true);
+    updateTableColor('rgb(105,105,105)');
   }
 
   function confirmModalHandler() {
@@ -53,7 +54,7 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
           UNIQUE: [],
         },
       };
-      updateTableColor('gray');
+      updateTableColor('rgb(105,105,105)');
       updateCreateTableInputValue('');
       onModalConfirmed(newTableDndDetails, mainTableDetails);
       setTableError(true);
@@ -74,12 +75,16 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
       <Input
         label='Table Name'
         color='blue'
+        autoFocus
         value={createTableInputValue}
         onChange={createTableInputValueHandler}
         focusColor='green'
         size='large'
       />
-      <TableColorPickerList onTableColorSelected={updateTableColor} />
+      <TableColorPickerList
+        onTableColorSelected={updateTableColor}
+        selectedColor={tableColor}
+      />
     </Modal>
   );
 }

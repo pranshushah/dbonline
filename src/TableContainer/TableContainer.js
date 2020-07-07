@@ -42,7 +42,7 @@ function TableContainer({
     },
   });
   function editClickHandler() {
-    onEditClick();
+    onEditClick(tableDndDetail);
   }
   function deleteClickHandler() {
     onDeleteClick(tableDndDetail);
@@ -60,7 +60,7 @@ function TableContainer({
       </ContextMenuTrigger>
       <TableContentContainer>{children}</TableContentContainer>
       <ContextMenu id={tableDndDetail.id} className={'tableMenu'}>
-        <MenuItem className={'menuItem'} onClick={deleteClickHandler}>
+        <MenuItem className={'menuItem'} onClick={editClickHandler}>
           edit table
         </MenuItem>
         <MenuItem className={'menuItem'} onClick={deleteClickHandler}>

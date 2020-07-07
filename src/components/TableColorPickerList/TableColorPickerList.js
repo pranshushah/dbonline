@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from 'react';
+import React, { MouseEvent } from 'react';
 import styled from 'styled-components';
 import TableColor from '../../utils/tableColors';
 
@@ -7,8 +7,8 @@ const ColorPickerSpan = styled.span`
   padding: 8px;
   margin: 6px;
   cursor: pointer;
-  background-color: ${props => props.bgColor};
-  border: ${props => `1px solid ${props.bgColor}`};
+  background-color: ${(props) => props.bgColor};
+  border: ${(props) => `1px solid ${props.bgColor}`};
 `;
 
 const ColorPickerListDiv = styled.div`
@@ -26,19 +26,21 @@ const TableHeading = styled.h3`
 
 /**
  *
- * @param {{onTableColorSelected:Function}} props
+ * @param {{onTableColorSelected:Function,selectedColor:string}} props
  */
 
-function TableColorPickerList(props) {
-  const [selectedColor, setSelectedColor] = useState(-1);
+function TableColorPickerList({
+  onTableColorSelected,
+  selectedColor,
+  ...props
+}) {
   /**
    *
    * @param {MouseEvent<HTMLSpanElement>} e
    */
-  function ClickHandler(id, e) {
+  function ClickHandler(e) {
     e.preventDefault();
-    setSelectedColor(id);
-    props.onTableColorSelected(
+    onTableColorSelected(
       window.getComputedStyle(e.target).getPropertyValue('background-color'),
     );
   }
@@ -48,13 +50,12 @@ function TableColorPickerList(props) {
     return (
       <ColorPickerSpan
         key={id}
-        style={selectedColor === id ? { border: '2px solid #A9A9A9' } : null}
-        onClick={ClickHandler.bind(this, id)}
+        style={selectedColor === color ? { border: '2px solid #A9A9A9' } : null}
+        onClick={ClickHandler}
         bgColor={color}
       />
     );
   });
-  console.log(typeof React.memo);
   return (
     <>
       <TableHeading>*Pick Your Color</TableHeading>
