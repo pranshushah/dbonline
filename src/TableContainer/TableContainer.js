@@ -26,22 +26,6 @@ import Styles from './TableContainer.module.css';
  * }} props
  */
 
-function EditButton() {
-  return (
-    <span className={Styles.edit}>
-      <FontAwesomeIcon icon={faPencilAlt} size='xs' />
-    </span>
-  );
-}
-
-function DeleteButton() {
-  return (
-    <span className={Styles.delete}>
-      <FontAwesomeIcon icon={faTrash} size='xs' />
-    </span>
-  );
-}
-
 function TableContainer({
   tableDndDetail,
   children,

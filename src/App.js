@@ -148,7 +148,7 @@ export default function App() {
         onModalConfirmed={confirmCreateTableModalHandler}
       />
 
-      <ContextMenuTrigger id='same_unique_identifier'>
+      <ContextMenuTrigger id='same_unique_identifier' holdToDisplay={-1}>
         <div className='App'>
           <DndProvider backend={backend}>
             <MainGround

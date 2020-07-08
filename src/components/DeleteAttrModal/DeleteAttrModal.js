@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Input } from 'react-ui-lib-pranshu';
-import Style from './DeleteModal.module.css';
+import Style from './DeleteAttrModal.module.css';
 import '../../utils/Types';
 /**
  * @param {{showModalState:boolean,
  * onModalConfirmed:Function,
  * onModalClosed:Function,
- * tableName:string
+ * tableName:string,
+ * attrName:string,
  * }} props
  */
-function DeleteTableModal({
+function DeleteAttrModal({
   onModalClosed,
   onModalConfirmed,
   showModalState,
   tableName,
+  attrName,
 }) {
   const [deleteTableInputValue, updateCreateTableInputValue] = useState('');
   const [tableError, setTableError] = useState(true);
@@ -35,25 +37,27 @@ function DeleteTableModal({
   }
 
   useEffect(() => {
-    if (tableName === deleteTableInputValue) {
+    if (attrName === deleteTableInputValue && attrName) {
       setTableError(false);
+      console.log(deleteTableInputValue);
+      console.log(attrName);
     }
-  }, [deleteTableInputValue, tableName]);
+  }, [deleteTableInputValue, attrName]);
 
   return (
     <Modal
       theme='red'
       size='large'
-      title={`Are sure You want To Delete ${tableName} table`}
+      title={`Are sure You want To Delete ${attrName} in ${tableName} table`}
       show={showModalState}
       canConfirm={!tableError}
       canCancel
       topAligned
       modalConfirmed={confirmModalHandler}
       modalClosed={cancelModalHandler}>
-      <h1 className={Style.header}>Please Enter Table Name To Confirm</h1>
+      <h1 className={Style.header}>Please Enter Attribute Name To Confirm</h1>
       <Input
-        label='Table Name'
+        label='Attribute Name'
         color='red'
         autoFocus
         value={deleteTableInputValue}
@@ -64,4 +68,4 @@ function DeleteTableModal({
     </Modal>
   );
 }
-export default DeleteTableModal;
+export default DeleteAttrModal;

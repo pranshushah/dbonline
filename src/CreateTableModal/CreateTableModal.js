@@ -48,6 +48,7 @@ function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
         attributes: [],
         tableLevelConstraint: {
           FOREIGNKEY: [],
+          PRIMARYKEY: null,
         },
         columnLevelConstraint: {
           NOTNULL: [],

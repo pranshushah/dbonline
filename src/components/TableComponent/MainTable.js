@@ -65,7 +65,7 @@ function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
           <FontAwesomeIcon size='sm' icon={faPencilAlt} />
         </span>
         <span
-          // onClick={onDelete(tableName, attrName, attrIndex)}
+          onClick={onDelete.bind(this, tableName, attrName, attrIndex)}
           style={{ padding: '1px 3px', cursor: 'pointer', marginLeft: '2px' }}>
           <FontAwesomeIcon icon={faTrash} size='sm' />
         </span>
