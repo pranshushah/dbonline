@@ -328,6 +328,8 @@ function MainGround({
         tableName={editTableName}
         onTableColorChange={setEditTableColor}
         onTableNameChange={setEditTableName}
+        mainTableDetails={mainTableDetails}
+        selectedTable={selectedTableDetailsForEditModal}
       />
       <DeleteAttrModal
         showModalState={showDeleteAttributeModal}

@@ -1,25 +1,39 @@
 import React, { useState } from 'react';
 import { Modal, Input } from 'react-ui-lib-pranshu';
-import uuid from 'uuid/v4';
+import uuid from 'uuid/v1';
 import TableColorPickerList from '../components/TableColorPickerList/TableColorPickerList';
 import '../utils/Types';
 /**
  * @param {{showModalState:boolean,
  * onModalConfirmed:Function,
  * onModalClosed:Function,
+ * allMainTableDetails:mainTableDetailsType[]
  * }} props
  */
-function CreateTableModal({ onModalClosed, onModalConfirmed, showModalState }) {
+function CreateTableModal({
+  onModalClosed,
+  onModalConfirmed,
+  showModalState,
+  allMainTableDetails,
+}) {
   const [createTableInputValue, updateCreateTableInputValue] = useState('');
   const [tableColor, updateTableColor] = useState('rgb(105,105,105)');
   const [tableError, setTableError] = useState(true);
 
   function createTableInputValueHandler(e) {
-    if (e.target.value !== '') {
-      updateCreateTableInputValue(e.target.value);
-      setTableError(false);
+    const newTableValue = e.target.value;
+    if (newTableValue !== '') {
+      updateCreateTableInputValue(newTableValue);
+      const index = allMainTableDetails.findIndex(
+        (table) => table.tableName === newTableValue.trim(),
+      );
+      if (index === -1) {
+        setTableError(false);
+      } else {
+        setTableError(true);
+      }
     } else {
-      updateCreateTableInputValue(e.target.value);
+      updateCreateTableInputValue(newTableValue);
       setTableError(true);
     }
   }

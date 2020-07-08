@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
 import Nav from './Nav';
-import uuid from 'uuid/v4';
+import uuid from 'uuid/v1';
 import MainGround from './MainGround';
 import SideBar from './Sidebar';
 import { DndProvider } from 'react-dnd';
@@ -144,6 +144,7 @@ export default function App() {
       />
       <CreateTableModal
         showModalState={showModal}
+        allMainTableDetails={mainTableDetails}
         onModalClosed={cancelCreateTableModalHandler}
         onModalConfirmed={confirmCreateTableModalHandler}
       />

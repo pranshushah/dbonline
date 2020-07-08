@@ -10,6 +10,8 @@ import '../../utils/Types';
  * tableName:string,
  * onTableColorChange:Function,
  * onTableNameChange:Function,
+ * mainTableDetails:mainTableDetailsType[],
+ * selectedTable:mainTableDetailsType
  * }} props
  */
 function EditTableModal({
@@ -20,15 +22,28 @@ function EditTableModal({
   tableName,
   onTableColorChange,
   onTableNameChange,
+  mainTableDetails,
+  selectedTable,
 }) {
   const [tableError, setTableError] = useState(false);
 
   function tableInputValueHandler(e) {
-    if (e.target.value !== '') {
-      onTableNameChange(e.target.value);
-      setTableError(false);
+    const newTableValue = e.target.value;
+    onTableNameChange(newTableValue);
+    if (newTableValue !== '') {
+      if (newTableValue === selectedTable.tableName) {
+        setTableError(false);
+      } else {
+        const index = mainTableDetails.findIndex(
+          (table) => table.tableName === newTableValue.trim(),
+        );
+        if (index === -1) {
+          setTableError(false);
+        } else {
+          setTableError(true);
+        }
+      }
     } else {
-      onTableNameChange(e.target.value);
       setTableError(true);
     }
   }
