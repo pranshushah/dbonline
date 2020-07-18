@@ -73,6 +73,7 @@ function EditTableModal({
       canConfirm={!tableError}
       canCancel
       topAligned
+      focusColor='blue'
       modalConfirmed={confirmModalHandler}
       modalClosed={cancelModalHandler}>
       <Input
@@ -81,7 +82,7 @@ function EditTableModal({
         autoFocus
         value={tableName}
         onChange={tableInputValueHandler}
-        focusColor='green'
+        focusColor='blue'
         size='large'
       />
       <TableColorPickerList

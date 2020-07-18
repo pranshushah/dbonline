@@ -3,9 +3,17 @@ import Table from 'react-virtualized/dist/commonjs/Table/Table';
 import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import '../../utils/Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faKey, faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faKey } from '@fortawesome/free-solid-svg-icons';
+import EditIcon from '../UI/editIcon/Edit';
+import DeleteIcon from '../UI/DeleteIcon/Delete';
+import Styles from './MainTable.module.css';
 
 import 'react-virtualized/styles.css';
+
+/**
+ * @param {string} id
+ * @param {primaryKeyObj} primaryKeyObj
+ */
 
 /**
  * @param {{
@@ -17,7 +25,7 @@ import 'react-virtualized/styles.css';
 
 function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
   let nameWidth = 85;
-  let dataTypeWidth = 95;
+  let dataTypeWidth = 105;
   let tableWidth = 255;
 
   const index = mainTableDetails.findIndex((mainTableDetail) => {
@@ -27,8 +35,8 @@ function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
   mainTableDetails[index].attributes.forEach((attribute) => {
     if (attribute.name.length > 12) {
       nameWidth = 140;
-      dataTypeWidth = 105;
-      tableWidth = 320;
+      dataTypeWidth = 115;
+      tableWidth = 330;
     }
     tableData.push({
       name: `${attribute.name}`,
@@ -39,9 +47,7 @@ function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
           ? `(${attribute.size})`
           : ``
       }`,
-      isPrimaryKey:
-        attribute.name ===
-        mainTableDetails[index].tableLevelConstraint.PRIMARYKEY,
+      isPrimaryKey: attribute.isPRIMARYKEY,
       edit: '',
     });
   });
@@ -61,13 +67,20 @@ function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
   function editCellRendererHandler(attrName, attrIndex, tableName, onDelete) {
     return (
       <>
-        <span style={{ padding: '1px 3px', cursor: 'pointer' }}>
-          <FontAwesomeIcon size='sm' icon={faPencilAlt} />
+        <span className={Styles.Icon}>
+          <EditIcon size={'sm'} />
         </span>
         <span
-          onClick={onDelete.bind(this, tableName, attrName, attrIndex)}
-          style={{ padding: '1px 3px', cursor: 'pointer', marginLeft: '2px' }}>
-          <FontAwesomeIcon icon={faTrash} size='sm' />
+          className={Styles.Icon}
+          onClick={onDelete.bind(
+            this,
+            tableName,
+            attrName,
+            attrIndex,
+            mainTableDetails[index],
+          )}
+          style={{ marginLeft: '2px' }}>
+          <DeleteIcon size={'sm'} />
         </span>
       </>
     );

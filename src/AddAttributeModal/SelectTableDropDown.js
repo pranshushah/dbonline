@@ -14,15 +14,13 @@ import Select from 'react-select';
  * @param {{currentTable:string,otherTables:tableDndDetailsObj[],onTableSelected:Function}} props
  */
 
-function TableNameDropDown({ currentTable, otherTables, onTableSelected }) {
+function TableNameDropDown({ otherTables, onTableSelected }) {
   const options = [];
   for (let i = 0; i < otherTables.length; i++) {
-    if (currentTable !== otherTables[i].tableName) {
-      options.push({
-        label: `${otherTables[i].tableName}`,
-        value: `${otherTables[i].tableName}`,
-      });
-    }
+    options.push({
+      label: `${otherTables[i].tableName}`,
+      value: `${otherTables[i].id}`,
+    });
   }
   function tableSelectedHandler(value) {
     onTableSelected(value.value);

@@ -6,8 +6,6 @@ import styled from 'styled-components';
 const TableCard = styled.div`
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.2s;
-  border: 1px solid rgb(66, 66, 66);
-  border-radius: 1px;
   margin: 10px;
   position: absolute;
   left: ${(props) => `${props.left}px`};
@@ -28,7 +26,7 @@ const TableHeader = styled.h3`
   padding-left: 8px;
   letter-spacing: 0.5px;
   height: 15%;
-  font-size: 0.8rem;
+  font-size: 1rem;
   &:hover {
     cursor: grab;
   }

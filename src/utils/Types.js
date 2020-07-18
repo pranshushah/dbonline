@@ -13,44 +13,60 @@
 
 /**
  * @typedef {object} attributeObj
- * @property {id} [id]
+ * @property {id} id
  * @property {string} name
  * @property {string} dataType
  * @property {number} [size]
  * @property {number} [precision]
- * @property {?boolean} [isNOTNULL]
- * @property {?boolean} [isUNIQUE]
- * @property {?boolean} [isPRIMARYKEY]
- * @property {?boolean} [isFOREIGNKEY]
- * @property {?boolean} [isUNIQUETABLE]
- * @property {?boolean} [isCHECK]
+ * @property {boolean} [isNOTNULL]
+ * @property {boolean} [isUNIQUE]
+ * @property {boolean} [isPRIMARYKEY]
+ * @property {boolean} [isFOREIGNKEY]
+ * @property {boolean} [isAUTOINCREMENT]
+ * @property {string} [DEFAULT]
+ * @property {string[]} [inTableLevelUniquConstraint]
  */
 
 /**
  * @typedef {object} foreignKeyObj
  * @property {id} referencedAtt
- * @property {string} ReferencingTable
+ * @property {id} ReferencingTable
  * @property {id} ReferencingAtt
+ * @property {string} constraintName
+ * @property {boolean} [cascade]
+ * @property {boolean} [setNull]
+ */
+
+/**
+ * @typedef {object} primaryKeyObj
+ * @property {id[]} attributes
+ * @property {string} constraintName
+ */
+
+/**
+ * @typedef {object} UNIQUETABLELEVELObj
+ * @property {id[]} attributes
+ * @property {string} constraintName
+ */
+
+/**
+ * @typedef {object} CHECKObj
+ * @property {object} AST
+ * @property {string} constraintName
  */
 
 /**
  * @typedef {object} tableLevelConstraintObj
- * @property {id} [PRIMARYKEY]
+ * @property {primaryKeyObj} [PRIMARYKEY]
  * @property {foreignKeyObj[]} [FOREIGNKEY]
- * @property {id[][]} [UNIQUETABLELEVEL]
- */
-
-/**
- * @typedef {object} columnLevelConstraintObj
- * @property {string[]} [NOTNULL]
- * @property {string[]} [UNIQUE]
+ * @property {UNIQUETABLELEVELObj[]} [UNIQUETABLELEVEL]
+ * @property {CHECKObj[]} [CHECK]
  */
 
 /**
  * @typedef {object} mainTableDetailsType
- * @property {id} [id]
+ * @property {id} id
  * @property {string} tableName
  * @property {attributeObj[]} attributes
  * @property {tableLevelConstraintObj} tableLevelConstraint
- * @property {columnLevelConstraintObj} columnLevelConstraint
  */

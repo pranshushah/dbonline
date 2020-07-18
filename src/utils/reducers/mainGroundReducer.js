@@ -36,16 +36,16 @@ export default function mainGroundReducer(state, action) {
       return {
         ...state,
         showDeleteTableModal: false,
-        selectedTableDndDetailsForDeleteModal: {},
-        selectedTableDetailsForDeleteModal: {},
+        selectedTableDndDetailsForDeleteModal: null,
+        selectedTableDetailsForDeleteModal: null,
       };
     }
     case 'DELETE_MODAL_CONFIRM': {
       return {
         ...state,
         showDeleteTableModal: false,
-        selectedTableDndDetailsForDeleteModal: {},
-        selectedTableDetailsForDeleteModal: {},
+        selectedTableDndDetailsForDeleteModal: null,
+        selectedTableDetailsForDeleteModal: null,
       };
     }
     case 'EDIT_MODAL_START': {
@@ -60,16 +60,16 @@ export default function mainGroundReducer(state, action) {
       return {
         ...state,
         showEditTableModal: false,
-        selectedTableDndDetailsForEditModal: {},
-        selectedTableDetailsForEditModal: {},
+        selectedTableDndDetailsForEditModal: null,
+        selectedTableDetailsForEditModal: null,
       };
     }
     case 'EDIT_MODAL_CONFIRM': {
       return {
         ...state,
         showEditTableModal: false,
-        selectedTableDndDetailsForEditModal: {},
-        selectedTableDetailsForEditModal: {},
+        selectedTableDndDetailsForEditModal: null,
+        selectedTableDetailsForEditModal: null,
       };
     }
     case 'DELETE_ATTRIBUTE_START': {
@@ -79,6 +79,7 @@ export default function mainGroundReducer(state, action) {
         selectedTableNameForDeleteAttribute: action.payload.tableName,
         selectedAttributeNameForDeleteAttribute: action.payload.attributeName,
         selectedAttributeIndexForDeleteAttribute: action.payload.attributeIndex,
+        selectedTableForDeleteAttribute: action.payload.selectedTable,
       };
     }
     case 'DELETE_ATTRIBUTE_CANCEL': {
@@ -88,6 +89,7 @@ export default function mainGroundReducer(state, action) {
         selectedTableNameForDeleteAttribute: '',
         selectedAttributeNameForDeleteAttribute: '',
         selectedAttributeIndexForDeleteAttribute: -1,
+        selectedTableForDeleteAttribute: null,
       };
     }
     case 'DELETE_ATTRIBUTE_CONFIRM': {
@@ -97,6 +99,7 @@ export default function mainGroundReducer(state, action) {
         selectedTableNameForDeleteAttribute: '',
         selectedAttributeNameForDeleteAttribute: '',
         selectedAttributeIndexForDeleteAttribute: -1,
+        selectedTableForDeleteAttribute: null,
       };
     }
     default: {

@@ -5,8 +5,8 @@ import {
   TableContentContainer,
 } from '../components/TableComponent/TableComponents';
 import ItemDndTypes from '../utils/dndTypes';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import EditIcon from '../components/UI/editIcon/Edit';
+import DeleteIcon from '../components/UI/DeleteIcon/Delete';
 import { useDrag, DragSourceMonitor } from 'react-dnd';
 import Styles from './TableContainer.module.css';
 /**
@@ -48,7 +48,6 @@ function TableContainer({
     onEditClick(tableDndDetail);
   }
   function deleteClickHandler() {
-    console.log('boom');
     onDeleteClick(tableDndDetail);
   }
   return (
@@ -57,15 +56,20 @@ function TableContainer({
       isDragging={isDragging}
       top={tableDndDetail.top}
       ref={preview}>
-      <div style={{ position: 'relative' }}>
+      <div
+        style={{
+          position: 'relative',
+          border: '1px solid rgb(66, 66, 66)',
+          borderRadius: '1px',
+        }}>
         <TableHeader ref={drag} bgColor={tableDndDetail.color}>
           {tableDndDetail.tableName}
         </TableHeader>
         <span className={Styles.edit} onClick={editClickHandler}>
-          <FontAwesomeIcon icon={faPencilAlt} size='xs' />
+          <EditIcon />
         </span>
         <span className={Styles.delete} onClick={deleteClickHandler}>
-          <FontAwesomeIcon icon={faTrash} size='xs' />
+          <DeleteIcon />
         </span>
         <TableContentContainer>{children}</TableContentContainer>
       </div>

@@ -1,25 +1,22 @@
 export const stringTypes = [
   { label: 'CHAR', value: 'CHAR' },
-  { label: 'VARCHAR', value: 'VARCHAR' },
-  { label: 'TEXT', value: 'TEXT' },
-  { label: 'BINARY', value: 'BINARY' },
+  { label: 'VARCHAR2', value: 'VARCHAR2' },
+  { label: 'NCHAR', value: 'NCHAR' },
+  { label: 'NVARCHAR2', value: 'NVARCHAR2' },
+  { label: 'CLOB', value: 'CLOB' },
+  { label: 'NCLOB', value: 'NCLOB' },
+  { label: 'LONG', value: 'LONG' },
+];
+
+export const numericTypes = [{ label: 'NUMBER', value: 'NUMBER' }];
+
+export const dateAndTimeTypes = [{ label: 'DATE', value: 'DATE' }];
+
+export const binaryTypes = [
   { label: 'BLOB', value: 'BLOB' },
-];
-
-export const numericTypes = [
-  { label: 'BOOLEAN', value: 'BOOLEAN' },
-  { label: 'BIT', value: 'BIT' },
-  { label: 'INTEGER', value: 'INTEGER' },
-  { label: 'FLOAT', value: 'FLOAT' },
-  { label: 'DOUBLE', value: 'DOUBLE' },
-  { label: 'DECIMAL', value: 'DECIMAL' },
-];
-
-export const dateAndTimeTypes = [
-  { label: 'DATE', value: 'DATE' },
-  { label: 'DATETIME', value: 'DATETIME' },
-  { label: 'TIMESTAMP', value: 'TIMESTAMP' },
-  { label: 'TIME', value: 'TIME' },
+  { label: 'BFILE', value: 'BFILE' },
+  { label: 'RAW', value: 'RAW' },
+  { label: 'LONG RAW', value: 'LONG RAW' },
 ];
 
 export const dataTypes = [
@@ -32,7 +29,11 @@ export const dataTypes = [
     options: numericTypes,
   },
   {
-    label: 'Date and Time',
+    label: 'Date',
     options: dateAndTimeTypes,
+  },
+  {
+    label: 'binary datatypes',
+    options: binaryTypes,
   },
 ];

@@ -91,6 +91,7 @@ function MainGround({
     selectedTableNameForDeleteAttribute,
     selectedAttributeNameForDeleteAttribute,
     selectedAttributeIndexForDeleteAttribute,
+    selectedTableForDeleteAttribute,
   } = state;
 
   const [editTableName, setEditTableName] = useState('');
@@ -104,19 +105,42 @@ function MainGround({
     let newTable = JSON.parse(
       JSON.stringify({ ...selectedTableDetailsForAddModal }),
     );
-    console.log(newTable);
     newTable.attributes.push(newObj.attributes);
-    if (newObj['NOTNULL']) {
-      newTable.columnLevelConstraint.NOTNULL.push(newObj.attributes.name);
-    }
-    if (newObj['UNIQUE']) {
-      newTable.columnLevelConstraint.UNIQUE.push(newObj.attributes.name);
-    }
-    if (newObj['PRIMARYKEY']) {
-      newTable.tableLevelConstraint['PRIMARYKEY'] = newObj.attributes.name;
-    }
     if (newObj['FOREIGNKEY']) {
       newTable.tableLevelConstraint.FOREIGNKEY.push(newObj['FOREIGNKEY']);
+    }
+    if (newObj['CHECK']) {
+      newTable.tableLevelConstraint.CHECK.push(newObj['CHECK']);
+    }
+    if (newObj['PRIMARYKEY']) {
+      newObj['PRIMARYKEY'].attributes.forEach((id) => {
+        newTable.attributes.some((attr) => {
+          let ret = false;
+          if (attr.id === id) {
+            attr.isPRIMARYKEY = true;
+            ret = true;
+          }
+          return ret;
+        });
+      });
+      newTable.tableLevelConstraint.PRIMARYKEY = newObj['PRIMARYKEY'];
+    }
+    if (newObj['UNIQUETABLE']) {
+      newObj['UNIQUETABLE'].attributes.forEach((id) => {
+        newTable.attributes.some((attr) => {
+          let ret = false;
+          if (attr.id === id) {
+            attr.inTableLevelUniquConstraint.push(
+              newObj['UNIQUETABLE'].constraintName,
+            );
+            ret = true;
+          }
+          return ret;
+        });
+      });
+      newTable.tableLevelConstraint.UNIQUETABLELEVEL.push(
+        newObj['UNIQUETABLE'],
+      );
     }
     const newMainTableDetails = [...mainTableDetails];
     const index = newMainTableDetails.findIndex(
@@ -209,74 +233,105 @@ function MainGround({
     dispatch({ type: 'EDIT_MODAL_CONFIRM' });
   }
 
-  function attrDeleteHandler(tableName, deleteAttrName, deleteAttrIndex) {
+  function attrDeleteHandler(
+    tableName,
+    deleteAttrName,
+    deleteAttrIndex,
+    givenTable,
+  ) {
     dispatch({
       type: 'DELETE_ATTRIBUTE_START',
       payload: {
         tableName: tableName,
         attributeName: deleteAttrName,
         attributeIndex: deleteAttrIndex,
+        selectedTable: givenTable,
       },
     });
   }
 
-  function attributeCancelHandler() {
+  function deleteAttributeCancelHandler() {
     dispatch({ type: 'DELETE_ATTRIBUTE_CANCEL' });
   }
 
-  function attributeConfirmHandler() {
+  function deleteAttributeConfirmHandler() {
+    /**
+     * @type {mainTableDetailsType[]}
+     */
     const newMainTableDetails = JSON.parse(
       JSON.stringify([...mainTableDetails]),
     );
     const index = newMainTableDetails.findIndex(
       (table) => table.tableName === selectedTableNameForDeleteAttribute,
     );
+
     newMainTableDetails[index].attributes.splice(
       selectedAttributeIndexForDeleteAttribute,
       1,
     );
-    const notNullIndex = newMainTableDetails[
-      index
-    ].columnLevelConstraint.NOTNULL.indexOf(
-      selectedAttributeNameForDeleteAttribute,
-    );
-    const uniqueIndex = newMainTableDetails[
-      index
-    ].columnLevelConstraint.UNIQUE.indexOf(
-      selectedAttributeNameForDeleteAttribute,
-    );
-    if (notNullIndex >= 0) {
-      newMainTableDetails[index].columnLevelConstraint.NOTNULL.splice(
-        notNullIndex,
-        1,
-      );
-    }
-    if (uniqueIndex >= 0) {
-      newMainTableDetails[index].columnLevelConstraint.UNIQUE.splice(
-        uniqueIndex,
-        1,
-      );
-    }
+
+    // clean-up
+
+    //unique-key
     if (
-      newMainTableDetails[index].tableLevelConstraint.PRIMARYKEY ===
-      selectedAttributeNameForDeleteAttribute
+      selectedTableForDeleteAttribute.attributes[
+        selectedAttributeIndexForDeleteAttribute
+      ]?.inTableLevelUniquConstraint.length !== 0
     ) {
+      selectedTableForDeleteAttribute.attributes[
+        selectedAttributeIndexForDeleteAttribute
+      ].inTableLevelUniquConstraint.forEach((cName) => {
+        newMainTableDetails[index].attributes.forEach((attr) => {
+          attr.inTableLevelUniquConstraint = attr?.inTableLevelUniquConstraint.filter(
+            (entity) => entity !== cName,
+          );
+        });
+      });
+      newMainTableDetails[
+        index
+      ].tableLevelConstraint.UNIQUETABLELEVEL = newMainTableDetails[
+        index
+      ].tableLevelConstraint.UNIQUETABLELEVEL.filter((obj) => {
+        return !selectedTableForDeleteAttribute.attributes[
+          selectedAttributeIndexForDeleteAttribute
+        ].inTableLevelUniquConstraint.includes(obj.constraintName);
+      });
+    }
+
+    // foreign-key
+
+    if (
+      selectedTableForDeleteAttribute.attributes[
+        selectedAttributeIndexForDeleteAttribute
+      ]?.isFOREIGNKEY
+    ) {
+      newMainTableDetails[
+        index
+      ].tableLevelConstraint.FOREIGNKEY = newMainTableDetails[
+        index
+      ].tableLevelConstraint.FOREIGNKEY.filter(
+        (obj) =>
+          !obj.referencedAtt ===
+          selectedTableForDeleteAttribute.attributes[
+            selectedAttributeIndexForDeleteAttribute
+          ].id,
+      );
+    }
+
+    //primary-key
+    if (
+      selectedTableForDeleteAttribute.attributes[
+        selectedAttributeIndexForDeleteAttribute
+      ].isPRIMARYKEY
+    ) {
+      newMainTableDetails[index].attributes.forEach((attr) => {
+        if (attr.isPRIMARYKEY) {
+          delete attr.isPRIMARYKEY;
+        }
+      });
       newMainTableDetails[index].tableLevelConstraint.PRIMARYKEY = null;
     }
-    if (
-      newMainTableDetails[index].tableLevelConstraint.FOREIGNKEY.length !== 0
-    ) {
-      const foreignIndex = newMainTableDetails[
-        index
-      ].tableLevelConstraint.FOREIGNKEY.findIndex(
-        (foreignObj) =>
-          foreignObj.referencedAtt === selectedAttributeNameForDeleteAttribute,
-      );
-      newMainTableDetails[index].tableLevelConstraint.FOREIGNKEY.splice(
-        foreignIndex,
-        1,
-      );
-    }
+
     onMainTableDetailsChange(newMainTableDetails);
     dispatch({ type: 'DELETE_ATTRIBUTE_CONFIRM' });
   }
@@ -333,10 +388,11 @@ function MainGround({
       />
       <DeleteAttrModal
         showModalState={showDeleteAttributeModal}
-        onModalClosed={attributeCancelHandler}
-        onModalConfirmed={attributeConfirmHandler}
+        onModalClosed={deleteAttributeCancelHandler}
+        onModalConfirmed={deleteAttributeConfirmHandler}
         tableName={selectedTableNameForDeleteAttribute}
         attrName={selectedAttributeNameForDeleteAttribute}
+        givenTable={selectedTableForDeleteAttribute}
       />
     </Grid>
   );

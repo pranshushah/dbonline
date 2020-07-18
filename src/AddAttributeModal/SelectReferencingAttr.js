@@ -11,15 +11,20 @@ function SelectReferencingAttr({
   onAttrSelected,
 }) {
   const index = mainTableDetails.findIndex(
-    mainTableDetail => mainTableDetail.tableName === selectedTable,
+    (mainTableDetail) => mainTableDetail.id === selectedTable,
   );
 
   let options = [];
   for (let i = 0; i < mainTableDetails[index].attributes.length; i++) {
-    options.push({
-      label: mainTableDetails[index].attributes[i].name,
-      value: mainTableDetails[index].attributes[i].name,
-    });
+    if (
+      (mainTableDetails[index].attributes[i].isNOTNULL &&
+        mainTableDetails[index].attributes[i].isUNIQUE) ||
+      mainTableDetails[index].attributes[i].isPRIMARYKEY
+    )
+      options.push({
+        label: mainTableDetails[index].attributes[i].name,
+        value: mainTableDetails[index].attributes[i].id,
+      });
   }
 
   function attrSelectHandler(value) {
@@ -31,6 +36,7 @@ function SelectReferencingAttr({
       options={options}
       onChange={attrSelectHandler}
       placeholder='Select Referencing Attribute'
+      noOptionsMessage={() => 'Candidate key not found.'}
     />
   );
 }

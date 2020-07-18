@@ -41,7 +41,6 @@ function Nav(props) {
           </SubNavLinkContainer>
         </NavLink>
         <NavLink text='download' />
-        <NavLink text='About' />
       </NavLinksContainer>
       <AccountStatus>Login/Signup</AccountStatus>
     </Navbar>

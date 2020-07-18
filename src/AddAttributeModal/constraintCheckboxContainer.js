@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import constraintCheckBoxList from '../utils/constraintCheckBox';
+import React from 'react';
 import { Checkbox } from 'react-ui-lib-pranshu';
 
 /**
@@ -10,6 +9,7 @@ function ConstraintCheckBoxContainer({
   checkedConstraintObj,
   onConstraintChecked,
   checkBoxList,
+  stl,
   ...props
 }) {
   const style = {

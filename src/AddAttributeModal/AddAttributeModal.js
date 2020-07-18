@@ -1,11 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Modal, Input } from 'react-ui-lib-pranshu';
 import ConstraintCheckBoxContainer from './constraintCheckboxContainer';
 import DataTypeDropDown from './DataTypeDropDown';
 import TableNameDropDown from './SelectTableDropDown';
-import { numericTypes, stringTypes } from '../utils/attributeDataTypes';
 import SelectReferencingAttr from './SelectReferencingAttr';
+import uuid from 'uuid/v1';
+import ConstraintContainer from './ConstriantContainer';
+import Styles from './AddAttribute.module.css';
 import '../utils/Types';
+import MultipleUniqueDropDown from './MultipleUniqueDropDown';
+import PrimaryKeyDropDown from './PrimaryDropDown';
+import { randomString } from '../utils/helper-function/randomString';
+import { oracleSizeError } from '../utils/helper-function/size-pre-error';
+import { constraintError } from '../utils/helper-function/constraintError';
+import { debounce } from '../utils/helper-function/debounce';
+import {
+  AddObjModal,
+  AddAttributeReducer,
+} from '../utils/reducers/AddAttributeReducer';
+import {
+  foreignConstraintCheckboxList,
+  columnConstraintCheckboxList,
+  getTableLevelCheckboxList,
+} from '../utils/checkedItemsForAddAttr';
+
+const parser = require('js-sql-parser');
 
 /** @param {{
  * showModalState:boolean,
@@ -26,54 +45,47 @@ function AddAttributeModal({
   onModalConfirmed,
   givenTable,
 }) {
-  const [AddAttributeInputValue, updateAddAttributeInputValue] = useState('');
-  const [modalError, updateModalError] = useState(true);
-  const [checkedItems, updateCheckedItems] = useState({});
-  const [selectedDataType, updateSelectedDataType] = useState('');
-  const [selectedReferencingTable, updateSelectedReferencingTable] = useState();
-  const [selectedReferencingAttr, updateSelectedReferencingAttr] = useState();
-  const [sizeInputValue, updateSizeInputValue] = useState('');
-  const [
+  const [state, dispatch] = useReducer(AddAttributeReducer, AddObjModal);
+  const [modalError, setModalError] = useState(true);
+  const {
+    AddAttributeInputValue,
+    selectedDataType,
+    sizeInputValue,
     precisionAfterDecimalInputValue,
-    updatePrecisionAfterDecimalInputValue,
-  ] = useState('');
-  const [showSizeInput, updateShowSizeInput] = useState(false);
-  const [
+    showSizeInput,
     showprecisionAfterDecimalInput,
-    updateShowPrecisionAfterDecimalInput,
-  ] = useState(false);
-  const [attributeValueError, setAttributeValueError] = useState(true);
-  const [selectDataTypeError, setSelectDataTypeError] = useState(true);
-  const [sizeInputValueError, setSizeInputValueError] = useState(true);
-  const [
-    precisionAfterDecimalInputValueError,
-    setPrecisionAfterDecimalInputValueError,
-  ] = useState(true);
-  const [
+    tableLevelCheckedItem,
+    columnLevelCheckedItem,
+    foreignCheckedItem,
+    defaultValue,
+    tableLevelUnique,
+    selectedReferencingTable,
+    selectedReferencingAttr,
+    primaryKey,
+    checkConstraintExpression,
+    checkConstraintExpressionObj,
+    attributeValueError,
+    selectDataTypeError,
+    sizeInputValueError,
     selectedReferencingTableError,
-    setSelectedReferencingTableError,
-  ] = useState(false);
-
-  const [
+    defaultValueError,
+    tableLevelUniqueError,
+    primaryKeyError,
     selectedReferencingAttrError,
-    setSelectedReferencingAttrError,
-  ] = useState(false);
+    checkConstraintExpressionError,
+    primaryKeyConstraintNameError,
+    foreignkeyConstraintNameError,
+    tableLevelUniqueConstraintNameError,
+    checkConstraintExpressionObjError,
+    primaryKeyConstraintName,
+    foreignkeyConstraintName,
+    tableLevelUniqueConstraintName,
+    checkConstraintName,
+  } = state;
 
   function modalCleanUp() {
-    updateAddAttributeInputValue('');
-    updateSelectedDataType('');
-    updateCheckedItems({});
-    updateSelectedReferencingTable('');
-    updateSelectedReferencingAttr('');
-    updateSizeInputValue('');
-    updatePrecisionAfterDecimalInputValue('');
-    updateShowSizeInput(false);
-    updateShowPrecisionAfterDecimalInput(false);
-    setAttributeValueError(true);
-    setSelectDataTypeError(true);
-    setSizeInputValueError(true);
-    setPrecisionAfterDecimalInputValueError(true);
-    setSelectedReferencingTableError(false);
+    dispatch({ type: 'MODAL_CLEANUP' });
+    setModalError(true);
   }
 
   function ModalCloseHandler() {
@@ -86,9 +98,14 @@ function AddAttributeModal({
       modalCleanUp();
     } else {
       let addObj = {
+        /**
+         * @type {attributeObj}
+         */
         attributes: {
           name: AddAttributeInputValue,
           dataType: selectedDataType,
+          id: uuid(),
+          inTableLevelUniquConstraint: [],
         },
       };
       if (sizeInputValue) {
@@ -97,23 +114,103 @@ function AddAttributeModal({
       if (precisionAfterDecimalInputValue) {
         addObj['attributes'].precision = precisionAfterDecimalInputValue;
       }
-      if (checkedItems['NOT-NULL']) {
-        addObj['NOTNULL'] = true;
+      if (columnLevelCheckedItem['NOT-NULL']) {
+        addObj['attributes'].isNOTNULL = true;
       }
-      if (checkedItems['UNIQUE']) {
-        addObj['UNIQUE'] = true;
+      if (columnLevelCheckedItem['UNIQUE']) {
+        addObj['attributes'].isUNIQUE = true;
       }
-      if (checkedItems['FOREIGN-KEY']) {
+      if (columnLevelCheckedItem['DEFAULT']) {
+        addObj['attributes'].DEFAULT = defaultValue;
+      }
+      if (columnLevelCheckedItem['AUTO-INCREMENT']) {
+        addObj['attributes'].isAUTOINCREMENT = true;
+      }
+      if (tableLevelCheckedItem['FOREIGN-KEY']) {
+        addObj['attributes'].isFOREIGNKEY = true;
+        let constraintName;
+        if (foreignkeyConstraintName) {
+          constraintName = foreignkeyConstraintName;
+        } else {
+          constraintName = randomString();
+        }
         addObj['FOREIGNKEY'] = {
-          referencedAtt: AddAttributeInputValue,
+          referencedAtt: addObj['attributes'].id,
           ReferencingTable: selectedReferencingTable,
           ReferencingAtt: selectedReferencingAttr,
+          constraintName,
         };
+        if (foreignCheckedItem['CASCADE']) {
+          addObj['FOREIGNKEY'].cascade = true;
+        } else {
+          if (foreignCheckedItem['setNull']) {
+            addObj['FOREIGNKEY'].setNull = true;
+          }
+        }
       }
-      if (checkedItems['PRIMARY-KEY']) {
-        addObj['PRIMARYKEY'] = true;
-        addObj['NOTNULL'] = true;
-        addObj['UNIQUE'] = true;
+      if (tableLevelCheckedItem['PRIMARY-KEY']) {
+        if (primaryKey) {
+          const index = primaryKey.findIndex((item) => {
+            return !item.value;
+          });
+          let finalArr = [...primaryKey];
+          if (index !== -1) {
+            finalArr.splice(index, 1);
+            finalArr.push({
+              label: AddAttributeInputValue,
+              value: addObj.attributes.id,
+            });
+          }
+          const FinalPrimary = finalArr.map((item) => item.value);
+          let constraintName;
+          if (primaryKeyConstraintName) {
+            constraintName = primaryKeyConstraintName;
+          } else {
+            constraintName = randomString();
+          }
+          addObj['PRIMARYKEY'] = {
+            attributes: FinalPrimary,
+            constraintName,
+          };
+        }
+      }
+      if (tableLevelCheckedItem['UNIQUE']) {
+        if (tableLevelUnique) {
+          const index = tableLevelUnique.findIndex((item) => {
+            return !item.value;
+          });
+          let finalArr = [...tableLevelUnique];
+          if (index !== -1) {
+            finalArr.splice(index, 1);
+            finalArr.push({
+              label: AddAttributeInputValue,
+              value: addObj.attributes.id,
+            });
+          }
+          const FinalUnique = finalArr.map((item) => item.value);
+          let constraintName;
+          if (tableLevelUniqueConstraintName) {
+            constraintName = tableLevelUniqueConstraintName;
+          } else {
+            constraintName = randomString();
+          }
+          addObj['UNIQUETABLE'] = {
+            attributes: FinalUnique,
+            constraintName,
+          };
+        }
+      }
+      if (tableLevelCheckedItem['CHECK']) {
+        let constraintName;
+        if (checkConstraintName) {
+          constraintName = checkConstraintName;
+        } else {
+          constraintName = randomString();
+        }
+        addObj['CHECK'] = {
+          AST: checkConstraintExpressionObj,
+          constraintName,
+        };
       }
       onModalConfirmed(addObj);
       modalCleanUp();
@@ -122,192 +219,315 @@ function AddAttributeModal({
 
   const addAttributeInputValueHandler = (e) => {
     const val = e.target.value;
-    updateAddAttributeInputValue(val);
     if (val.trim().length > 0) {
       const attrIndex = givenTable.attributes.findIndex(
         (attr) => attr.name === val,
       );
       attrIndex > -1
-        ? setAttributeValueError(true)
-        : setAttributeValueError(false);
+        ? dispatch({ type: 'ATTRIBUTENAME_ALREADY_EXIST', payload: { val } })
+        : dispatch({ type: 'ATTRIBUTENAME_ALL_OK', payload: { val } });
     } else {
-      setAttributeValueError(true);
+      dispatch({ type: 'ATTRIBUTENAME_CANNOT_NULL', payload: { val } });
     }
   };
 
   // input select type related
 
-  function handleNumericSizeAndPrecisionAfterDecimal() {
-    if (
-      selectedDataType === 'FLOAT' ||
-      selectedDataType === 'DOUBLE' ||
-      selectedDataType === 'DECIMAL'
-    ) {
-      updateShowSizeInput(true);
-      updateShowPrecisionAfterDecimalInput(true);
-      setSizeInputValueError(true);
-      setPrecisionAfterDecimalInputValueError(true);
-    } else {
-      setSizeInputValueError(false);
-      setPrecisionAfterDecimalInputValueError(false);
-    }
-  }
-
-  function handlerStringSize() {
-    if (selectedDataType === 'CHAR' || selectedDataType === 'VARCHAR') {
-      updateShowSizeInput(true);
-      setSizeInputValueError(true);
-      setPrecisionAfterDecimalInputValueError(false);
-    } else {
-      setSizeInputValueError(false);
-      setPrecisionAfterDecimalInputValueError(false);
-    }
-  }
-
-  function handleDataTypeRelatedInputs() {
-    let index;
-    index = numericTypes.findIndex((type) => type.value === selectedDataType);
-    if (index !== -1) {
-      handleNumericSizeAndPrecisionAfterDecimal();
-    } else {
-      index = stringTypes.findIndex((type) => type.value === selectedDataType);
-      if (index !== -1) {
-        handlerStringSize();
-      } else {
-        setSizeInputValueError(false);
-        setPrecisionAfterDecimalInputValueError(false);
-      }
-    }
-  }
-
-  function whenDataTypeisUpdated() {
-    if (selectedDataType.length !== 0) {
-      handleDataTypeRelatedInputs();
-      updateSizeInputValue('');
-      updatePrecisionAfterDecimalInputValue('');
-    }
-  }
-  //for immediate effect selectedDataType
-  useEffect(whenDataTypeisUpdated, [selectedDataType]);
-
   function dataTypeSelectedHandler(value) {
-    updateShowSizeInput(false);
-    updateShowPrecisionAfterDecimalInput(false);
-    updateSelectedDataType(value);
-    setSelectDataTypeError(false);
+    dispatch({
+      type: 'DATATYPE_SELECTED',
+      payload: { value },
+    });
   }
 
   // size and precisionAfterDecimal related
 
   function sizeInputValueChangeHandler(e) {
-    if (e.target.value >= 0) {
-      updateSizeInputValue(e.target.value);
-      if (e.target.value === '') {
-        setSizeInputValueError(true);
+    const val = e.target.value;
+    if (val >= 0) {
+      if (val === '' && oracleSizeError(selectedDataType)) {
+        dispatch({ type: 'EMPTY_SIZE_INPUT', payload: { val } });
       } else {
-        setSizeInputValueError(false);
+        dispatch({ type: 'SIZE_INPUT_OK', payload: { val } });
       }
-    } else {
-      setSizeInputValueError(true);
     }
   }
 
   function precisionAfterDecimalInputValueChangeHandler(e) {
-    if (e.target.value >= 0) {
-      updatePrecisionAfterDecimalInputValue(e.target.value);
-      if (e.target.value === '') {
-        setPrecisionAfterDecimalInputValueError(true);
-      } else {
-        setPrecisionAfterDecimalInputValueError(false);
-      }
+    let val = e.target.value;
+    if (val === '' || val === '-') {
     } else {
-      setPrecisionAfterDecimalInputValueError(true);
+      val = parseInt(val);
     }
+    dispatch({
+      type: 'PRECISION_INPUT_OK',
+      payload: { val },
+    });
   }
 
-  //checkbox
+  //CONSTRAINT
 
-  function checkBoxChangeHandler(e) {
+  function tableLevelCheckBoxChangeHandler(e) {
     e.persist();
-    updateCheckedItems((checkedItems) => ({
-      ...checkedItems,
+    const newCheckedItems = {
+      ...tableLevelCheckedItem,
       [e.target.name]: e.target.checked,
-    }));
-    if (!checkedItems['FOREIGN-KEY'] && selectedReferencingTable) {
-      updateSelectedReferencingTable('');
-      updateSelectedReferencingAttr('');
-    }
-  }
-
-  // when checkbox-changes
-  useEffect(() => {
-    if (checkedItems['FOREIGN-KEY']) {
-      if (selectedReferencingAttr && selectedReferencingTable) {
-        setSelectedReferencingTableError(false);
-        setSelectedReferencingAttrError(false);
-      } else {
-        setSelectedReferencingTableError(true);
-        setSelectedReferencingAttrError(true);
-      }
+    };
+    if (!newCheckedItems['FOREIGN-KEY'] && selectedReferencingTable) {
+      dispatch({
+        type: 'TABLEVELCHECKEDITEMS_FOREIGNKEY_REMOVED',
+        payload: { newCheckedItems },
+      });
     } else {
-      setSelectedReferencingTableError(false);
-      setSelectedReferencingAttrError(false);
+      dispatch({
+        type: 'TABLEVELCHECKEDITEMS_NORMAL',
+        payload: { newCheckedItems },
+      });
     }
-  }, [checkedItems, selectedReferencingAttr, selectedReferencingTable]);
-
-  function getCheckboxList() {
-    let constraintCheckboxList = [
-      { name: 'NOT-NULL', label: 'NOT NULL' },
-      { name: 'UNIQUE', label: 'UNIQUE' },
-      { name: 'PRIMARY-KEY', label: 'PRIMARY KEY' },
-      { name: 'FOREIGN-KEY', label: 'FOREIGN KEY' },
-    ];
-    if (givenTable.tableLevelConstraint) {
-      if (givenTable.tableLevelConstraint['PRIMARYKEY']) {
-        constraintCheckboxList = [
-          { name: 'NOT-NULL', label: 'NOT NULL' },
-          { name: 'UNIQUE', label: 'UNIQUE' },
-          { name: 'FOREIGN-KEY', label: 'FOREIGN KEY' },
-        ];
-      }
-    }
-
-    return constraintCheckboxList;
   }
 
   //FOREIGNKEY related
 
-  function referencingTableSelectedHandler(value) {
-    updateSelectedReferencingTable(value);
-    setSelectedReferencingTableError(false);
-  }
-  function selectedReferencingAttrHandler(value) {
-    updateSelectedReferencingAttr(value);
-    setSelectedReferencingAttrError(false);
+  // when FOREIGN-KEY checkbox-changes
+  useEffect(() => {
+    if (tableLevelCheckedItem['FOREIGN-KEY']) {
+      if (selectedReferencingAttr && selectedReferencingTable) {
+        dispatch({ type: 'TABLEVELCHECKEDITEMS_HAS_FOREIGNKEY_NOERROR' });
+      } else {
+        dispatch({ type: 'TABLEVELCHECKEDITEMS_HAS_FOREIGNKEY_ERROR' });
+      }
+    } else {
+      dispatch({ type: 'TABLEVELCHECKEDITEMS_HASNO_FOREIGNKEY' });
+    }
+  }, [
+    tableLevelCheckedItem,
+    selectedReferencingAttr,
+    selectedReferencingTable,
+  ]);
+
+  function foreignCheckBoxChangeHandler(e) {
+    e.persist();
+    const newCheckedItems = {
+      ...foreignCheckedItem,
+      [e.target.name]: e.target.checked,
+    };
+    dispatch({
+      type: 'ONDELETE_FOREIGNKEY_CHECKEDITEMS',
+      payload: { newCheckedItems },
+    });
   }
 
-  //error
+  function referencingTableSelectedHandler(value) {
+    dispatch({
+      type: 'FOREIGNKEY_REFERENCING_TABLE_SELECTED',
+      payload: { value },
+    });
+  }
+  function selectedReferencingAttrHandler(value) {
+    dispatch({
+      type: 'FOREIGNKEY_REFERENCING_ATTR_SELECTED',
+      payload: { value },
+    });
+  }
+
+  // same data-type as referencing attribute
+  useEffect(() => {
+    if (selectedReferencingAttr && selectedReferencingTable) {
+      const tableIndex = mainTableDetails.findIndex(
+        (table) => table.id === selectedReferencingTable,
+      );
+      const attrIndex = mainTableDetails[tableIndex].attributes.findIndex(
+        (attr) => attr.id === selectedReferencingAttr,
+      );
+      const newObj = {};
+      newObj.dataType =
+        mainTableDetails[tableIndex].attributes[attrIndex].dataType;
+      if (mainTableDetails[tableIndex].attributes[attrIndex].size) {
+        newObj.sizeInputValue =
+          mainTableDetails[tableIndex].attributes[attrIndex].size;
+      }
+      if (mainTableDetails[tableIndex].attributes[attrIndex].precision) {
+        newObj.preInputValue =
+          mainTableDetails[tableIndex].attributes[attrIndex].precision;
+      }
+      dispatch({
+        type: 'NEWDATA_AFTER_FOREIGNKEYSELECTED',
+        payload: { newObj },
+      });
+    }
+  }, [selectedReferencingAttr, selectedReferencingTable, mainTableDetails]);
+
+  // table level unique
+
+  function tableLevelUniqueHandler(value) {
+    dispatch({ type: 'NEW_TABLELEVEL_UNIQUE', payload: { value } });
+  }
+
+  useEffect(() => {
+    if (tableLevelCheckedItem['UNIQUE'] && !tableLevelUnique) {
+      dispatch({ type: 'TABLELEVEL_UNIQUE_ERROR' });
+    } else {
+      dispatch({ type: 'TABLELEVEL_UNIQUE_NOERROR' });
+    }
+  }, [tableLevelCheckedItem, tableLevelUnique]);
+
+  // table level primary key
+
+  function primaryKeyHandler(value) {
+    dispatch({ type: 'NEW_PRIMARYKEY', payload: { value } });
+  }
+
+  useEffect(() => {
+    if (tableLevelCheckedItem['PRIMARY-KEY'] && !primaryKey) {
+      dispatch({ type: 'PRIMARYKEY_ERROR' });
+    } else {
+      dispatch({ type: 'PRIMARYKEY_NOERROR' });
+    }
+  }, [tableLevelCheckedItem, primaryKey]);
+
+  // constraint name
+  // primaryKey-constraint
+  function primaryKeyConstraintNameChangeHandler(e) {
+    const value = e.target.value.trim();
+    const error = constraintError(value, givenTable);
+    dispatch({ type: 'PRIMARYKEY_CONSTRAINT_NAME', payload: { value, error } });
+  }
+
+  //foreign-key
+
+  function foreignKeyConstraintNameChangeHandler(e) {
+    const value = e.target.value.trim();
+    const error = constraintError(value, givenTable);
+    dispatch({ type: 'FOREIGNKEY_CONSTRAINT_NAME', payload: { value, error } });
+  }
+
+  // unique-name
+
+  function tableLevelUniqueConstraintNameChangeHandler(e) {
+    const value = e.target.value.trim();
+    const error = constraintError(value, givenTable);
+    dispatch({
+      type: 'TABLELEVEL_UNIQUE_CONSTRAINT_NAME',
+      payload: { value, error },
+    });
+  }
+
+  // check
+
+  function cehckConstraintNameChangeHandler(e) {
+    const value = e.target.value.trim();
+    const error = constraintError(value, givenTable);
+    dispatch({
+      type: 'CHECK_CONSTRAINT_NAME',
+      payload: { value, error },
+    });
+  }
+
+  // check constrain expression
+
+  function checkConstraintExpressionObjChangeHandler(val) {
+    try {
+      const ast = parser.parse(`select * from boom WHERE (${val})`);
+
+      dispatch({ type: 'CHECKOBJ_ALL_OK', payload: { ast } });
+    } catch {
+      dispatch({ type: 'CHECKOBJ_ERROR' });
+    }
+  }
+
+  function cehckExpressionChangeHandler(e) {
+    const value = e.target.value;
+    dispatch({ type: 'CHANGE_CHECK_EXPR', payload: { value } });
+    const debouncedFunction = debounce(
+      checkConstraintExpressionObjChangeHandler,
+      1500,
+    );
+    debouncedFunction(value);
+  }
+
+  useEffect(() => {
+    if (tableLevelCheckedItem['CHECK'] && !checkConstraintExpression) {
+      dispatch({ type: 'CHECK_EXPR_ERROR' });
+    } else {
+      dispatch({ type: 'CHECK_EXPR_NOERROR' });
+    }
+  }, [tableLevelCheckedItem, checkConstraintExpression]);
+
+  // when defaultValue check-box changes
+
+  function columnLevelCheckBoxChangeHandler(e) {
+    e.persist();
+    const newCheckedItems = {
+      ...columnLevelCheckedItem,
+      [e.target.name]: e.target.checked,
+    };
+    if (!columnLevelCheckedItem['DEFAULT'] && defaultValue) {
+      dispatch({
+        type: 'COLUMNCHECKEDITEMS_DEFAULT_REMOVED',
+        payload: { newCheckedItems },
+      });
+    } else {
+      dispatch({
+        type: 'COLUMNCHECKEDITEMS_NORMAL',
+        payload: { newCheckedItems },
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (columnLevelCheckedItem['DEFAULT'] && !defaultValue) {
+      dispatch({ type: 'COLUMN_DEFAULT_ERROR' });
+    } else {
+      dispatch({ type: 'COLUMN_DEFAULT_NOERROR' });
+    }
+  }, [columnLevelCheckedItem, defaultValue]);
+
+  // Default value change-handler
+  function defaultChangeHandler(e) {
+    dispatch({
+      type: 'COLUMN_DEFAULT_CHANGED',
+      payload: { value: e.target.value },
+    });
+  }
+
+  // GETTING DATA FOR CHECKBOX
+
+  // all error
 
   useEffect(() => {
     if (
       !attributeValueError &&
       !selectDataTypeError &&
-      !sizeInputValueError &&
-      !precisionAfterDecimalInputValueError &&
       !selectedReferencingTableError &&
-      !selectedReferencingAttrError
+      !selectedReferencingAttrError &&
+      !defaultValueError &&
+      !tableLevelUniqueError &&
+      !primaryKeyError &&
+      !checkConstraintExpressionError &&
+      !sizeInputValueError &&
+      !primaryKeyConstraintNameError &&
+      !foreignkeyConstraintNameError &&
+      !tableLevelUniqueConstraintNameError &&
+      !checkConstraintExpressionObjError
     ) {
-      updateModalError(false);
+      setModalError(false);
     } else {
-      updateModalError(true);
+      setModalError(true);
     }
   }, [
     attributeValueError,
     selectDataTypeError,
-    sizeInputValueError,
-    precisionAfterDecimalInputValueError,
     selectedReferencingTableError,
     selectedReferencingAttrError,
+    defaultValueError,
+    tableLevelUniqueError,
+    primaryKeyError,
+    sizeInputValueError,
+    checkConstraintExpressionError,
+    primaryKeyConstraintNameError,
+    foreignkeyConstraintNameError,
+    tableLevelUniqueConstraintNameError,
+    checkConstraintExpressionObjError,
   ]);
 
   return (
@@ -315,9 +535,10 @@ function AddAttributeModal({
       canCancel
       canConfirm={!modalError}
       topAligned
-      size='medium'
+      size='huge'
       show={showModalState}
       theme='blue'
+      bodyScroll
       title={`Add Attribute to ${tableName}`}
       modalConfirmed={modalConfirmHandler}
       modalClosed={ModalCloseHandler}>
@@ -327,89 +548,212 @@ function AddAttributeModal({
           color='blue'
           size='medium'
           autoFocus
+          focusColor='blue'
           value={AddAttributeInputValue}
           onChange={addAttributeInputValueHandler}
         />
       </div>
-      <h2
-        style={{
-          color: '#27292a',
-          margin: '5px',
-          marginTop: '15px',
-          fontWeight: 'inherit',
-        }}>
-        Select DataType :-
-      </h2>
-      <div style={{ width: '40%' }}>
-        <DataTypeDropDown onNewDataSelected={dataTypeSelectedHandler} />
-      </div>
-      <div
-        style={{
-          marginTop: '10px',
-          marginBottom: '15px',
-          marginLeft: '5px',
-          display: 'flex',
-          flexDirection: 'row',
-          width: '100%',
-          justifyContent: 'flex-start',
-        }}>
-        {showSizeInput && (
-          <Input
-            value={sizeInputValue}
-            onChange={sizeInputValueChangeHandler}
-            type='text'
-            label='Size'
-            size='medium'
-            color='blue'
+      <h2 className={Styles.header}>Select DataType :-</h2>
+      <div className={Styles.dataTypeContainer}>
+        <div style={{ width: '35%' }}>
+          <DataTypeDropDown
+            selectedValue={selectedDataType}
+            onNewDataSelected={dataTypeSelectedHandler}
           />
+        </div>
+        {showSizeInput && (
+          <div className={Styles.sizeValueContainer}>
+            <Input
+              value={sizeInputValue}
+              onChange={sizeInputValueChangeHandler}
+              type='text'
+              label='Size'
+              size='huge'
+              color='blue'
+              focusColor='blue'
+            />
+          </div>
         )}
-        <div style={{ width: '100%', marginLeft: '20px' }}>
-          {showprecisionAfterDecimalInput && (
+        {showprecisionAfterDecimalInput && (
+          <div className={Styles.sizeValueContainer}>
             <Input
               value={precisionAfterDecimalInputValue}
               onChange={precisionAfterDecimalInputValueChangeHandler}
               type='text'
               label='Precision after Decimal'
-              size='large'
+              size='huge'
               color='blue'
-            />
-          )}
-        </div>
-      </div>
-      <h2
-        style={{
-          color: '#27292a',
-          margin: '5px',
-          marginTop: '15px',
-          fontWeight: 'inherit',
-        }}>
-        Add constriants :-
-      </h2>
-      <ConstraintCheckBoxContainer
-        checkedConstraintObj={checkedItems}
-        onConstraintChecked={checkBoxChangeHandler}
-        checkBoxList={getCheckboxList()}
-      />
-      <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'row' }}>
-        {checkedItems['FOREIGN-KEY'] && (
-          <div style={{ width: '100%' }}>
-            <TableNameDropDown
-              currentTable={tableName}
-              otherTables={allTableDndDetails}
-              onTableSelected={referencingTableSelectedHandler}
+              focusColor='blue'
             />
           </div>
         )}
-        <div style={{ width: '100%', marginLeft: '10px' }}>
-          {checkedItems['FOREIGN-KEY'] && selectedReferencingTable && (
-            <SelectReferencingAttr
-              selectedTable={selectedReferencingTable}
-              mainTableDetails={mainTableDetails}
-              onAttrSelected={selectedReferencingAttrHandler}
-            />
+      </div>
+      <ConstraintContainer>
+        <div style={{ marginRight: '1rem' }}>
+          <h2 className={Styles.header}>Column Levlel constriants :-</h2>
+          <ConstraintCheckBoxContainer
+            checkedConstraintObj={columnLevelCheckedItem}
+            onConstraintChecked={columnLevelCheckBoxChangeHandler}
+            checkBoxList={columnConstraintCheckboxList}
+          />
+        </div>
+        <div style={{ marginLeft: '1rem' }}>
+          <h2 className={Styles.header}>Table Levlel constriants :-</h2>
+          <ConstraintCheckBoxContainer
+            checkedConstraintObj={tableLevelCheckedItem}
+            onConstraintChecked={tableLevelCheckBoxChangeHandler}
+            checkBoxList={getTableLevelCheckboxList(givenTable)}
+          />
+        </div>
+      </ConstraintContainer>
+      {columnLevelCheckedItem['DEFAULT'] && (
+        <div className={Styles.constraintNameContainer}>
+          <Input
+            value={defaultValue}
+            onChange={defaultChangeHandler}
+            type='text'
+            label='Default Value'
+            size='medium'
+            color='blue'
+            autoFocus
+            focusColor='blue'
+          />
+        </div>
+      )}
+      {tableLevelCheckedItem['UNIQUE'] && (
+        <div className={Styles.uniqueContainer}>
+          {tableLevelCheckedItem['UNIQUE'] && (
+            <div className={Styles.uniqueInput}>
+              <Input
+                value={tableLevelUniqueConstraintName}
+                onChange={tableLevelUniqueConstraintNameChangeHandler}
+                type='text'
+                label='unique constraint name'
+                color='blue'
+                size='huge'
+                autoFocus
+                focusColor='blue'
+              />
+            </div>
+          )}
+          {tableLevelCheckedItem['UNIQUE'] && (
+            <div className={Styles.uniqueDropDown} style={{ width: '40%' }}>
+              <MultipleUniqueDropDown
+                allTables={mainTableDetails}
+                currentTable={givenTable}
+                onAttrSelected={tableLevelUniqueHandler}
+                currentValue={AddAttributeInputValue}
+              />
+            </div>
           )}
         </div>
-      </div>
+      )}
+      {tableLevelCheckedItem['PRIMARY-KEY'] && (
+        <div className={Styles.primaryContainer}>
+          {tableLevelCheckedItem['PRIMARY-KEY'] && (
+            <div className={Styles.primaryInput}>
+              <Input
+                value={primaryKeyConstraintName}
+                onChange={primaryKeyConstraintNameChangeHandler}
+                type='text'
+                label='Primary-key constraint name'
+                size='huge'
+                color='blue'
+                autoFocus
+                focusColor='blue'
+              />
+            </div>
+          )}
+          {tableLevelCheckedItem['PRIMARY-KEY'] && (
+            <div className={Styles.uniqueDropDown} style={{ width: '40%' }}>
+              <PrimaryKeyDropDown
+                allTables={mainTableDetails}
+                currentTable={givenTable}
+                onAttrSelected={primaryKeyHandler}
+                currentValue={AddAttributeInputValue}
+              />
+            </div>
+          )}
+        </div>
+      )}
+      {tableLevelCheckedItem['FOREIGN-KEY'] && (
+        <div className={Styles.foreignContainer}>
+          {tableLevelCheckedItem['FOREIGN-KEY'] && (
+            <div className={Styles.foreignInput}>
+              <Input
+                value={foreignkeyConstraintName}
+                onChange={foreignKeyConstraintNameChangeHandler}
+                type='text'
+                label='Foreign constraint name'
+                size='huge'
+                color='blue'
+                focusColor='blue'
+              />
+            </div>
+          )}
+          {tableLevelCheckedItem['FOREIGN-KEY'] && (
+            <div className={Styles.foreignDropDown}>
+              <TableNameDropDown
+                otherTables={allTableDndDetails}
+                onTableSelected={referencingTableSelectedHandler}
+              />
+            </div>
+          )}
+          {tableLevelCheckedItem['FOREIGN-KEY'] && selectedReferencingTable && (
+            <div className={Styles.foreignDropDown}>
+              <SelectReferencingAttr
+                selectedTable={selectedReferencingTable}
+                mainTableDetails={mainTableDetails}
+                onAttrSelected={selectedReferencingAttrHandler}
+              />
+            </div>
+          )}
+        </div>
+      )}
+      {tableLevelCheckedItem['FOREIGN-KEY'] && (
+        <div className={Styles.foreignCheckBoxContainer}>
+          <h2 className={Styles.header} style={{ marginTop: '0' }}>
+            On delete:
+          </h2>
+          <div className={Styles.foreignCheckBox}>
+            <ConstraintCheckBoxContainer
+              checkedConstraintObj={foreignCheckedItem}
+              onConstraintChecked={foreignCheckBoxChangeHandler}
+              checkBoxList={foreignConstraintCheckboxList}
+            />
+          </div>
+        </div>
+      )}
+      {tableLevelCheckedItem['CHECK'] && (
+        <div className={Styles.checkContainer}>
+          {tableLevelCheckedItem['CHECK'] && (
+            <div className={Styles.checkInput}>
+              <Input
+                value={checkConstraintName}
+                onChange={cehckConstraintNameChangeHandler}
+                type='text'
+                label='CHECK constraint name'
+                size='huge'
+                color='blue'
+                focusColor='blue'
+              />
+            </div>
+          )}
+          {tableLevelCheckedItem['CHECK'] && (
+            <div className={Styles.checkInputExpr}>
+              <Input
+                value={checkConstraintExpression}
+                onChange={cehckExpressionChangeHandler}
+                type='text'
+                label='CHECK expression'
+                size='huge'
+                color='blue'
+                focusColor='blue'
+              />
+            </div>
+          )}
+        </div>
+      )}
     </Modal>
   );
 }

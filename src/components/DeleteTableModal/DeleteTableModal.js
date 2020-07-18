@@ -54,11 +54,11 @@ function DeleteTableModal({
       <h1 className={Style.header}>Please Enter Table Name To Confirm</h1>
       <Input
         label='Table Name'
-        color='red'
+        color='black'
         autoFocus
         value={deleteTableInputValue}
         onChange={createTableInputValueHandler}
-        focusColor='red'
+        focusColor='black'
         size='large'
       />
     </Modal>

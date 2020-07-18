@@ -1,0 +1,104 @@
+.header {
+  color: #27292a;
+  margin: 5px;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+.sizeAndPreContainer {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 5px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.dataTypeContainer {
+  display: flex;
+  width: 98%;
+}
+
+.constraintNameContainer {
+  margin: 0.7rem 0.5rem;
+  width: 100%;
+}
+
+.sizeValueContainer {
+  margin: 0 1rem;
+}
+
+.uniqueContainer {
+  display: flex;
+  width: 98%;
+  margin: 1.5rem 0;
+}
+
+.uniqueInput {
+  width: 30%;
+  margin: 0 5px;
+}
+.uniqueDropDown {
+  margin-top: 0.9rem;
+  width: 45%;
+  margin-left: 2.5rem;
+}
+
+.primaryContainer {
+  display: flex;
+  width: 98%;
+  margin: 1.5rem 0;
+}
+
+.primaryInput {
+  width: 30%;
+  margin: 0 5px;
+}
+.primaryDropDown {
+  margin: 0.9rem;
+  width: 45%;
+  margin-left: 2.5rem;
+}
+
+.foreignContainer {
+  display: flex;
+  width: 98%;
+  margin: 1.5rem 0;
+  margin-bottom: 0px;
+}
+
+.foreignInput {
+  width: 30%;
+  margin: 0 5px;
+}
+
+.foreignDropDown {
+  margin: 0.9rem;
+  width: 25%;
+  margin-left: 1.5rem;
+}
+
+.checkContainer {
+  display: flex;
+  width: 98%;
+  margin: 1.5rem 0;
+}
+
+.checkInput {
+  width: 40%;
+  margin: 0 5px;
+}
+.checkInputExpr {
+  margin: 0 5px;
+  margin-left: 2.6rem;
+  width: 45%;
+}
+
+.foreignCheckBoxContainer {
+  display: flex;
+}
+
+.foreignCheckBox {
+  margin-left: 2rem;
+}

@@ -47,26 +47,26 @@ function CreateTableModal({
 
   function confirmModalHandler() {
     if (!tableError) {
+      const id = uuid();
       const newTableDndDetails = {
         left: 20,
         top: 20,
         tableName: createTableInputValue,
-        id: uuid(),
+        id: id,
         color: tableColor,
       };
       /**
        * @type {mainTableDetailsType}
        */
       const mainTableDetails = {
+        id: id,
         tableName: createTableInputValue,
         attributes: [],
         tableLevelConstraint: {
           FOREIGNKEY: [],
           PRIMARYKEY: null,
-        },
-        columnLevelConstraint: {
-          NOTNULL: [],
-          UNIQUE: [],
+          UNIQUETABLELEVEL: [],
+          CHECK: [],
         },
       };
       updateTableColor('rgb(105,105,105)');
@@ -91,9 +91,9 @@ function CreateTableModal({
         label='Table Name'
         color='blue'
         autoFocus
+        focusColor='blue'
         value={createTableInputValue}
         onChange={createTableInputValueHandler}
-        focusColor='green'
         size='large'
       />
       <TableColorPickerList

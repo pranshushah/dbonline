@@ -1,6 +1,25 @@
 .header {
-  color: #db2828;
+  color: rgb(50, 50, 50);
   font-weight: 500;
   padding-bottom: 1rem;
   font-size: 2rem;
+}
+
+.listContainer {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  list-style-type: none;
+}
+
+.listContainer li {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  background-image: url('../../utils/img/alert.svg');
+  background-position: 0 0;
+  background-size: 1.5rem 1.5rem;
+  background-repeat: no-repeat;
+}
+
+.constraintName {
+  font-weight: bold;
 }
