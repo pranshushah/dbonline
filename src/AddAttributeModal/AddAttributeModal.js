@@ -65,6 +65,7 @@ function AddAttributeModal({
     primaryKey,
     checkConstraintExpression,
     checkConstraintExpressionObj,
+    checkConstraintNameError,
     attributeValueError,
     selectDataTypeError,
     sizeInputValueError,
@@ -82,6 +83,22 @@ function AddAttributeModal({
     foreignkeyConstraintName,
     tableLevelUniqueConstraintName,
     checkConstraintName,
+    AddAttributeInputValueErrorMessage,
+    sizeInputValueErrorMessage,
+    defaultValueErrorMessage,
+    primaryKeyConstraintNameErrorMessage,
+    foreignkeyConstraintNameErrorMessage,
+    checkConstraintExpressionErrorMessage,
+    tableLevelUniqueConstraintNameErrorMessage,
+    checkConstraintNameErrorMessage,
+    sizeInputValueDirty,
+    defaultValueDirty,
+    checkConstraintExpressionDirty,
+    AddAttributeInputValueDirty,
+    primaryKeyConstraintNameDirty,
+    foreignkeyConstraintNameDirty,
+    tableLevelUniqueConstraintNameDirty,
+    checkConstraintNameDirty,
   } = state;
 
   function modalCleanUp() {
@@ -429,7 +446,6 @@ function AddAttributeModal({
   function checkConstraintExpressionObjChangeHandler(val) {
     try {
       const ast = parser.parse(`select * from boom WHERE (${val})`);
-
       dispatch({ type: 'CHECKOBJ_ALL_OK', payload: { ast } });
     } catch {
       dispatch({ type: 'CHECKOBJ_ERROR' });
@@ -439,17 +455,13 @@ function AddAttributeModal({
   function cehckExpressionChangeHandler(e) {
     const value = e.target.value;
     dispatch({ type: 'CHANGE_CHECK_EXPR', payload: { value } });
-    const debouncedFunction = debounce(
-      checkConstraintExpressionObjChangeHandler,
-      1500,
-    );
-    debouncedFunction(value);
   }
 
   useEffect(() => {
     if (tableLevelCheckedItem['CHECK'] && !checkConstraintExpression) {
       dispatch({ type: 'CHECK_EXPR_ERROR' });
     } else {
+      checkConstraintExpressionObjChangeHandler(checkConstraintExpression);
       dispatch({ type: 'CHECK_EXPR_NOERROR' });
     }
   }, [tableLevelCheckedItem, checkConstraintExpression]);
@@ -509,7 +521,8 @@ function AddAttributeModal({
       !primaryKeyConstraintNameError &&
       !foreignkeyConstraintNameError &&
       !tableLevelUniqueConstraintNameError &&
-      !checkConstraintExpressionObjError
+      !checkConstraintExpressionObjError &&
+      !checkConstraintNameError
     ) {
       setModalError(false);
     } else {
@@ -524,6 +537,7 @@ function AddAttributeModal({
     tableLevelUniqueError,
     primaryKeyError,
     sizeInputValueError,
+    checkConstraintNameError,
     checkConstraintExpressionError,
     primaryKeyConstraintNameError,
     foreignkeyConstraintNameError,
@@ -547,6 +561,9 @@ function AddAttributeModal({
           label='Attribute Name'
           dimension='medium'
           autoFocus
+          required
+          error={AddAttributeInputValueDirty && attributeValueError}
+          errorMessage={AddAttributeInputValueErrorMessage}
           value={AddAttributeInputValue}
           onChange={addAttributeInputValueHandler}
         />
@@ -565,7 +582,10 @@ function AddAttributeModal({
                 onChange={sizeInputValueChangeHandler}
                 type='text'
                 label='Size'
+                error={sizeInputValueDirty && sizeInputValueError}
+                errorMessage={sizeInputValueErrorMessage}
                 dimension='huge'
+                required={oracleSizeError(selectedDataType)}
               />
             </div>
           )}
@@ -605,6 +625,9 @@ function AddAttributeModal({
               value={defaultValue}
               onChange={defaultChangeHandler}
               type='text'
+              required
+              error={defaultValueDirty && defaultValueError}
+              errorMessage={defaultValueErrorMessage}
               label='Default Value'
               dimension='small'
               autoFocus
@@ -619,6 +642,11 @@ function AddAttributeModal({
                   value={tableLevelUniqueConstraintName}
                   onChange={tableLevelUniqueConstraintNameChangeHandler}
                   type='text'
+                  error={
+                    tableLevelUniqueConstraintNameDirty &&
+                    tableLevelUniqueConstraintNameError
+                  }
+                  errorMessage={tableLevelUniqueConstraintNameErrorMessage}
                   dimension='huge'
                   label='unique constraint name'
                   color='blue'
@@ -646,6 +674,11 @@ function AddAttributeModal({
                   value={primaryKeyConstraintName}
                   onChange={primaryKeyConstraintNameChangeHandler}
                   type='text'
+                  error={
+                    primaryKeyConstraintNameDirty &&
+                    primaryKeyConstraintNameError
+                  }
+                  errorMessage={primaryKeyConstraintNameErrorMessage}
                   label='Primary-key constraint name'
                   dimension='huge'
                   autoFocus
@@ -672,6 +705,11 @@ function AddAttributeModal({
                   value={foreignkeyConstraintName}
                   onChange={foreignKeyConstraintNameChangeHandler}
                   type='text'
+                  error={
+                    foreignkeyConstraintNameDirty &&
+                    foreignkeyConstraintNameError
+                  }
+                  errorMessage={foreignkeyConstraintNameErrorMessage}
                   label='Foreign constraint name'
                   dimension='huge'
                 />
@@ -718,6 +756,8 @@ function AddAttributeModal({
                   value={checkConstraintName}
                   onChange={cehckConstraintNameChangeHandler}
                   type='text'
+                  error={checkConstraintNameDirty && checkConstraintNameError}
+                  errorMessage={checkConstraintNameErrorMessage}
                   label='check constraint name'
                   dimension='huge'
                 />
@@ -728,6 +768,12 @@ function AddAttributeModal({
                 <Input
                   value={checkConstraintExpression}
                   onChange={cehckExpressionChangeHandler}
+                  error={
+                    checkConstraintExpressionDirty &&
+                    checkConstraintExpressionError
+                  }
+                  required
+                  errorMessage={checkConstraintExpressionErrorMessage}
                   type='text'
                   label='check expression'
                   dimension='huge'

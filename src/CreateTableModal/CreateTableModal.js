@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import uuid from 'uuid/v1';
 import Input from '../components/UI/Input/Input';
 import TableColorPickerList from '../components/TableColorPickerList/TableColorPickerList';
@@ -18,30 +18,40 @@ function CreateTableModal({
   showModalState,
   allMainTableDetails,
 }) {
-  const [createTableInputValue, updateCreateTableInputValue] = useState('');
+  const [createTableInputValue, setCreateTableInputValue] = useState('');
   const [tableColor, updateTableColor] = useState('rgb(105,105,105)');
   const [tableError, setTableError] = useState(true);
+  const [createTableInputDirty, setCreateTableDirty] = useState(false);
+  const [creteTableErrorMessage, setCreteTableMessage] = useState('');
 
   function createTableInputValueHandler(e) {
-    const newTableValue = e.target.value;
-    if (newTableValue !== '') {
-      updateCreateTableInputValue(newTableValue);
+    setCreateTableInputValue(e.target.value);
+    setCreateTableDirty(true);
+  }
+
+  useEffect(() => {
+    if (createTableInputValue !== '') {
       const index = allMainTableDetails.findIndex(
-        (table) => table.tableName === newTableValue.trim(),
+        (table) => table.tableName === createTableInputValue.trim(),
       );
       if (index === -1) {
         setTableError(false);
       } else {
         setTableError(true);
+        if (createTableInputDirty) {
+          setCreteTableMessage('tablename already exist');
+        }
       }
     } else {
-      updateCreateTableInputValue(newTableValue);
       setTableError(true);
+      if (createTableInputDirty) {
+        setCreteTableMessage("tablename can't be empty");
+      }
     }
-  }
+  }, [createTableInputValue, allMainTableDetails, createTableInputDirty]);
 
   function cancelModalHandler() {
-    updateCreateTableInputValue('');
+    setCreateTableInputValue('');
     onModalClosed();
     setTableError(true);
     updateTableColor('rgb(105,105,105)');
@@ -72,7 +82,7 @@ function CreateTableModal({
         },
       };
       updateTableColor('rgb(105,105,105)');
-      updateCreateTableInputValue('');
+      setCreateTableInputValue('');
       onModalConfirmed(newTableDndDetails, mainTableDetails);
       setTableError(true);
     }
@@ -93,9 +103,11 @@ function CreateTableModal({
         <Input
           label='Table Name'
           autoFocus
+          error={createTableInputDirty && tableError}
           value={createTableInputValue}
           onChange={createTableInputValueHandler}
           dimension='medium'
+          errorMessage={creteTableErrorMessage}
         />
         <TableColorPickerList
           onTableColorSelected={updateTableColor}
@@ -105,4 +117,4 @@ function CreateTableModal({
     </Modal>
   );
 }
-export default React.memo(CreateTableModal);
+export default CreateTableModal;

@@ -106,13 +106,13 @@
 
 .errorMessageMedium {
   @extend .errorMessage;
-  font-size: getFontSize(2) * 1px;
+  font-size: getFontSize(3) * 1px;
   @include mobile() {
-    font-size: getFontSize(1) * 1px;
+    font-size: getFontSize(2) * 1px;
   }
 }
 
 .errorMessageSmall {
   @extend .errorMessage;
-  font-size: getFontSize(1) * 1px;
+  font-size: getFontSize(3) * 1px;
 }

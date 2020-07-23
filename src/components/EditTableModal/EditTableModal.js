@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../../components/UI/Input/Input';
 import Modal from '../../components/UI/Modal/Modal';
 import TableColorPickerList from '../TableColorPickerList/TableColorPickerList';
@@ -28,27 +28,38 @@ function EditTableModal({
   selectedTable,
 }) {
   const [tableError, setTableError] = useState(false);
+  const [createTableInputDirty, setCreateTableDirty] = useState(false);
+  const [creteTableErrorMessage, setCreteTableMessage] = useState('');
 
   function tableInputValueHandler(e) {
-    const newTableValue = e.target.value;
-    onTableNameChange(newTableValue);
-    if (newTableValue !== '') {
-      if (newTableValue === selectedTable.tableName) {
+    onTableNameChange(e.target.value);
+    setCreateTableDirty(true);
+  }
+
+  useEffect(() => {
+    if (tableName !== '') {
+      if (tableName === selectedTable.tableName) {
         setTableError(false);
       } else {
         const index = mainTableDetails.findIndex(
-          (table) => table.tableName === newTableValue.trim(),
+          (table) => table.tableName === tableName.trim(),
         );
         if (index === -1) {
           setTableError(false);
         } else {
           setTableError(true);
+          if (createTableInputDirty) {
+            setCreteTableMessage('tablename already exist');
+          }
         }
       }
     } else {
       setTableError(true);
+      if (createTableInputDirty) {
+        setCreteTableMessage("tablename can't be emty");
+      }
     }
-  }
+  }, [tableName, mainTableDetails, selectedTable, createTableInputDirty]);
 
   function cancelModalHandler() {
     onTableNameChange('');
@@ -82,8 +93,10 @@ function EditTableModal({
           label='Table Name'
           autoFocus
           value={tableName}
+          error={createTableInputDirty && tableError}
           onChange={tableInputValueHandler}
           dimension='large'
+          errorMessage={creteTableErrorMessage}
           primary
         />
         <TableColorPickerList

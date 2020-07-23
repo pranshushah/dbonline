@@ -20,5 +20,11 @@ export function constraintError(str, givenTable) {
   if (uniqueIndex !== -1) {
     return true;
   }
+  const checkIndex = givenTable.tableLevelConstraint?.CHECK.findIndex(
+    (checkObj) => checkObj.constraintName === str,
+  );
+  if (checkIndex !== -1) {
+    return true;
+  }
   return false;
 }

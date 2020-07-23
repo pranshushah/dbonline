@@ -20,6 +20,7 @@ export const AddObjModal = {
   primaryKey: null,
   checkConstraintExpression: '',
   checkConstraintExpressionObj: {},
+  checkConstraintNameError: false,
   attributeValueError: true,
   selectDataTypeError: true,
   sizeInputValueError: false,
@@ -37,16 +38,33 @@ export const AddObjModal = {
   foreignkeyConstraintName: '',
   tableLevelUniqueConstraintName: '',
   checkConstraintName: '',
+  AddAttributeInputValueDirty: false,
+  sizeInputValueDirty: false,
+  defaultValueDirty: false,
+  checkConstraintExpressionDirty: false,
+  primaryKeyConstraintNameDirty: false,
+  foreignkeyConstraintNameDirty: false,
+  tableLevelUniqueConstraintNameDirty: false,
+  checkConstraintNameDirty: false,
+  AddAttributeInputValueErrorMessage: '',
+  sizeInputValueErrorMessage: '',
+  defaultValueErrorMessage: '',
+  checkConstraintExpressionErrorMessage: '',
+  primaryKeyConstraintNameErrorMessage: '',
+  foreignkeyConstraintNameErrorMessage: '',
+  tableLevelUniqueConstraintNameErrorMessage: '',
+  checkConstraintNameErrorMessage: '',
 };
 
 export function AddAttributeReducer(state, action) {
   switch (action.type) {
     case 'ATTRIBUTENAME_ALREADY_EXIST': {
-      console.log('bok');
       return {
         ...state,
         AddAttributeInputValue: action.payload.val,
         attributeValueError: true,
+        AddAttributeInputValueDirty: true,
+        AddAttributeInputValueErrorMessage: 'attribute name already exist',
       };
     }
     case 'ATTRIBUTENAME_CANNOT_NULL': {
@@ -54,14 +72,17 @@ export function AddAttributeReducer(state, action) {
         ...state,
         AddAttributeInputValue: action.payload.val,
         attributeValueError: true,
+        AddAttributeInputValueDirty: true,
+        AddAttributeInputValueErrorMessage: "attribute name can't be empty",
       };
     }
     case 'ATTRIBUTENAME_ALL_OK': {
-      console.log('ok');
       return {
         ...state,
         AddAttributeInputValue: action.payload.val,
         attributeValueError: false,
+        AddAttributeInputValueDirty: true,
+        AddAttributeInputValueErrorMessage: '',
       };
     }
     case 'DATATYPE_SELECTED': {
@@ -79,6 +100,8 @@ export function AddAttributeReducer(state, action) {
         ...state,
         sizeInputValue: action.payload.val,
         sizeInputValueError: true,
+        sizeInputValueDirty: true,
+        sizeInputValueErrorMessage: "size can't be null",
       };
     }
     case 'SIZE_INPUT_OK': {
@@ -86,6 +109,8 @@ export function AddAttributeReducer(state, action) {
         ...state,
         sizeInputValue: action.payload.val,
         sizeInputValueError: false,
+        sizeInputValueDirty: true,
+        sizeInputValueErrorMessage: '',
       };
     }
     case 'PRECISION_INPUT_OK': {
@@ -206,6 +231,8 @@ export function AddAttributeReducer(state, action) {
         ...state,
         primaryKeyConstraintName: action.payload.value,
         primaryKeyConstraintNameError: action.payload.error,
+        primaryKeyConstraintNameDirty: true,
+        primaryKeyConstraintNameErrorMessage: 'constraint name already exist',
       };
     }
     case 'FOREIGNKEY_CONSTRAINT_NAME': {
@@ -213,6 +240,8 @@ export function AddAttributeReducer(state, action) {
         ...state,
         foreignkeyConstraintName: action.payload.value,
         foreignkeyConstraintNameError: action.payload.error,
+        foreignkeyConstraintNameDirty: true,
+        foreignkeyConstraintNameErrorMessage: 'constraint name already exist',
       };
     }
     case 'TABLELEVEL_UNIQUE_CONSTRAINT_NAME': {
@@ -220,13 +249,18 @@ export function AddAttributeReducer(state, action) {
         ...state,
         tableLevelUniqueConstraintName: action.payload.value,
         tableLevelUniqueConstraintNameError: action.payload.error,
+        tableLevelUniqueConstraintNameDirty: true,
+        tableLevelUniqueConstraintNameErrorMessage:
+          'constraint name already exist',
       };
     }
     case 'CHECK_CONSTRAINT_NAME': {
       return {
         ...state,
         checkConstraintName: action.payload.value,
-        tableLevelUniqueConstraintNameError: action.payload.error,
+        checkConstraintNameError: action.payload.error,
+        checkConstraintNameDirty: true,
+        checkConstraintNameErrorMessage: 'constraint name already exist',
       };
     }
     case 'CHECKOBJ_ALL_OK': {
@@ -247,12 +281,14 @@ export function AddAttributeReducer(state, action) {
       return {
         ...state,
         checkConstraintExpression: action.payload.value,
+        checkConstraintExpressionDirty: true,
       };
     }
     case 'CHECK_EXPR_ERROR': {
       return {
         ...state,
         checkConstraintExpressionError: true,
+        checkConstraintExpressionErrorMessage: "check expression can't be null",
       };
     }
     case 'CHECK_EXPR_NOERROR': {
@@ -278,18 +314,21 @@ export function AddAttributeReducer(state, action) {
       return {
         ...state,
         defaultValueError: true,
+        defaultValueErrorMessage: "default value can't be null",
       };
     }
     case 'COLUMN_DEFAULT_NOERROR': {
       return {
         ...state,
         defaultValueError: false,
+        defaultValueErrorMessage: '',
       };
     }
     case 'COLUMN_DEFAULT_CHANGED': {
       return {
         ...state,
         defaultValue: action.payload.value,
+        defaultValueDirty: true,
       };
     }
     case 'MODAL_CLEANUP': {
