@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Input } from 'react-ui-lib-pranshu';
+import Input from '../../components/UI/Input/Input';
+import Modal from '../../components/UI/Modal/Modal';
 import TableColorPickerList from '../TableColorPickerList/TableColorPickerList';
+import Styles from './EditTableModal.module.scss';
 import '../../utils/Types';
 /**
  * @param {{showModalState:boolean,
@@ -66,29 +68,29 @@ function EditTableModal({
 
   return (
     <Modal
-      theme='blue'
-      size='medium'
+      primary
+      size='large'
       title='Edit Table'
       show={showModalState}
-      canConfirm={!tableError}
+      canConfirm
       canCancel
-      topAligned
-      focusColor='blue'
+      confirmDisabled={tableError}
       modalConfirmed={confirmModalHandler}
       modalClosed={cancelModalHandler}>
-      <Input
-        label='Table Name'
-        color='blue'
-        autoFocus
-        value={tableName}
-        onChange={tableInputValueHandler}
-        focusColor='blue'
-        size='large'
-      />
-      <TableColorPickerList
-        onTableColorSelected={onTableColorChange}
-        selectedColor={tableColor}
-      />
+      <div className={Styles.container}>
+        <Input
+          label='Table Name'
+          autoFocus
+          value={tableName}
+          onChange={tableInputValueHandler}
+          dimension='large'
+          primary
+        />
+        <TableColorPickerList
+          onTableColorSelected={onTableColorChange}
+          selectedColor={tableColor}
+        />
+      </div>
     </Modal>
   );
 }

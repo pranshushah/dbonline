@@ -203,6 +203,7 @@ export function AddAttributeReducer(state, action) {
     }
     case 'PRIMARYKEY_CONSTRAINT_NAME': {
       return {
+        ...state,
         primaryKeyConstraintName: action.payload.value,
         primaryKeyConstraintNameError: action.payload.error,
       };
@@ -224,7 +225,7 @@ export function AddAttributeReducer(state, action) {
     case 'CHECK_CONSTRAINT_NAME': {
       return {
         ...state,
-        tableLevelUniqueConstraintName: action.payload.value,
+        checkConstraintName: action.payload.value,
         tableLevelUniqueConstraintNameError: action.payload.error,
       };
     }

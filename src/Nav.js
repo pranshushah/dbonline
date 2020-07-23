@@ -1,14 +1,13 @@
 import React from 'react';
 import {
-  Navbar,
-  NavLogo,
-  NavLinksContainer,
   NavLink,
-  SubNavLinkContainer,
+  SubMenuContiainer,
   SubNavLink,
-} from 'react-ui-lib-pranshu';
-import AccountStatus from './Navbar/Navbar';
+} from './components/UI/Navbar/NavLink/NavLink';
 
+import NavbarContainer from './components/UI/Navbar/NavContainer';
+import NavLogo from './components/UI/Navbar/NavLogo/NavLogo';
+import NavLinksContainer from './components/UI/Navbar/NavLinksContainer/NavLinksContainer';
 /**
  * @param {{showGrid:boolean,
  * showSideBar:boolean,
@@ -19,17 +18,17 @@ import AccountStatus from './Navbar/Navbar';
 
 function Nav(props) {
   return (
-    <Navbar style={{ width: '100%' }}>
-      <NavLogo>DB ONLINE</NavLogo>
+    <NavbarContainer>
+      <NavLogo text='DB ONLINE' />
       <NavLinksContainer>
         <NavLink text='Insert'>
-          <SubNavLinkContainer>
+          <SubMenuContiainer>
             <SubNavLink onClick={props.onCreateTableClick} text='add Table' />
             <SubNavLink text='add Todo' />
-          </SubNavLinkContainer>
+          </SubMenuContiainer>
         </NavLink>
         <NavLink text='View'>
-          <SubNavLinkContainer>
+          <SubMenuContiainer>
             <SubNavLink
               text={props.showGrid ? 'hide grid' : 'show grid'}
               onClick={props.onGridClick}
@@ -38,12 +37,12 @@ function Nav(props) {
               text={props.showSideBar ? 'hide sidebar' : 'show sidebar'}
               onClick={props.onSideBarClick}
             />
-          </SubNavLinkContainer>
+          </SubMenuContiainer>
         </NavLink>
         <NavLink text='download' />
+        <NavLink text='Login/Signup' />
       </NavLinksContainer>
-      <AccountStatus>Login/Signup</AccountStatus>
-    </Navbar>
+    </NavbarContainer>
   );
 }
 

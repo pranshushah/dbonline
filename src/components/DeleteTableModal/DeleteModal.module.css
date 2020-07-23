@@ -1,6 +1,12 @@
 .header {
-  color: rgb(50, 50, 50);
+  color: #282828;
   font-weight: 500;
-  padding-bottom: 1rem;
-  font-size: 2rem;
+  padding-bottom: 16px;
+  font-size: 36px;
+  line-height: 48px;
 }
+
+.container {
+  margin: 16px;
+}
+/*# sourceMappingURL=DeleteModal.module.css.map */

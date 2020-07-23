@@ -360,40 +360,48 @@ function MainGround({
   return (
     <Grid ref={drop} showGrid={showGrid}>
       {tables}
-      <AddAttributeModal
-        showModalState={addAttributeShowModal}
-        onModalConfirmed={confirmAddModalHandler}
-        onModalClosed={cancelAddModalHandler}
-        tableName={selectedTableDndDetailsForAddModal.tableName}
-        allTableDndDetails={tableDndDetails}
-        mainTableDetails={mainTableDetails}
-        givenTable={selectedTableDetailsForAddModal}
-      />
-      <DeleteTableModal
-        showModalState={showDeleteTableModal}
-        tableName={selectedTableDndDetailsForDeleteModal.tableName}
-        onModalClosed={deleteTableModalCancelHandler}
-        onModalConfirmed={deleteTableModalConfirmHandler}
-      />
-      <EditTableModal
-        showModalState={showEditTableModal}
-        onModalConfirmed={editTableModalConfirmHandler}
-        onModalClosed={editTableModalCancelHandler}
-        tableColor={editTableColor}
-        tableName={editTableName}
-        onTableColorChange={setEditTableColor}
-        onTableNameChange={setEditTableName}
-        mainTableDetails={mainTableDetails}
-        selectedTable={selectedTableDetailsForEditModal}
-      />
-      <DeleteAttrModal
-        showModalState={showDeleteAttributeModal}
-        onModalClosed={deleteAttributeCancelHandler}
-        onModalConfirmed={deleteAttributeConfirmHandler}
-        tableName={selectedTableNameForDeleteAttribute}
-        attrName={selectedAttributeNameForDeleteAttribute}
-        givenTable={selectedTableForDeleteAttribute}
-      />
+      {addAttributeShowModal && (
+        <AddAttributeModal
+          showModalState={addAttributeShowModal}
+          onModalConfirmed={confirmAddModalHandler}
+          onModalClosed={cancelAddModalHandler}
+          tableName={selectedTableDndDetailsForAddModal.tableName}
+          allTableDndDetails={tableDndDetails}
+          mainTableDetails={mainTableDetails}
+          givenTable={selectedTableDetailsForAddModal}
+        />
+      )}
+      {showDeleteTableModal && (
+        <DeleteTableModal
+          showModalState={showDeleteTableModal}
+          tableName={selectedTableDndDetailsForDeleteModal.tableName}
+          onModalClosed={deleteTableModalCancelHandler}
+          onModalConfirmed={deleteTableModalConfirmHandler}
+        />
+      )}
+      {showEditTableModal && (
+        <EditTableModal
+          showModalState={showEditTableModal}
+          onModalConfirmed={editTableModalConfirmHandler}
+          onModalClosed={editTableModalCancelHandler}
+          tableColor={editTableColor}
+          tableName={editTableName}
+          onTableColorChange={setEditTableColor}
+          onTableNameChange={setEditTableName}
+          mainTableDetails={mainTableDetails}
+          selectedTable={selectedTableDetailsForEditModal}
+        />
+      )}
+      {showDeleteAttributeModal && (
+        <DeleteAttrModal
+          showModalState={showDeleteAttributeModal}
+          onModalClosed={deleteAttributeCancelHandler}
+          onModalConfirmed={deleteAttributeConfirmHandler}
+          tableName={selectedTableNameForDeleteAttribute}
+          attrName={selectedAttributeNameForDeleteAttribute}
+          givenTable={selectedTableForDeleteAttribute}
+        />
+      )}
     </Grid>
   );
 }

@@ -1,0 +1,34 @@
+@import '../../../../utils/scss/variables';
+@import '../../../../utils/scss/spaces';
+@import '../../../../utils/scss/fontSize';
+@import '../../../../utils/scss/lineHeight';
+
+.primary {
+  background-color: $primaryColor;
+}
+
+.secondary {
+  background-color: $secondaryColor;
+}
+.danger {
+  background-color: rgb(227, 70, 70);
+}
+
+.header {
+  margin: 0;
+  padding: getSpace(2) * 1px;
+  color: $tertiaryColor;
+  line-height: map-get($map: $line-height, $key: 'large') * 1px;
+}
+
+.medium {
+  font-size: getFontSize(8) * 1px;
+}
+
+.large {
+  font-size: getFontSize(9) * 1px;
+}
+
+.huge {
+  font-size: getFontSize(10) * 1px;
+}

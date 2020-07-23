@@ -1,0 +1,9 @@
+@import '../../../utils/scss/fontSize';
+@import '../../../utils/scss/variables';
+.headerContainer {
+  display: flex;
+  background-color: $primaryColor;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+  justify-content: space-between;
+  letter-spacing: 1px;
+}

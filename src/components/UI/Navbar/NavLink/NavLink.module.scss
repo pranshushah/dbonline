@@ -1,0 +1,72 @@
+@import '../../../../utils/scss/media';
+@import '../../../../utils/scss/fontSize';
+@import '../../../../utils/scss/variables';
+@import '../../../../utils/scss/lineHeight';
+@import '../../../../utils/scss/spaces';
+.navLink {
+  position: relative;
+  .link {
+    display: inline-block;
+    text-transform: capitalize;
+    color: $tertiaryColor;
+    text-decoration: none;
+    width: 100%;
+    font-size: getFontSize(6) * 1px;
+    padding: getSpace(2) * 1px getSpace(6) * 1px;
+    line-height: map-get($map: $line-height, $key: 'medium') * 1px;
+    &:hover {
+      background-color: lighten($color: $primaryColor, $amount: 5);
+      color: $tertiaryColor;
+    }
+    @include tablet() {
+      font-size: getFontSize(4) * 1px;
+      padding: getSpace(2) * 1px 28px;
+    }
+  }
+  .subMenuContainer {
+    position: absolute;
+    display: flex;
+    left: 0%;
+    top: 100%;
+    width: 100%;
+    z-index: 2;
+    flex-direction: column;
+    padding: 0;
+    background-color: $primaryColor;
+    .subNavLink {
+      display: none;
+      .subLink {
+        display: block;
+        text-align: center;
+        width: 300px;
+        text-transform: capitalize;
+        color: $tertiaryColor;
+        text-decoration: none;
+        width: 100%;
+        line-height: map-get($map: $line-height, $key: 'medium') * 1px;
+        padding: getSpace(2) * 1px getSpace(4) * 1px;
+        font-size: getFontSize(4) * 1px;
+        &:hover {
+          background-color: lighten($color: $primaryColor, $amount: 5);
+          color: $tertiaryColor;
+        }
+        @include tablet() {
+          font-size: getFontSize(3) * 1px;
+          padding: getSpace(2) * 1px getSpace(3) * 1px;
+        }
+      }
+    }
+  }
+  &:hover .subMenuContainer .subNavLink {
+    display: block;
+  }
+}
+.downArrow {
+  background: url('../../../../utils/scss/down/down.svg');
+  background-repeat: no-repeat;
+  background-position: 90% 45%;
+  transition: 0.2s background ease-in;
+  @include tablet() {
+    background-position: 106% 45%;
+  }
+}

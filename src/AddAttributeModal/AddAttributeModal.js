@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { Modal, Input } from 'react-ui-lib-pranshu';
+import Modal from '../components/UI/Modal/Modal';
+import Input from '../components/UI/Input/Input';
 import ConstraintCheckBoxContainer from './constraintCheckboxContainer';
 import DataTypeDropDown from './DataTypeDropDown';
 import TableNameDropDown from './SelectTableDropDown';
 import SelectReferencingAttr from './SelectReferencingAttr';
 import uuid from 'uuid/v1';
 import ConstraintContainer from './ConstriantContainer';
-import Styles from './AddAttribute.module.css';
+import Styles from './AddAttribute.module.scss';
 import '../utils/Types';
 import MultipleUniqueDropDown from './MultipleUniqueDropDown';
 import PrimaryKeyDropDown from './PrimaryDropDown';
@@ -533,227 +534,209 @@ function AddAttributeModal({
   return (
     <Modal
       canCancel
-      canConfirm={!modalError}
-      topAligned
+      canConfirm
       size='huge'
       show={showModalState}
-      theme='blue'
-      bodyScroll
+      primary
+      confirmDisabled={modalError}
       title={`Add Attribute to ${tableName}`}
       modalConfirmed={modalConfirmHandler}
       modalClosed={ModalCloseHandler}>
-      <div style={{ margin: '3px', marginLeft: '7px' }}>
+      <div className={Styles.container}>
         <Input
           label='Attribute Name'
-          color='blue'
-          size='medium'
+          dimension='medium'
           autoFocus
-          focusColor='blue'
           value={AddAttributeInputValue}
           onChange={addAttributeInputValueHandler}
         />
-      </div>
-      <h2 className={Styles.header}>Select DataType :-</h2>
-      <div className={Styles.dataTypeContainer}>
-        <div style={{ width: '35%' }}>
-          <DataTypeDropDown
-            selectedValue={selectedDataType}
-            onNewDataSelected={dataTypeSelectedHandler}
-          />
-        </div>
-        {showSizeInput && (
-          <div className={Styles.sizeValueContainer}>
-            <Input
-              value={sizeInputValue}
-              onChange={sizeInputValueChangeHandler}
-              type='text'
-              label='Size'
-              size='huge'
-              color='blue'
-              focusColor='blue'
+        <h2 className={Styles.header}>Select DataType :-</h2>
+        <div className={Styles.dataTypeContainer}>
+          <div style={{ width: '35%', marginRight: '8px' }}>
+            <DataTypeDropDown
+              selectedValue={selectedDataType}
+              onNewDataSelected={dataTypeSelectedHandler}
             />
           </div>
-        )}
-        {showprecisionAfterDecimalInput && (
-          <div className={Styles.sizeValueContainer}>
-            <Input
-              value={precisionAfterDecimalInputValue}
-              onChange={precisionAfterDecimalInputValueChangeHandler}
-              type='text'
-              label='Precision after Decimal'
-              size='huge'
-              color='blue'
-              focusColor='blue'
-            />
-          </div>
-        )}
-      </div>
-      <ConstraintContainer>
-        <div style={{ marginRight: '1rem' }}>
-          <h2 className={Styles.header}>Column Levlel constriants :-</h2>
-          <ConstraintCheckBoxContainer
-            checkedConstraintObj={columnLevelCheckedItem}
-            onConstraintChecked={columnLevelCheckBoxChangeHandler}
-            checkBoxList={columnConstraintCheckboxList}
-          />
-        </div>
-        <div style={{ marginLeft: '1rem' }}>
-          <h2 className={Styles.header}>Table Levlel constriants :-</h2>
-          <ConstraintCheckBoxContainer
-            checkedConstraintObj={tableLevelCheckedItem}
-            onConstraintChecked={tableLevelCheckBoxChangeHandler}
-            checkBoxList={getTableLevelCheckboxList(givenTable)}
-          />
-        </div>
-      </ConstraintContainer>
-      {columnLevelCheckedItem['DEFAULT'] && (
-        <div className={Styles.constraintNameContainer}>
-          <Input
-            value={defaultValue}
-            onChange={defaultChangeHandler}
-            type='text'
-            label='Default Value'
-            size='medium'
-            color='blue'
-            autoFocus
-            focusColor='blue'
-          />
-        </div>
-      )}
-      {tableLevelCheckedItem['UNIQUE'] && (
-        <div className={Styles.uniqueContainer}>
-          {tableLevelCheckedItem['UNIQUE'] && (
-            <div className={Styles.uniqueInput}>
+          {showSizeInput && (
+            <div className={Styles.sizeValueContainer}>
               <Input
-                value={tableLevelUniqueConstraintName}
-                onChange={tableLevelUniqueConstraintNameChangeHandler}
+                value={sizeInputValue}
+                onChange={sizeInputValueChangeHandler}
                 type='text'
-                label='unique constraint name'
-                color='blue'
-                size='huge'
-                autoFocus
-                focusColor='blue'
+                label='Size'
+                dimension='huge'
               />
             </div>
           )}
-          {tableLevelCheckedItem['UNIQUE'] && (
-            <div className={Styles.uniqueDropDown} style={{ width: '40%' }}>
-              <MultipleUniqueDropDown
-                allTables={mainTableDetails}
-                currentTable={givenTable}
-                onAttrSelected={tableLevelUniqueHandler}
-                currentValue={AddAttributeInputValue}
-              />
-            </div>
-          )}
-        </div>
-      )}
-      {tableLevelCheckedItem['PRIMARY-KEY'] && (
-        <div className={Styles.primaryContainer}>
-          {tableLevelCheckedItem['PRIMARY-KEY'] && (
-            <div className={Styles.primaryInput}>
+          {showprecisionAfterDecimalInput && (
+            <div className={Styles.sizeValueContainer}>
               <Input
-                value={primaryKeyConstraintName}
-                onChange={primaryKeyConstraintNameChangeHandler}
+                value={precisionAfterDecimalInputValue}
+                onChange={precisionAfterDecimalInputValueChangeHandler}
                 type='text'
-                label='Primary-key constraint name'
-                size='huge'
-                color='blue'
-                autoFocus
-                focusColor='blue'
-              />
-            </div>
-          )}
-          {tableLevelCheckedItem['PRIMARY-KEY'] && (
-            <div className={Styles.uniqueDropDown} style={{ width: '40%' }}>
-              <PrimaryKeyDropDown
-                allTables={mainTableDetails}
-                currentTable={givenTable}
-                onAttrSelected={primaryKeyHandler}
-                currentValue={AddAttributeInputValue}
+                label='Precision after Decimal'
+                dimension='huge'
               />
             </div>
           )}
         </div>
-      )}
-      {tableLevelCheckedItem['FOREIGN-KEY'] && (
-        <div className={Styles.foreignContainer}>
-          {tableLevelCheckedItem['FOREIGN-KEY'] && (
-            <div className={Styles.foreignInput}>
-              <Input
-                value={foreignkeyConstraintName}
-                onChange={foreignKeyConstraintNameChangeHandler}
-                type='text'
-                label='Foreign constraint name'
-                size='huge'
-                color='blue'
-                focusColor='blue'
-              />
-            </div>
-          )}
-          {tableLevelCheckedItem['FOREIGN-KEY'] && (
-            <div className={Styles.foreignDropDown}>
-              <TableNameDropDown
-                otherTables={allTableDndDetails}
-                onTableSelected={referencingTableSelectedHandler}
-              />
-            </div>
-          )}
-          {tableLevelCheckedItem['FOREIGN-KEY'] && selectedReferencingTable && (
-            <div className={Styles.foreignDropDown}>
-              <SelectReferencingAttr
-                selectedTable={selectedReferencingTable}
-                mainTableDetails={mainTableDetails}
-                onAttrSelected={selectedReferencingAttrHandler}
-              />
-            </div>
-          )}
-        </div>
-      )}
-      {tableLevelCheckedItem['FOREIGN-KEY'] && (
-        <div className={Styles.foreignCheckBoxContainer}>
-          <h2 className={Styles.header} style={{ marginTop: '0' }}>
-            On delete:
-          </h2>
-          <div className={Styles.foreignCheckBox}>
+        <ConstraintContainer>
+          <div style={{ marginRight: '1rem' }}>
+            <h2 className={Styles.header}>Column Levlel constriants :-</h2>
             <ConstraintCheckBoxContainer
-              checkedConstraintObj={foreignCheckedItem}
-              onConstraintChecked={foreignCheckBoxChangeHandler}
-              checkBoxList={foreignConstraintCheckboxList}
+              checkedConstraintObj={columnLevelCheckedItem}
+              onConstraintChecked={columnLevelCheckBoxChangeHandler}
+              checkBoxList={columnConstraintCheckboxList}
             />
           </div>
-        </div>
-      )}
-      {tableLevelCheckedItem['CHECK'] && (
-        <div className={Styles.checkContainer}>
-          {tableLevelCheckedItem['CHECK'] && (
-            <div className={Styles.checkInput}>
-              <Input
-                value={checkConstraintName}
-                onChange={cehckConstraintNameChangeHandler}
-                type='text'
-                label='CHECK constraint name'
-                size='huge'
-                color='blue'
-                focusColor='blue'
+          <div style={{ marginLeft: '1rem' }}>
+            <h2 className={Styles.header}>Table Levlel constriants :-</h2>
+            <ConstraintCheckBoxContainer
+              checkedConstraintObj={tableLevelCheckedItem}
+              onConstraintChecked={tableLevelCheckBoxChangeHandler}
+              checkBoxList={getTableLevelCheckboxList(givenTable)}
+            />
+          </div>
+        </ConstraintContainer>
+        {columnLevelCheckedItem['DEFAULT'] && (
+          <div className={Styles.constraintNameContainer}>
+            <Input
+              value={defaultValue}
+              onChange={defaultChangeHandler}
+              type='text'
+              label='Default Value'
+              dimension='small'
+              autoFocus
+            />
+          </div>
+        )}
+        {tableLevelCheckedItem['UNIQUE'] && (
+          <div className={Styles.uniqueContainer}>
+            {tableLevelCheckedItem['UNIQUE'] && (
+              <div className={Styles.uniqueInput}>
+                <Input
+                  value={tableLevelUniqueConstraintName}
+                  onChange={tableLevelUniqueConstraintNameChangeHandler}
+                  type='text'
+                  dimension='huge'
+                  label='unique constraint name'
+                  color='blue'
+                  autoFocus
+                />
+              </div>
+            )}
+            {tableLevelCheckedItem['UNIQUE'] && (
+              <div className={Styles.uniqueDropDown} style={{ width: '40%' }}>
+                <MultipleUniqueDropDown
+                  allTables={mainTableDetails}
+                  currentTable={givenTable}
+                  onAttrSelected={tableLevelUniqueHandler}
+                  currentValue={AddAttributeInputValue}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {tableLevelCheckedItem['PRIMARY-KEY'] && (
+          <div className={Styles.primaryContainer}>
+            {tableLevelCheckedItem['PRIMARY-KEY'] && (
+              <div className={Styles.primaryInput}>
+                <Input
+                  value={primaryKeyConstraintName}
+                  onChange={primaryKeyConstraintNameChangeHandler}
+                  type='text'
+                  label='Primary-key constraint name'
+                  dimension='huge'
+                  autoFocus
+                />
+              </div>
+            )}
+            {tableLevelCheckedItem['PRIMARY-KEY'] && (
+              <div className={Styles.uniqueDropDown} style={{ width: '40%' }}>
+                <PrimaryKeyDropDown
+                  allTables={mainTableDetails}
+                  currentTable={givenTable}
+                  onAttrSelected={primaryKeyHandler}
+                  currentValue={AddAttributeInputValue}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {tableLevelCheckedItem['FOREIGN-KEY'] && (
+          <div className={Styles.foreignContainer}>
+            {tableLevelCheckedItem['FOREIGN-KEY'] && (
+              <div className={Styles.foreignInput}>
+                <Input
+                  value={foreignkeyConstraintName}
+                  onChange={foreignKeyConstraintNameChangeHandler}
+                  type='text'
+                  label='Foreign constraint name'
+                  dimension='huge'
+                />
+              </div>
+            )}
+            {tableLevelCheckedItem['FOREIGN-KEY'] && (
+              <div className={Styles.foreignDropDown}>
+                <TableNameDropDown
+                  otherTables={allTableDndDetails}
+                  onTableSelected={referencingTableSelectedHandler}
+                />
+              </div>
+            )}
+            {tableLevelCheckedItem['FOREIGN-KEY'] && selectedReferencingTable && (
+              <div className={Styles.foreignDropDown}>
+                <SelectReferencingAttr
+                  selectedTable={selectedReferencingTable}
+                  mainTableDetails={mainTableDetails}
+                  onAttrSelected={selectedReferencingAttrHandler}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {tableLevelCheckedItem['FOREIGN-KEY'] && (
+          <div className={Styles.foreignCheckBoxContainer}>
+            <h2 className={Styles.header} style={{ marginTop: '0' }}>
+              On Delete:
+            </h2>
+            <div className={Styles.foreignCheckBox}>
+              <ConstraintCheckBoxContainer
+                checkedConstraintObj={foreignCheckedItem}
+                onConstraintChecked={foreignCheckBoxChangeHandler}
+                checkBoxList={foreignConstraintCheckboxList}
               />
             </div>
-          )}
-          {tableLevelCheckedItem['CHECK'] && (
-            <div className={Styles.checkInputExpr}>
-              <Input
-                value={checkConstraintExpression}
-                onChange={cehckExpressionChangeHandler}
-                type='text'
-                label='CHECK expression'
-                size='huge'
-                color='blue'
-                focusColor='blue'
-              />
-            </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+        {tableLevelCheckedItem['CHECK'] && (
+          <div className={Styles.checkContainer}>
+            {tableLevelCheckedItem['CHECK'] && (
+              <div className={Styles.checkInput}>
+                <Input
+                  value={checkConstraintName}
+                  onChange={cehckConstraintNameChangeHandler}
+                  type='text'
+                  label='check constraint name'
+                  dimension='huge'
+                />
+              </div>
+            )}
+            {tableLevelCheckedItem['CHECK'] && (
+              <div className={Styles.checkInputExpr}>
+                <Input
+                  value={checkConstraintExpression}
+                  onChange={cehckExpressionChangeHandler}
+                  type='text'
+                  label='check expression'
+                  dimension='huge'
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </Modal>
   );
 }

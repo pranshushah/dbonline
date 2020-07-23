@@ -1,0 +1,43 @@
+@import '../../../utils/scss/spaces';
+.container {
+  position: fixed;
+  z-index: 513;
+  background-color: white;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.26);
+  transition: all 0.3s ease-out;
+}
+.containerHuge {
+  height: 95vh;
+  overflow-y: auto;
+}
+
+.medium {
+  width: 50%;
+  left: 25%;
+  top: 15%;
+}
+
+.large {
+  width: 70%;
+  left: 15%;
+  top: 5%;
+}
+
+.huge {
+  width: 96%;
+  left: 2%;
+  top: 2%;
+}
+
+.contentContainer {
+  padding: getSpace(1) * 1px;
+}
+.contentContainerHuge {
+  min-height: 70vh;
+}
+
+.action {
+  display: flex;
+  justify-content: flex-end;
+  padding: getSpace(1) * 1px;
+}

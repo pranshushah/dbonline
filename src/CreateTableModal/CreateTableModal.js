@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, Input } from 'react-ui-lib-pranshu';
 import uuid from 'uuid/v1';
+import Input from '../components/UI/Input/Input';
 import TableColorPickerList from '../components/TableColorPickerList/TableColorPickerList';
+import Modal from '../components/UI/Modal/Modal';
 import '../utils/Types';
+import Styles from './CreateTableModal.module.scss';
 /**
  * @param {{showModalState:boolean,
  * onModalConfirmed:Function,
@@ -78,28 +80,28 @@ function CreateTableModal({
 
   return (
     <Modal
-      theme='blue'
-      size='medium'
+      primary
+      size='large'
       title='Create Table'
       show={showModalState}
-      canConfirm={!tableError}
+      canConfirm
       canCancel
-      topAligned
       modalConfirmed={confirmModalHandler}
+      confirmDisabled={tableError}
       modalClosed={cancelModalHandler}>
-      <Input
-        label='Table Name'
-        color='blue'
-        autoFocus
-        focusColor='blue'
-        value={createTableInputValue}
-        onChange={createTableInputValueHandler}
-        size='large'
-      />
-      <TableColorPickerList
-        onTableColorSelected={updateTableColor}
-        selectedColor={tableColor}
-      />
+      <div className={Styles.container}>
+        <Input
+          label='Table Name'
+          autoFocus
+          value={createTableInputValue}
+          onChange={createTableInputValueHandler}
+          dimension='medium'
+        />
+        <TableColorPickerList
+          onTableColorSelected={updateTableColor}
+          selectedColor={tableColor}
+        />
+      </div>
     </Modal>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input } from 'react-ui-lib-pranshu';
-import Style from './DeleteAttrModal.module.css';
+import Modal from '../UI/Modal/Modal';
+import Input from '../UI/Input/Input';
+import Style from './DeleteAttrModal.module.scss';
 import '../../utils/Types';
 /**
  * @param {{showModalState:boolean,
@@ -120,26 +121,27 @@ function DeleteAttrModal({
 
   return (
     <Modal
-      theme='red'
       size='large'
       title={`Are sure You want To Delete ${attrName} in ${tableName} table`}
       show={showModalState}
-      canConfirm={!tableError}
+      canConfirm
       canCancel
-      topAligned
+      danger
+      confirmDisabled={tableError}
       modalConfirmed={confirmModalHandler}
       modalClosed={cancelModalHandler}>
-      <h1 className={Style.header}>Please Enter Attribute Name To Confirm</h1>
-      <Input
-        label='Attribute Name'
-        color='black'
-        autoFocus
-        value={deleteTableInputValue}
-        onChange={createTableInputValueHandler}
-        focusColor='black'
-        size='large'
-      />
-      <ul className={Style.listContainer}>{lis}</ul>
+      <div className={Style.container}>
+        <h1 className={Style.header}>Please Enter Attribute Name To Confirm</h1>
+        <Input
+          label='Attribute Name'
+          autoFocus
+          secondary
+          value={deleteTableInputValue}
+          onChange={createTableInputValueHandler}
+          dimension='medium'
+        />
+        <ul className={Style.listContainer}>{lis}</ul>
+      </div>
     </Modal>
   );
 }

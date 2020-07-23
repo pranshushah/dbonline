@@ -11,7 +11,7 @@ function DataTypeDropDown({ onNewDataSelected, selectedValue, ...props }) {
   }
   console.log(selectedValue);
   return (
-    <div style={{ margin: '4px', marginTop: '15px' }}>
+    <div style={{ marginTop: '18px' }}>
       <Select
         value={
           selectedValue ? { label: selectedValue, value: selectedValue } : null

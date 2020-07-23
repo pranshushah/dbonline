@@ -1,27 +1,18 @@
 import React, { MouseEvent } from 'react';
 import styled from 'styled-components';
 import TableColor from '../../utils/tableColors';
+import Styles from './TableColorPickerList.module.scss';
 
 const ColorPickerSpan = styled.span`
   width: 10px;
   padding: 8px;
-  margin: 6px;
+  margin: 8px;
   cursor: pointer;
   background-color: ${(props) => props.bgColor};
-  border: ${(props) => `1px solid ${props.bgColor}`};
-`;
-
-const ColorPickerListDiv = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin: 6px;
-  align-items: center;
-`;
-
-const TableHeading = styled.h3`
-  margin: 5px;
-  margin-top: 15px;
-  color: rgb(50, 50, 50);
+  outline: ${(props) => `1px solid ${props.bgColor}`};
+  &::first-child {
+    margin-left: 0;
+  }
 `;
 
 /**
@@ -50,7 +41,9 @@ function TableColorPickerList({
     return (
       <ColorPickerSpan
         key={id}
-        style={selectedColor === color ? { border: '2px solid #A9A9A9' } : null}
+        style={
+          selectedColor === color ? { outline: '2px solid #A9A9A9' } : null
+        }
         onClick={ClickHandler}
         bgColor={color}
       />
@@ -58,10 +51,10 @@ function TableColorPickerList({
   });
   return (
     <>
-      <TableHeading>*Pick Your Color</TableHeading>
-      <ColorPickerListDiv>{ColorPickerList}</ColorPickerListDiv>
+      <h3 className={Styles.heading}>*Pick Your Color</h3>
+      <div className={Styles.colorContainer}>{ColorPickerList}</div>
     </>
   );
 }
 
-export default React.memo(TableColorPickerList);
+export default TableColorPickerList;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input } from 'react-ui-lib-pranshu';
-import Style from './DeleteModal.module.css';
+import Input from '../../components/UI/Input/Input';
+import Modal from '../../components/UI/Modal/Modal';
+import Style from './DeleteModal.module.scss';
 import '../../utils/Types';
 /**
  * @param {{showModalState:boolean,
@@ -42,25 +43,26 @@ function DeleteTableModal({
 
   return (
     <Modal
-      theme='red'
       size='large'
+      danger
       title={`Are sure You want To Delete ${tableName} table`}
       show={showModalState}
-      canConfirm={!tableError}
+      canConfirm
       canCancel
-      topAligned
+      confirmDisabled={tableError}
       modalConfirmed={confirmModalHandler}
       modalClosed={cancelModalHandler}>
-      <h1 className={Style.header}>Please Enter Table Name To Confirm</h1>
-      <Input
-        label='Table Name'
-        color='black'
-        autoFocus
-        value={deleteTableInputValue}
-        onChange={createTableInputValueHandler}
-        focusColor='black'
-        size='large'
-      />
+      <div className={Style.container}>
+        <h1 className={Style.header}>Please Enter Table Name To Confirm</h1>
+        <Input
+          label='Table Name'
+          autoFocus
+          secondary
+          value={deleteTableInputValue}
+          onChange={createTableInputValueHandler}
+          dimension='medium'
+        />
+      </div>
     </Modal>
   );
 }
