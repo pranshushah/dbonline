@@ -2,7 +2,6 @@ import React, { useState, useReducer } from 'react';
 import TableContainer from './TableContainer/TableContainer';
 import Grid from './Grid';
 import ItemDndTypes from './utils/dndTypes';
-import { useDrop } from 'react-dnd';
 import { AddAttributeLink } from './components/TableComponent/TableComponents';
 import AddAttributeModal from './AddAttributeModal/AddAttributeModal';
 import './utils/Types';
@@ -11,7 +10,8 @@ import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
 import EditTableModal from './components/EditTableModal/EditTableModal';
 import mainGroundReducer from './utils/reducers/mainGroundReducer';
 import DeleteAttrModal from './components/DeleteAttrModal/DeleteAttrModal';
-
+import { ArcherContainer, ArcherElement } from 'react-archer';
+import XArrow from 'react-xarrows';
 /**
  * @param {{
  * showGrid:boolean,
@@ -37,29 +37,10 @@ function MainGround({
     const updatedTableDndDetails = tableDndDetails.filter(
       (tableDndDetail) => tableDndDetail.id !== newItem.id,
     );
-    updatedTableDndDetails.push(newItem);
-    onTableDndDetailsChange(updatedTableDndDetails);
+    const newTable = JSON.parse(JSON.stringify(updatedTableDndDetails));
+    newTable.push(newItem);
+    onTableDndDetailsChange(newTable);
   }
-  const [, drop] = useDrop({
-    accept: ItemDndTypes.TABLE,
-    /**
-     * @param {tableDndDetailsObj} item
-     * @param {DropTargetMonitor} monitor
-     */
-    drop(item, monitor) {
-      const Delta = monitor.getDifferenceFromInitialOffset();
-      const left = Math.round(item.left + Delta.x);
-      const top = Math.round(item.top + Delta.y);
-      moveTable({
-        id: item.id,
-        top,
-        left,
-        tableName: item.tableName,
-        color: item.color,
-      });
-      return;
-    },
-  });
 
   const [state, dispatch] = useReducer(mainGroundReducer, {
     addAttributeShowModal: false,
@@ -337,71 +318,96 @@ function MainGround({
   }
 
   const tables = tableDndDetails.map((tableDndDetail) => {
+    const index = mainTableDetails.findIndex(
+      (tableObj) => tableObj.id === tableDndDetail.id,
+    );
+    let relArrow = [];
+    if (mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.length > 0) {
+      relArrow = mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.map(
+        (foreignObj, index) => {
+          return foreignObj.ReferencingTable === tableDndDetail.id ? null : (
+            <XArrow
+              key={index}
+              start={tableDndDetail.id}
+              end={foreignObj.ReferencingTable}
+              color={tableDndDetail.color}
+            />
+          );
+        },
+      );
+    }
     return (
-      <TableContainer
-        tableDndDetail={tableDndDetail}
-        key={tableDndDetail.id}
-        onEditClick={editTableHandler}
-        onDeleteClick={deleteTableHandler}>
-        <MainTable
-          mainTableDetails={mainTableDetails}
-          tableName={tableDndDetail.tableName}
-          onAttrDelete={attrDeleteHandler}
-        />
-        <AddAttributeLink
+      <div key={tableDndDetail.id}>
+        <TableContainer
+          id={tableDndDetail.id}
+          moveTable={moveTable}
           tableDndDetail={tableDndDetail}
-          onClick={AddAttributeLinkClickHandler}
-          fontColor={tableDndDetail.color}>
-          Add Attribute
-        </AddAttributeLink>
-      </TableContainer>
+          onEditClick={editTableHandler}
+          onDeleteClick={deleteTableHandler}>
+          <MainTable
+            mainTableDetails={mainTableDetails}
+            tableName={tableDndDetail.tableName}
+            onAttrDelete={attrDeleteHandler}
+            tableDndDetails={tableDndDetails}
+          />
+          <AddAttributeLink
+            tableDndDetail={tableDndDetail}
+            onClick={AddAttributeLinkClickHandler}
+            fontColor={tableDndDetail.color}>
+            Add Attribute
+          </AddAttributeLink>
+        </TableContainer>
+        {relArrow}
+      </div>
     );
   });
   return (
-    <Grid ref={drop} showGrid={showGrid}>
-      {tables}
-      {addAttributeShowModal && (
-        <AddAttributeModal
-          showModalState={addAttributeShowModal}
-          onModalConfirmed={confirmAddModalHandler}
-          onModalClosed={cancelAddModalHandler}
-          tableName={selectedTableDndDetailsForAddModal.tableName}
-          allTableDndDetails={tableDndDetails}
-          mainTableDetails={mainTableDetails}
-          givenTable={selectedTableDetailsForAddModal}
-        />
-      )}
-      {showDeleteTableModal && (
-        <DeleteTableModal
-          showModalState={showDeleteTableModal}
-          tableName={selectedTableDndDetailsForDeleteModal.tableName}
-          onModalClosed={deleteTableModalCancelHandler}
-          onModalConfirmed={deleteTableModalConfirmHandler}
-        />
-      )}
-      {showEditTableModal && (
-        <EditTableModal
-          showModalState={showEditTableModal}
-          onModalConfirmed={editTableModalConfirmHandler}
-          onModalClosed={editTableModalCancelHandler}
-          tableColor={editTableColor}
-          tableName={editTableName}
-          onTableColorChange={setEditTableColor}
-          onTableNameChange={setEditTableName}
-          mainTableDetails={mainTableDetails}
-          selectedTable={selectedTableDetailsForEditModal}
-        />
-      )}
-      {showDeleteAttributeModal && (
-        <DeleteAttrModal
-          showModalState={showDeleteAttributeModal}
-          onModalClosed={deleteAttributeCancelHandler}
-          onModalConfirmed={deleteAttributeConfirmHandler}
-          tableName={selectedTableNameForDeleteAttribute}
-          attrName={selectedAttributeNameForDeleteAttribute}
-          givenTable={selectedTableForDeleteAttribute}
-        />
-      )}
+    <Grid showGrid={showGrid} className='.head'>
+      <ArcherContainer>
+        {tables}
+        {addAttributeShowModal && (
+          <AddAttributeModal
+            showModalState={addAttributeShowModal}
+            onModalConfirmed={confirmAddModalHandler}
+            onModalClosed={cancelAddModalHandler}
+            tableName={selectedTableDndDetailsForAddModal.tableName}
+            allTableDndDetails={tableDndDetails}
+            mainTableDetails={mainTableDetails}
+            givenTable={selectedTableDetailsForAddModal}
+          />
+        )}
+        {showDeleteTableModal && (
+          <DeleteTableModal
+            showModalState={showDeleteTableModal}
+            tableName={selectedTableDndDetailsForDeleteModal.tableName}
+            onModalClosed={deleteTableModalCancelHandler}
+            onModalConfirmed={deleteTableModalConfirmHandler}
+          />
+        )}
+        {showEditTableModal && (
+          <EditTableModal
+            showModalState={showEditTableModal}
+            onModalConfirmed={editTableModalConfirmHandler}
+            onModalClosed={editTableModalCancelHandler}
+            tableColor={editTableColor}
+            tableName={editTableName}
+            onTableColorChange={setEditTableColor}
+            onTableNameChange={setEditTableName}
+            mainTableDetails={mainTableDetails}
+            selectedTable={selectedTableDetailsForEditModal}
+          />
+        )}
+        {showDeleteAttributeModal && (
+          <DeleteAttrModal
+            showModalState={showDeleteAttributeModal}
+            onModalClosed={deleteAttributeCancelHandler}
+            onModalConfirmed={deleteAttributeConfirmHandler}
+            tableName={selectedTableNameForDeleteAttribute}
+            attrName={selectedAttributeNameForDeleteAttribute}
+            givenTable={selectedTableForDeleteAttribute}
+          />
+        )}
+      </ArcherContainer>
     </Grid>
   );
 }

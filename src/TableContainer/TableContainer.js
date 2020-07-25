@@ -7,8 +7,9 @@ import {
 import ItemDndTypes from '../utils/dndTypes';
 import EditIcon from '../components/UI/editIcon/Edit';
 import DeleteIcon from '../components/UI/DeleteIcon/Delete';
-import { useDrag, DragSourceMonitor } from 'react-dnd';
 import Styles from './TableContainer.module.css';
+import Draggable from 'react-draggable';
+
 /**
  * @typedef {object} tableDndDetailsObj
  * @property {number} top
@@ -23,6 +24,7 @@ import Styles from './TableContainer.module.css';
  * tableDndDetail:tableDndDetailsObj,
  * onEditClick:Function,
  * onDeleteClick:Function,
+ * moveTable:Function
  * }} props
  */
 
@@ -30,50 +32,51 @@ function TableContainer({
   tableDndDetail,
   children,
   onEditClick,
+  moveTable,
   onDeleteClick,
   ...props
 }) {
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { ...tableDndDetail, type: ItemDndTypes.TABLE },
-    /**
-     * @param {DragSourceMonitor} moniter
-     */
-    collect(moniter) {
-      return {
-        isDragging: moniter.isDragging(),
-      };
-    },
-  });
   function editClickHandler() {
     onEditClick(tableDndDetail);
   }
   function deleteClickHandler() {
     onDeleteClick(tableDndDetail);
   }
+  function dragHandler(e, data) {
+    const newDetail = {
+      ...tableDndDetail,
+      left: tableDndDetail.left + data.deltaX,
+      top: tableDndDetail.top + data.deltaY,
+    };
+    moveTable(newDetail);
+  }
   return (
-    <TableCard
-      left={tableDndDetail.left}
-      isDragging={isDragging}
-      top={tableDndDetail.top}
-      ref={preview}>
-      <div
-        style={{
-          position: 'relative',
-          border: '1px solid rgb(66, 66, 66)',
-          borderRadius: '1px',
-        }}>
-        <TableHeader ref={drag} bgColor={tableDndDetail.color}>
-          {tableDndDetail.tableName}
-        </TableHeader>
-        <span className={Styles.edit} onClick={editClickHandler}>
-          <EditIcon />
-        </span>
-        <span className={Styles.delete} onClick={deleteClickHandler}>
-          <DeleteIcon />
-        </span>
-        <TableContentContainer>{children}</TableContentContainer>
-      </div>
-    </TableCard>
+    <Draggable
+      handle={'h3'}
+      bounds='main'
+      position={{ x: tableDndDetail.left, y: tableDndDetail.top }}
+      onStop={dragHandler}
+      onDrag={dragHandler}>
+      <TableCard {...props}>
+        <div
+          style={{
+            position: 'relative',
+            border: '1px solid rgb(66, 66, 66)',
+            borderRadius: '1px',
+          }}>
+          <TableHeader className='.handle' bgColor={tableDndDetail.color}>
+            {tableDndDetail.tableName}
+          </TableHeader>
+          <span className={Styles.edit} onClick={editClickHandler}>
+            <EditIcon />
+          </span>
+          <span className={Styles.delete} onClick={deleteClickHandler}>
+            <DeleteIcon />
+          </span>
+          <TableContentContainer>{children}</TableContentContainer>
+        </div>
+      </TableCard>
+    </Draggable>
   );
 }
 

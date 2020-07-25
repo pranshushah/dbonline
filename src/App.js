@@ -26,8 +26,6 @@ export default function App() {
     'mainTableDetails',
   );
 
-  console.log(mainTableDetails);
-
   /**
    * @param {tableDndDetailsObj[]} newTableDndDetails
    */

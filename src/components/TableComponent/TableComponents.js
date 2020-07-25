@@ -8,8 +8,6 @@ const TableCard = styled.div`
   transition: 0.2s;
   margin: 10px;
   position: absolute;
-  left: ${(props) => `${props.left}px`};
-  top: ${(props) => `${props.top}px`};
   &:hover {
     box-shadow: 0 0px 24px 8px rgba(0, 0, 0, 0.2);
   }

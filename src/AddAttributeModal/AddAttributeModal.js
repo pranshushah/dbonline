@@ -14,7 +14,6 @@ import PrimaryKeyDropDown from './PrimaryDropDown';
 import { randomString } from '../utils/helper-function/randomString';
 import { oracleSizeError } from '../utils/helper-function/size-pre-error';
 import { constraintError } from '../utils/helper-function/constraintError';
-import { debounce } from '../utils/helper-function/debounce';
 import {
   AddObjModal,
   AddAttributeReducer,
@@ -455,13 +454,13 @@ function AddAttributeModal({
   function cehckExpressionChangeHandler(e) {
     const value = e.target.value;
     dispatch({ type: 'CHANGE_CHECK_EXPR', payload: { value } });
+    checkConstraintExpressionObjChangeHandler(checkConstraintExpression);
   }
 
   useEffect(() => {
     if (tableLevelCheckedItem['CHECK'] && !checkConstraintExpression) {
       dispatch({ type: 'CHECK_EXPR_ERROR' });
     } else {
-      checkConstraintExpressionObjChangeHandler(checkConstraintExpression);
       dispatch({ type: 'CHECK_EXPR_NOERROR' });
     }
   }, [tableLevelCheckedItem, checkConstraintExpression]);
@@ -506,6 +505,23 @@ function AddAttributeModal({
   // GETTING DATA FOR CHECKBOX
 
   // all error
+
+  console.table([
+    attributeValueError,
+    selectDataTypeError,
+    selectedReferencingTableError,
+    selectedReferencingAttrError,
+    defaultValueError,
+    tableLevelUniqueError,
+    primaryKeyError,
+    checkConstraintExpressionError,
+    sizeInputValueError,
+    primaryKeyConstraintNameError,
+    foreignkeyConstraintNameError,
+    tableLevelUniqueConstraintNameError,
+    checkConstraintExpressionObjError,
+    checkConstraintNameError,
+  ]);
 
   useEffect(() => {
     if (

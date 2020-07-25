@@ -7,7 +7,7 @@ import { faKey } from '@fortawesome/free-solid-svg-icons';
 import EditIcon from '../UI/editIcon/Edit';
 import DeleteIcon from '../UI/DeleteIcon/Delete';
 import Styles from './MainTable.module.css';
-
+import Xarrow from 'react-xarrows';
 import 'react-virtualized/styles.css';
 
 /**
@@ -20,10 +20,16 @@ import 'react-virtualized/styles.css';
  * tableName:string,
  * mainTableDetails:mainTableDetailsType[]
  * onAttrDelete:Function
+ * tableDndDetails:tableDndDetailsObj[]
  * }} props
  */
 
-function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
+function MainTable({
+  mainTableDetails,
+  tableName,
+  onAttrDelete,
+  tableDndDetails,
+}) {
   let nameWidth = 85;
   let dataTypeWidth = 105;
   let tableWidth = 255;
@@ -63,6 +69,58 @@ function MainTable({ mainTableDetails, tableName, onAttrDelete }) {
       return '';
     }
   }
+
+  // function editCellRendererHandler(attrName, attrIndex, tableName, onDelete) {
+  //   const render = (
+  //     <div>
+  //       <span className={Styles.Icon}>
+  //         <EditIcon size={'sm'} />
+  //       </span>
+  //       <span
+  //         className={Styles.Icon}
+  //         onClick={onDelete.bind(
+  //           this,
+  //           tableName,
+  //           attrName,
+  //           attrIndex,
+  //           mainTableDetails[index],
+  //         )}
+  //         style={{ marginLeft: '2px' }}>
+  //         <DeleteIcon size={'sm'} />
+  //       </span>
+  //     </div>
+  //   );
+  //   if (mainTableDetails[index].attributes[attrIndex].isFOREIGNKEY) {
+  //     const reIndex = mainTableDetails[
+  //       index
+  //     ].tableLevelConstraint.FOREIGNKEY.findIndex(
+  //       (foreignObj) =>
+  //         mainTableDetails[index].attributes[attrIndex].id ===
+  //         foreignObj.referencedAtt,
+  //     );
+  //     return (
+  //       <ArcherElement
+  //         id={mainTableDetails[index].attributes[attrIndex].id}
+  //         relations={[
+  //           {
+  //             targetId:
+  //               mainTableDetails[index].tableLevelConstraint.FOREIGNKEY[reIndex]
+  //                 .ReferencingAtt,
+  //             targetAnchor: 'right',
+  //             sourceAnchor: 'right',
+  //           },
+  //         ]}>
+  //         {render}
+  //       </ArcherElement>
+  //     );
+  //   } else {
+  //     return (
+  //       <ArcherElement id={mainTableDetails[index].attributes[attrIndex].id}>
+  //         {render}
+  //       </ArcherElement>
+  //     );
+  //   }
+  // }
 
   function editCellRendererHandler(attrName, attrIndex, tableName, onDelete) {
     return (

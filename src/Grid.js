@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-const Grid = styled.div`
+const Grid = styled.main`
   width: 100%;
   height: 170vh;
   position: relative;
-  background: ${props =>
+  background: ${(props) =>
     props.showGrid
       ? `linear-gradient(-90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
     linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
