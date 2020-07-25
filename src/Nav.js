@@ -4,10 +4,12 @@ import {
   SubMenuContiainer,
   SubNavLink,
 } from './components/UI/Navbar/NavLink/NavLink';
-
 import NavbarContainer from './components/UI/Navbar/NavContainer';
 import NavLogo from './components/UI/Navbar/NavLogo/NavLogo';
 import NavLinksContainer from './components/UI/Navbar/NavLinksContainer/NavLinksContainer';
+import html2canvas from 'html2canvas';
+import pdfMake from 'pdfmake/build/pdfmake';
+
 /**
  * @param {{showGrid:boolean,
  * showSideBar:boolean,
@@ -16,7 +18,13 @@ import NavLinksContainer from './components/UI/Navbar/NavLinksContainer/NavLinks
  * onSideBarClick:Function}} props
  */
 
-function Nav(props) {
+function Nav({ Main, mainTableDetails, tableDndDetails, ...props }) {
+  function createPDf() {
+    window.print();
+    window.onafterprint = function (e) {
+      console.log(e);
+    };
+  }
   return (
     <NavbarContainer>
       <NavLogo text='DB ONLINE' />
@@ -39,8 +47,14 @@ function Nav(props) {
             />
           </SubMenuContiainer>
         </NavLink>
-        <NavLink text='download' />
-        <NavLink text='Login/Signup' />
+        <NavLink text='download'>
+          <SubMenuContiainer>
+            <SubNavLink text='as PDF' onClick={createPDf} />
+            <SubNavLink text='as Code' />
+          </SubMenuContiainer>
+        </NavLink>
+        <NavLink text='code' />
+        <NavLink text='Guest' />
       </NavLinksContainer>
     </NavbarContainer>
   );

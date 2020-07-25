@@ -28,6 +28,12 @@ const Grid = styled.main`
   background-size: 16px 16px, 16px 16px, 80px 80px, 80px 80px, 80px 80px,
     80px 80px, 80px 80px, 80px 80px`
       : null};
+
+  @media print {
+    & {
+      background: none;
+    }
+  }
 `;
 
 export default Grid;

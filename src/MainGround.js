@@ -10,15 +10,15 @@ import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
 import EditTableModal from './components/EditTableModal/EditTableModal';
 import mainGroundReducer from './utils/reducers/mainGroundReducer';
 import DeleteAttrModal from './components/DeleteAttrModal/DeleteAttrModal';
-import { ArcherContainer, ArcherElement } from 'react-archer';
 import XArrow from 'react-xarrows';
+
 /**
  * @param {{
  * showGrid:boolean,
  * tableDndDetails:tableDndDetailsObj[],
  * mainTableDetails:mainTableDetailsType[],
  * onTableDndDetailsChange:Function,
- * onMainTableDetailsChange:Function
+ * onMainTableDetailsChange:Function,
  * }} props
  */
 function MainGround({
@@ -362,8 +362,8 @@ function MainGround({
     );
   });
   return (
-    <Grid showGrid={showGrid} className='.head'>
-      <ArcherContainer>
+    <Grid showGrid={showGrid}>
+      <div id='pdf' style={{ height: '100%' }}>
         {tables}
         {addAttributeShowModal && (
           <AddAttributeModal
@@ -407,7 +407,7 @@ function MainGround({
             givenTable={selectedTableForDeleteAttribute}
           />
         )}
-      </ArcherContainer>
+      </div>
     </Grid>
   );
 }

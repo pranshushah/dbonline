@@ -11,7 +11,7 @@ function SideBar(props) {
   const [width, setWidth] = useState(300);
 
   function WidthHandler(e, direction, ref, d) {
-    setWidth(width => width + d.width);
+    setWidth((width) => width + d.width);
   }
   return (
     <Resizable
@@ -40,7 +40,7 @@ function SideBar(props) {
           width: '100%',
           marginLeft: '5px',
           zIndex: 5,
-          backgroundColor: 'black',
+          backgroundColor: '#750F4C',
         }}
       />
     </Resizable>

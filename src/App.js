@@ -66,6 +66,10 @@ export default function App() {
     toggleSideBar((prevShowSidebar) => !prevShowSidebar);
   }
 
+  function pdf() {
+    window.print();
+  }
+
   useEffect(() => {
     function shortcutHandler(e) {
       // ctrl + b (sidebar toggle)
@@ -92,6 +96,9 @@ export default function App() {
         onGridClick={showGridHandler}
         onCreateTableClick={newTableCreatedHandler}
         onSideBarClick={showSidebarHandler}
+        Main={MainGround}
+        mainTableDetails={mainTableDetails}
+        tableDndDetails={tableDndDetails}
       />
       <CreateTableModal
         showModalState={showModal}
@@ -125,6 +132,10 @@ export default function App() {
         <MenuItem onClick={showSidebarHandler} className={'menuItem'}>
           {showSidebar ? 'hide sidebar' : 'show sidebar'}
           <span className={'shrotcut'}>ctrl + b</span>
+        </MenuItem>
+        <MenuItem onClick={pdf} className={'menuItem'}>
+          export as pdf
+          <span className={'shrotcut'}>ctrl + p</span>
         </MenuItem>
       </ContextMenu>
     </>

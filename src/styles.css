@@ -26,17 +26,18 @@
 .menu {
   background-color: rgb(60, 60, 60);
   color: whitesmoke;
-  padding-top: 1rem;
+  padding-top: 8px;
   padding-bottom: 1rem;
   text-transform: capitalize;
   font-size: 1rem;
   position: relative;
-  width: 250px;
-  height: 160px;
+  width: 270px;
 }
 
 .menuItem {
-  padding: 0.6rem 0.9rem;
+  padding: 8px;
+  padding-left: 24px;
+  line-height: 24px;
   cursor: pointer;
 }
 
