@@ -3,10 +3,9 @@ import {
   TableCard,
   TableHeader,
   TableContentContainer,
-} from '../components/TableComponent/TableComponents';
-import ItemDndTypes from '../utils/dndTypes';
-import EditIcon from '../components/UI/editIcon/Edit';
-import DeleteIcon from '../components/UI/DeleteIcon/Delete';
+} from '../TableComponent/TableComponents';
+import EditIcon from '../UI/editIcon/Edit';
+import DeleteIcon from '../UI/DeleteIcon/Delete';
 import Styles from './TableContainer.module.css';
 import Draggable from 'react-draggable';
 

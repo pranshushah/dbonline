@@ -1,15 +1,14 @@
 import React, { useState, useReducer } from 'react';
-import TableContainer from './TableContainer/TableContainer';
-import Grid from './Grid';
-import ItemDndTypes from './utils/dndTypes';
-import { AddAttributeLink } from './components/TableComponent/TableComponents';
-import AddAttributeModal from './AddAttributeModal/AddAttributeModal';
-import './utils/Types';
-import MainTable from './components/TableComponent/MainTable';
-import DeleteTableModal from './components/DeleteTableModal/DeleteTableModal';
-import EditTableModal from './components/EditTableModal/EditTableModal';
-import mainGroundReducer from './utils/reducers/mainGroundReducer';
-import DeleteAttrModal from './components/DeleteAttrModal/DeleteAttrModal';
+import TableContainer from '../TableContainer/TableContainer';
+import Grid from '../Grid/Grid';
+import { AddAttributeLink } from '../TableComponent/TableComponents';
+import AddAttributeModal from '../../AddAttributeModal/AddAttributeModal';
+import '../../utils/Types';
+import MainTable from '../TableComponent/MainTable';
+import DeleteTableModal from '../DeleteTableModal/DeleteTableModal';
+import EditTableModal from '../EditTableModal/EditTableModal';
+import mainGroundReducer from '../../utils/reducers/mainGroundReducer';
+import DeleteAttrModal from '../DeleteAttrModal/DeleteAttrModal';
 import XArrow from 'react-xarrows';
 
 /**

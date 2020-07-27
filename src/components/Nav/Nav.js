@@ -3,12 +3,12 @@ import {
   NavLink,
   SubMenuContiainer,
   SubNavLink,
-} from './components/UI/Navbar/NavLink/NavLink';
-import NavbarContainer from './components/UI/Navbar/NavContainer';
-import NavLogo from './components/UI/Navbar/NavLogo/NavLogo';
-import NavLinksContainer from './components/UI/Navbar/NavLinksContainer/NavLinksContainer';
-import './utils/Types';
-import { code } from './utils/helper-function/createCode';
+} from '../UI/Navbar/NavLink/NavLink';
+import NavbarContainer from '../UI/Navbar/NavContainer';
+import NavLogo from '../UI/Navbar/NavLogo/NavLogo';
+import NavLinksContainer from '../UI/Navbar/NavLinksContainer/NavLinksContainer';
+import '../../utils/Types';
+import { code } from '../../utils/helper-function/createCode';
 
 /**
  * @param {{showGrid:boolean,

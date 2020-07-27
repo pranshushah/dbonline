@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
-import Nav from './Nav';
-import MainGround from './MainGround';
-import SideBar from './Sidebar';
+import Nav from './components/Nav/Nav';
+import MainGround from './components/MainGround/MainGround';
+import SideBar from './components/Sidebar/Sidebar';
 import { DndProvider } from 'react-dnd';
 import backend from 'react-dnd-html5-backend';
 import CreateTableModal from './CreateTableModal/CreateTableModal';
@@ -92,8 +92,9 @@ export default function App() {
         e.isTrusted
       ) {
         showGridHandler();
-        //alt + t
-      } else if (
+      }
+      //alt + t (new table)
+      else if (
         !e.ctrlKey &&
         e.which === 84 &&
         e.altKey &&
@@ -101,7 +102,9 @@ export default function App() {
         e.isTrusted
       ) {
         newTableCreatedHandler();
-      } else if (
+      }
+      // alt + c (get code)
+      else if (
         !e.ctrlKey &&
         e.which === 67 &&
         e.altKey &&
@@ -109,7 +112,9 @@ export default function App() {
         e.isTrusted
       ) {
         code(mainTableDetails);
-      } else if (
+      }
+      // alt + p (print design)
+      else if (
         !e.ctrlKey &&
         e.which === 80 &&
         e.altKey &&
