@@ -24,7 +24,7 @@
  * @property {boolean} [isFOREIGNKEY]
  * @property {boolean} [isAUTOINCREMENT]
  * @property {string} [DEFAULT]
- * @property {string[]} [inTableLevelUniquConstraint]
+ * @property {string[]} inTableLevelUniquConstraint
  */
 
 /**

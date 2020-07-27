@@ -506,23 +506,6 @@ function AddAttributeModal({
 
   // all error
 
-  console.table([
-    attributeValueError,
-    selectDataTypeError,
-    selectedReferencingTableError,
-    selectedReferencingAttrError,
-    defaultValueError,
-    tableLevelUniqueError,
-    primaryKeyError,
-    checkConstraintExpressionError,
-    sizeInputValueError,
-    primaryKeyConstraintNameError,
-    foreignkeyConstraintNameError,
-    tableLevelUniqueConstraintNameError,
-    checkConstraintExpressionObjError,
-    checkConstraintNameError,
-  ]);
-
   useEffect(() => {
     if (
       !attributeValueError &&

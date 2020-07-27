@@ -38,14 +38,16 @@ function SubMenuContiainer({ children }) {
 /**
  * @param {{
  * text:string,
+ * shortcut:string,
  * } & liProps} props
  */
 
-function SubNavLink({ text, ...props }) {
+function SubNavLink({ text, shortcut, ...props }) {
   return (
     <li className={Styles.subNavLink} {...props}>
       <a href='/#' className={Styles.subLink}>
         {text}
+        {shortcut && <span className={Styles.shortcut}>{shortcut}</span>}
       </a>
     </li>
   );

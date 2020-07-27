@@ -9,7 +9,6 @@ function DataTypeDropDown({ onNewDataSelected, selectedValue, ...props }) {
   function changeHandler(value) {
     onNewDataSelected(value.value);
   }
-  console.log(selectedValue);
   return (
     <div style={{ marginTop: '18px' }}>
       <Select

@@ -9,7 +9,7 @@ import CreateTableModal from './CreateTableModal/CreateTableModal';
 import './utils/Types';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { useLocalStorage } from './utils/customHooks/useLocalStorage';
-
+import { code } from './utils/helper-function/createCode';
 export default function App() {
   const [showGrid, toggleShowGrid] = useState(true);
   const [showSidebar, toggleSideBar] = useState(false);
@@ -72,21 +72,56 @@ export default function App() {
 
   useEffect(() => {
     function shortcutHandler(e) {
-      // ctrl + b (sidebar toggle)
-      if (e.ctrlKey && e.which === 66) {
+      console.log(e);
+      // alt + s (sidebar toggle)
+      if (
+        e.altKey &&
+        e.which === 83 &&
+        e.isTrusted &&
+        !e.ctrlKey &&
+        !e.shiftKey
+      ) {
         showSidebarHandler();
       }
-      // ctrl + i (grid toggle)
-      else if (e.ctrlKey && e.which === 73 && !e.shiftKey) {
+      // alt + g (grid toggle)
+      else if (
+        e.altKey &&
+        e.which === 71 &&
+        !e.shiftKey &&
+        !e.ctrlKey &&
+        e.isTrusted
+      ) {
         showGridHandler();
-        //ctrl + shift + s
-      } else if (e.ctrlKey && e.which === 83 && e.shiftKey) {
+        //alt + t
+      } else if (
+        !e.ctrlKey &&
+        e.which === 84 &&
+        e.altKey &&
+        !e.shiftKey &&
+        e.isTrusted
+      ) {
         newTableCreatedHandler();
+      } else if (
+        !e.ctrlKey &&
+        e.which === 67 &&
+        e.altKey &&
+        !e.shiftKey &&
+        e.isTrusted
+      ) {
+        code(mainTableDetails);
+      } else if (
+        !e.ctrlKey &&
+        e.which === 80 &&
+        e.altKey &&
+        !e.shiftKey &&
+        e.isTrusted
+      ) {
+        pdf();
       }
     }
     document.addEventListener('keyup', shortcutHandler);
     return () => document.removeEventListener('keyup', shortcutHandler);
-  }, []);
+  }, [mainTableDetails]);
 
   return (
     <>
@@ -123,19 +158,23 @@ export default function App() {
       </ContextMenuTrigger>
       <ContextMenu id='same_unique_identifier' className={'menu'}>
         <MenuItem onClick={newTableCreatedHandler} className={'menuItem'}>
-          Add table <span className={'shrotcut'}>ctrl + shift + s</span>
+          Add table <span className={'shrotcut'}>alt + t</span>
         </MenuItem>
         <MenuItem onClick={showGridHandler} className={'menuItem'}>
           {showGrid ? 'hide grid' : 'show grid'}{' '}
-          <span className={'shrotcut'}>ctrl + i</span>
+          <span className={'shrotcut'}>alt + g</span>
         </MenuItem>
         <MenuItem onClick={showSidebarHandler} className={'menuItem'}>
           {showSidebar ? 'hide sidebar' : 'show sidebar'}
-          <span className={'shrotcut'}>ctrl + b</span>
+          <span className={'shrotcut'}>alt + s</span>
         </MenuItem>
         <MenuItem onClick={pdf} className={'menuItem'}>
           export as pdf
-          <span className={'shrotcut'}>ctrl + p</span>
+          <span className={'shrotcut'}>alt + p</span>
+        </MenuItem>
+        <MenuItem onClick={() => code(mainTableDetails)} className={'menuItem'}>
+          export as code
+          <span className={'shrotcut'}>alt + c</span>
         </MenuItem>
       </ContextMenu>
     </>
