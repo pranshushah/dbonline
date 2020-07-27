@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import uuid from 'uuid/v1';
-import Input from '../components/UI/Input/Input';
-import TableColorPickerList from '../components/TableColorPickerList/TableColorPickerList';
-import Modal from '../components/UI/Modal/Modal';
-import '../utils/Types';
+import Input from '../UI/Input/Input';
+import TableColorPickerList from '../TableColorPickerList/TableColorPickerList';
+import Modal from '../UI/Modal/Modal';
+import '../../utils/Types';
 import Styles from './CreateTableModal.module.scss';
 /**
  * @param {{showModalState:boolean,

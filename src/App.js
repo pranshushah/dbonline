@@ -5,7 +5,7 @@ import MainGround from './components/MainGround/MainGround';
 import SideBar from './components/Sidebar/Sidebar';
 import { DndProvider } from 'react-dnd';
 import backend from 'react-dnd-html5-backend';
-import CreateTableModal from './CreateTableModal/CreateTableModal';
+import CreateTableModal from './components/CreateTableModal/CreateTableModal';
 import './utils/Types';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { useLocalStorage } from './utils/customHooks/useLocalStorage';
@@ -140,12 +140,14 @@ export default function App() {
         mainTableDetails={mainTableDetails}
         tableDndDetails={tableDndDetails}
       />
-      <CreateTableModal
-        showModalState={showModal}
-        allMainTableDetails={mainTableDetails}
-        onModalClosed={cancelCreateTableModalHandler}
-        onModalConfirmed={confirmCreateTableModalHandler}
-      />
+      {showModal && (
+        <CreateTableModal
+          showModalState={showModal}
+          allMainTableDetails={mainTableDetails}
+          onModalClosed={cancelCreateTableModalHandler}
+          onModalConfirmed={confirmCreateTableModalHandler}
+        />
+      )}
 
       <ContextMenuTrigger id='same_unique_identifier' holdToDisplay={-1}>
         <div className='App'>

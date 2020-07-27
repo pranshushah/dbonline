@@ -2,7 +2,7 @@ import React, { useState, useReducer } from 'react';
 import TableContainer from '../TableContainer/TableContainer';
 import Grid from '../Grid/Grid';
 import { AddAttributeLink } from '../TableComponent/TableComponents';
-import AddAttributeModal from '../../AddAttributeModal/AddAttributeModal';
+import AddAttributeModal from '../AddAttributeModal/AddAttributeModal';
 import '../../utils/Types';
 import MainTable from '../TableComponent/MainTable';
 import DeleteTableModal from '../DeleteTableModal/DeleteTableModal';

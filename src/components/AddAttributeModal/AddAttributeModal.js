@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import Modal from '../components/UI/Modal/Modal';
-import Input from '../components/UI/Input/Input';
+import Modal from '../UI/Modal/Modal';
+import Input from '../UI/Input/Input';
 import ConstraintCheckBoxContainer from './constraintCheckboxContainer';
 import DataTypeDropDown from './DataTypeDropDown';
 import TableNameDropDown from './SelectTableDropDown';
@@ -8,21 +8,21 @@ import SelectReferencingAttr from './SelectReferencingAttr';
 import uuid from 'uuid/v1';
 import ConstraintContainer from './ConstriantContainer';
 import Styles from './AddAttribute.module.scss';
-import '../utils/Types';
+import '../../utils/Types';
 import MultipleUniqueDropDown from './MultipleUniqueDropDown';
 import PrimaryKeyDropDown from './PrimaryDropDown';
-import { randomString } from '../utils/helper-function/randomString';
-import { oracleSizeError } from '../utils/helper-function/size-pre-error';
-import { constraintError } from '../utils/helper-function/constraintError';
+import { randomString } from '../../utils/helper-function/randomString';
+import { oracleSizeError } from '../../utils/helper-function/size-pre-error';
+import { constraintError } from '../../utils/helper-function/constraintError';
 import {
   AddObjModal,
   AddAttributeReducer,
-} from '../utils/reducers/AddAttributeReducer';
+} from '../../utils/reducers/AddAttributeReducer';
 import {
   foreignConstraintCheckboxList,
   columnConstraintCheckboxList,
   getTableLevelCheckboxList,
-} from '../utils/checkedItemsForAddAttr';
+} from '../../utils/checkedItemsForAddAttr';
 
 const parser = require('js-sql-parser');
 

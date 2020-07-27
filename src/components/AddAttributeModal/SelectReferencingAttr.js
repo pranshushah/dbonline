@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import '../utils/Types';
+import '../../utils/Types';
 
 /**
  * @param {{selectedTable:string,mainTableDetails:mainTableDetailsType[],onAttrSelected:Function}} props

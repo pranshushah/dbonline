@@ -1,7 +1,7 @@
-@import '../utils/scss/fontSize';
-@import '../utils/scss/lineHeight';
-@import '../utils/scss/spaces';
-@import '../utils/scss/variables';
+@import '../../utils/scss/fontSize';
+@import '../../utils/scss/lineHeight';
+@import '../../utils/scss/spaces';
+@import '../../utils/scss/variables';
 
 .container {
   margin: getSpace(1) * 1px;

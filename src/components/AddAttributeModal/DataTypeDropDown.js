@@ -1,5 +1,5 @@
 import React from 'react';
-import { dataTypes } from '../utils/attributeDataTypes';
+import { dataTypes } from '../../utils/attributeDataTypes';
 import Select from 'react-select';
 
 /**
