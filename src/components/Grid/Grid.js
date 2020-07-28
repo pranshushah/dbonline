@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 const Grid = styled.main`
-  width: 100%;
   height: 170vh;
   position: relative;
   background: ${(props) =>
@@ -34,6 +33,7 @@ const Grid = styled.main`
       background: none;
     }
   }
+  width: 100%;
 `;
 
 export default Grid;

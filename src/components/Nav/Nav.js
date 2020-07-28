@@ -12,11 +12,13 @@ import { code } from '../../utils/helper-function/createCode';
 
 /**
  * @param {{showGrid:boolean,
- * showSideBar:boolean,
+ * showRightSidebar:boolean,
+ * showLeftSidebar:boolean,
  * mainTableDetails:mainTableDetailsType[],
  * onGridClick:Function,
  * onCreateTableClick:Function,
- * onSideBarClick:Function}} props
+ * onRightSideBarClick:Function,
+ * onLeftSideBarClick:Function}} props
  */
 
 function Nav({ mainTableDetails, ...props }) {
@@ -32,10 +34,9 @@ function Nav({ mainTableDetails, ...props }) {
           <SubMenuContiainer>
             <SubNavLink
               onClick={props.onCreateTableClick}
-              text='add Table'
+              text='Table'
               shortcut={'alt + t'}
             />
-            <SubNavLink text='add Todo' />
           </SubMenuContiainer>
         </NavLink>
         <NavLink text='View'>
@@ -46,9 +47,14 @@ function Nav({ mainTableDetails, ...props }) {
               shortcut={'alt + g'}
             />
             <SubNavLink
-              text={props.showSideBar ? 'hide sidebar' : 'show sidebar'}
-              onClick={props.onSideBarClick}
-              shortcut={'alt + s'}
+              text={props.showRightSidebar ? 'hide details' : 'show  details'}
+              onClick={props.onRightSideBarClick}
+              shortcut={'shift + D'}
+            />
+            <SubNavLink
+              text={props.showLeftSidebar ? 'hide explorer' : 'show explorer'}
+              onClick={props.onLeftSideBarClick}
+              shortcut={'shift + E'}
             />
           </SubMenuContiainer>
         </NavLink>

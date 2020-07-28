@@ -8,7 +8,7 @@ import { Resizable } from 're-resizable';
  */
 
 function SideBar(props) {
-  const [width, setWidth] = useState(300);
+  const [width, setWidth] = useState(280);
 
   function WidthHandler(e, direction, ref, d) {
     setWidth((width) => width + d.width);
@@ -17,12 +17,10 @@ function SideBar(props) {
     <Resizable
       style={{
         display: 'flex',
-        alignItems: 'stretch',
-        border: '3px solid black',
-        zIndex: 5,
+        borderLeft: '2px solid black',
       }}
-      minWidth='10%'
-      maxWidth='31%'
+      minWidth='15%'
+      maxWidth='20%'
       size={{ width: width, height: '170vh' }}
       onResizeStop={WidthHandler}
       enable={{
@@ -38,9 +36,7 @@ function SideBar(props) {
       <div
         style={{
           width: '100%',
-          marginLeft: '5px',
-          zIndex: 5,
-          backgroundColor: '#750F4C',
+          backgroundColor: '#F5F5F5',
         }}
       />
     </Resizable>

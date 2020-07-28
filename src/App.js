@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import './styles.css';
 import Nav from './components/Nav/Nav';
 import MainGround from './components/MainGround/MainGround';
-import SideBar from './components/Sidebar/Sidebar';
-import { DndProvider } from 'react-dnd';
-import backend from 'react-dnd-html5-backend';
+import RightSideBar from './components/RightSidebar/RightSidebar';
+import LeftSideBar from './components/LeftSidebar/LeftSidebar';
 import CreateTableModal from './components/CreateTableModal/CreateTableModal';
 import './utils/Types';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { useLocalStorage } from './utils/customHooks/useLocalStorage';
 import { code } from './utils/helper-function/createCode';
+
 export default function App() {
   const [showGrid, toggleShowGrid] = useState(true);
-  const [showSidebar, toggleSideBar] = useState(false);
+  const [showRightSidebar, toogleRightSidebar] = useState(false);
   const [showModal, updateShowModal] = useState(false);
+  const [showLeftSidebar, toogleLeftSidebar] = useState(true);
   const [tableDndDetails, updateTableDndDetails] = useLocalStorage(
     [],
     'tableDndDetails',
@@ -62,8 +63,12 @@ export default function App() {
     toggleShowGrid((prevShowGrid) => !prevShowGrid);
   }
 
-  function showSidebarHandler() {
-    toggleSideBar((prevShowSidebar) => !prevShowSidebar);
+  function showRightSidebarHandler() {
+    toogleRightSidebar((prevshowRightSidebar) => !prevshowRightSidebar);
+  }
+
+  function showLeftSidebarHandler() {
+    toogleLeftSidebar((prevShowLeftSidebar) => !prevShowLeftSidebar);
   }
 
   function pdf() {
@@ -73,15 +78,25 @@ export default function App() {
   useEffect(() => {
     function shortcutHandler(e) {
       console.log(e);
-      // alt + s (sidebar toggle)
+      // shift + d (details sidebar toggle)
       if (
-        e.altKey &&
-        e.which === 83 &&
+        !e.altKey &&
+        e.which === 68 &&
         e.isTrusted &&
         !e.ctrlKey &&
-        !e.shiftKey
+        e.shiftKey
       ) {
-        showSidebarHandler();
+        showRightSidebarHandler();
+      }
+      // shift + e (explorer sidebar toggle)
+      if (
+        !e.altKey &&
+        e.which === 69 &&
+        e.isTrusted &&
+        !e.ctrlKey &&
+        e.shiftKey
+      ) {
+        showLeftSidebarHandler();
       }
       // alt + g (grid toggle)
       else if (
@@ -132,10 +147,12 @@ export default function App() {
     <>
       <Nav
         showGrid={showGrid}
-        showSideBar={showSidebar}
+        showRightSidebar={showRightSidebar}
+        showLeftSidebar={showLeftSidebar}
         onGridClick={showGridHandler}
         onCreateTableClick={newTableCreatedHandler}
-        onSideBarClick={showSidebarHandler}
+        onRightSideBarClick={showRightSidebarHandler}
+        onLeftSideBarClick={showLeftSidebarHandler}
         Main={MainGround}
         mainTableDetails={mainTableDetails}
         tableDndDetails={tableDndDetails}
@@ -151,16 +168,15 @@ export default function App() {
 
       <ContextMenuTrigger id='same_unique_identifier' holdToDisplay={-1}>
         <div className='App'>
-          <DndProvider backend={backend}>
-            <MainGround
-              showGrid={showGrid}
-              mainTableDetails={mainTableDetails}
-              tableDndDetails={tableDndDetails}
-              onMainTableDetailsChange={mainTableDetailsChangeHandler}
-              onTableDndDetailsChange={tableDndDetailsHandler}
-            />
-            {showSidebar && <SideBar />}
-          </DndProvider>
+          {showLeftSidebar && <LeftSideBar />}
+          <MainGround
+            showGrid={showGrid}
+            mainTableDetails={mainTableDetails}
+            tableDndDetails={tableDndDetails}
+            onMainTableDetailsChange={mainTableDetailsChangeHandler}
+            onTableDndDetailsChange={tableDndDetailsHandler}
+          />
+          {showRightSidebar && <RightSideBar />}
         </div>
       </ContextMenuTrigger>
       <ContextMenu id='same_unique_identifier' className={'menu'}>
@@ -171,8 +187,8 @@ export default function App() {
           {showGrid ? 'hide grid' : 'show grid'}{' '}
           <span className={'shrotcut'}>alt + g</span>
         </MenuItem>
-        <MenuItem onClick={showSidebarHandler} className={'menuItem'}>
-          {showSidebar ? 'hide sidebar' : 'show sidebar'}
+        <MenuItem onClick={showRightSidebarHandler} className={'menuItem'}>
+          {showRightSidebar ? 'hide sidebar' : 'show sidebar'}
           <span className={'shrotcut'}>alt + s</span>
         </MenuItem>
         <MenuItem onClick={pdf} className={'menuItem'}>
