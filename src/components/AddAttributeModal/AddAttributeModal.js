@@ -580,7 +580,7 @@ function AddAttributeModal({
                 value={sizeInputValue}
                 onChange={sizeInputValueChangeHandler}
                 type='text'
-                label='Size'
+                label='size'
                 error={sizeInputValueDirty && sizeInputValueError}
                 errorMessage={sizeInputValueErrorMessage}
                 dimension='huge'

@@ -135,7 +135,6 @@ function DeleteAttrModal({
         <Input
           label='Attribute Name'
           autoFocus
-          secondary
           value={deleteTableInputValue}
           onChange={createTableInputValueHandler}
           dimension='medium'

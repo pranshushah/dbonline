@@ -12,13 +12,6 @@ import Styles from './HeaderContainer.module.scss';
 
 function HeaderContainer({ primary, secondary, size, danger, title }) {
   const classes = [];
-  if (secondary) {
-    classes.push(Styles.secondary);
-  } else if (danger) {
-    classes.push(Styles.danger);
-  } else {
-    classes.push(Styles.primary);
-  }
   let cls = [Styles.header];
   switch (size) {
     case 'huge': {

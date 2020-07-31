@@ -11,6 +11,7 @@
     font-size: getFontSize($size) * 1px;
     border: none;
     outline: none;
+    color: $textColor;
     &::placeholder {
       color: transparent;
       display: none;
@@ -33,6 +34,12 @@
       padding-bottom: 4px;
       transition: all 0.3s ease;
     }
+  }
+  .modalBg {
+    background-color: $secondaryColor;
+  }
+  .sidebarBg {
+    background-color: $sideBarColor;
   }
   .inputLabelContainer {
     position: absolute;

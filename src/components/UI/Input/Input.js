@@ -16,6 +16,7 @@ import Styles from './Input.module.scss';
 /**
  *
  * @param {{
+ * usingFor:("Modal"|"sidebar")
  * label:string,
  * secondary:boolean,
  * primary:boolean,
@@ -29,6 +30,7 @@ import Styles from './Input.module.scss';
 function Input(
   {
     label,
+    usingFor = 'Modal',
     secondary,
     primary,
     dimension = 'medium',
@@ -106,7 +108,11 @@ function Input(
     <>
       <div className={containerClassName}>
         <input
-          className={Styles.inputField}
+          className={
+            usingFor === 'Modal'
+              ? [Styles.inputField, Styles.modalBg].join(' ')
+              : [Styles.inputField, Styles.sidebarBg].join(' ')
+          }
           placeholder='x'
           {...props}
           ref={ref?.inputRef}

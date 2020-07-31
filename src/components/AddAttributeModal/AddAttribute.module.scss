@@ -9,7 +9,7 @@
 }
 
 .header {
-  color: #27292a;
+  color: $textColor;
   margin-top: getSpace(3) * 1px;
   font-weight: 500;
   line-height: map-get($map: $line-height, $key: 'large') * 1px;

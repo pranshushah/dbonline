@@ -8,12 +8,12 @@
   cursor: pointer;
   outline: none;
   border-radius: 0.1rem;
-  transition: 0.5s background ease-in-out;
+  transition: 0.1s background-color ease-in-out;
 }
 
 .button:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 0.75;
 }
 
 .primary {
@@ -33,13 +33,18 @@
 .primary:active {
   background-color: lighten($color: $primaryColor, $amount: 3);
   background-size: 100%;
-  transition: background 0s;
+  transition: background-color 0s;
 }
 
 .invertedPrimary {
-  background-color: white;
+  background-color: transparent;
   color: $primaryColor;
   outline: 1px solid $primaryColor;
+}
+
+.invertedPrimary:hover {
+  color: $tertiaryColor;
+  background-color: $primaryColor;
 }
 
 .invertedPrimary:active {
@@ -48,7 +53,7 @@
 }
 
 .secondary {
-  color: $tertiaryColor;
+  color: $textColor;
   background-color: lighten($color: $secondaryColor, $amount: 2);
 }
 
@@ -64,13 +69,17 @@
 .secondary:active {
   background-color: lighten($color: $secondaryColor, $amount: 6);
   background-size: 100%;
-  transition: background 0s;
 }
 
 .invertedSecondary {
-  background-color: white;
+  background-color: transparent;
   color: $secondaryColor;
   outline: 1px solid $secondaryColor;
+}
+
+.invertedSecondary:hover {
+  color: $textColor;
+  background-color: lighten($color: $secondaryColor, $amount: 2);
 }
 
 .invertedSecondary:active {
@@ -95,13 +104,18 @@
 .danger:active {
   background-color: lighten($color: $dangerColor, $amount: 4);
   background-size: 100%;
-  transition: background 0s;
+  transition: background-color 0s;
 }
 
 .invertedDanger {
-  background-color: white;
+  background-color: transparent;
   color: $dangerColor;
   outline: 1px solid $dangerColor;
+}
+
+.invertedDanger:hover {
+  color: $tertiaryColor;
+  background-color: $dangerColor;
 }
 
 .invertedDanger:active {

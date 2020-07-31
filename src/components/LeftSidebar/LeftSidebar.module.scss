@@ -1,0 +1,15 @@
+@import '../../utils/scss/variables';
+.container {
+  background-color: $sideBarColor;
+  color: $tertiaryColor;
+  width: 100%;
+}
+
+.resize {
+  display: flex;
+  border-right: 2px solid rgb(60, 60, 60);
+}
+
+.resize:hover {
+  border-right: 2px solid rgba(60, 60, 60, 0.5);
+}

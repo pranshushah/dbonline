@@ -1,8 +1,8 @@
 @import '../../../utils/scss/spaces';
+@import '../../../utils/scss/variables';
 .container {
   position: fixed;
   z-index: 513;
-  background-color: white;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.26);
   transition: all 0.3s ease-out;
 }
@@ -30,6 +30,7 @@
 }
 
 .contentContainer {
+  background-color: $secondaryColor;
   padding: getSpace(1) * 1px;
 }
 .contentContainerHuge {
@@ -38,6 +39,7 @@
 
 .action {
   display: flex;
+  background-color: $secondaryColor;
   justify-content: flex-end;
   padding: getSpace(1) * 1px;
 }

@@ -3,22 +3,12 @@
 @import '../../../../utils/scss/fontSize';
 @import '../../../../utils/scss/lineHeight';
 
-.primary {
-  background-color: $primaryColor;
-}
-
-.secondary {
-  background-color: $secondaryColor;
-}
-.danger {
-  background-color: rgb(227, 70, 70);
-}
-
 .header {
   margin: 0;
   padding: getSpace(2) * 1px;
   color: $tertiaryColor;
   line-height: map-get($map: $line-height, $key: 'large') * 1px;
+  background-color: lighten($color: $secondaryColor, $amount: 4);
 }
 
 .medium {

@@ -76,3 +76,21 @@
 .ReactVirtualized__Table__rowColumn {
   height: 100%;
 }
+
+ul::-webkit-scrollbar {
+  width: 12px;
+  background-color: #282c34;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  background-color: #191c20;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(180, 180, 180, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(180, 180, 180, 0.5);
+}

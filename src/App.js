@@ -77,7 +77,6 @@ export default function App() {
 
   useEffect(() => {
     function shortcutHandler(e) {
-      console.log(e);
       // shift + d (details sidebar toggle)
       if (
         !e.altKey &&
@@ -168,7 +167,9 @@ export default function App() {
 
       <ContextMenuTrigger id='same_unique_identifier' holdToDisplay={-1}>
         <div className='App'>
-          {showLeftSidebar && <LeftSideBar />}
+          {showLeftSidebar && (
+            <LeftSideBar mainTableDetails={mainTableDetails} />
+          )}
           <MainGround
             showGrid={showGrid}
             mainTableDetails={mainTableDetails}

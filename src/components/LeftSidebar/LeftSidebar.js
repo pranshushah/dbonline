@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
-
+import '../../utils/Types';
+import TableList from '../Explorer/TableList/TableList';
+import Styles from './LeftSidebar.module.scss';
 /**
  *
  * @param {{
+ * mainTableDetails:mainTableDetailsType[]
  * }} props
  */
 
-function LeftSideBar(props) {
+function LeftSideBar({ mainTableDetails }) {
   const [width, setWidth] = useState(250);
 
   function WidthHandler(e, direction, ref, d) {
@@ -15,11 +18,7 @@ function LeftSideBar(props) {
   }
   return (
     <Resizable
-      style={{
-        display: 'flex',
-        borderRight: '2px solid black',
-        zIndex: 5,
-      }}
+      className={Styles.resize}
       minWidth='15%'
       maxWidth='20%'
       size={{ width: width, height: '170vh' }}
@@ -34,13 +33,9 @@ function LeftSideBar(props) {
         bottomLeft: false,
         topLeft: false,
       }}>
-      <div
-        style={{
-          width: '100%',
-          zIndex: 5,
-          backgroundColor: '#F0F0F0',
-        }}
-      />
+      <div className={Styles.container}>
+        <TableList mainTableDetails={mainTableDetails} />
+      </div>
     </Resizable>
   );
 }

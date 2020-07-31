@@ -57,7 +57,6 @@ function DeleteTableModal({
         <Input
           label='Table Name'
           autoFocus
-          secondary
           value={deleteTableInputValue}
           onChange={createTableInputValueHandler}
           dimension='medium'

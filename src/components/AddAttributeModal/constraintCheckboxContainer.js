@@ -24,6 +24,8 @@ function ConstraintCheckBoxContainer({
         label={item.label}
         key={item.name}
         name={item.name}
+        customFontColor={'rgb(230,230,230)'}
+        customCheckedColor={'rgb(28, 161, 242)'}
         checked={
           checkedConstraintObj[item.name]
             ? checkedConstraintObj[item.name]
