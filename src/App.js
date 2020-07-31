@@ -139,7 +139,9 @@ export default function App() {
       }
     }
     document.addEventListener('keyup', shortcutHandler);
-    return () => document.removeEventListener('keyup', shortcutHandler);
+    return () => {
+      document.removeEventListener('keyup', shortcutHandler);
+    };
   }, [mainTableDetails]);
 
   return (
@@ -168,7 +170,10 @@ export default function App() {
       <ContextMenuTrigger id='same_unique_identifier' holdToDisplay={-1}>
         <div className='App'>
           {showLeftSidebar && (
-            <LeftSideBar mainTableDetails={mainTableDetails} />
+            <LeftSideBar
+              mainTableDetails={mainTableDetails}
+              toggleSidebar={showLeftSidebarHandler}
+            />
           )}
           <MainGround
             showGrid={showGrid}

@@ -3,6 +3,22 @@
   background-color: $sideBarColor;
   color: $tertiaryColor;
   width: 100%;
+  position: relative;
+  .close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+    background-image: url('../../utils/img/close.svg');
+    background-size: 14px;
+    background-repeat: no-repeat;
+    transition: 0.2s all ease;
+  }
+  .close:hover {
+    transform: scale(1.1);
+  }
 }
 
 .resize {

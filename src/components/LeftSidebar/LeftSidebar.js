@@ -6,11 +6,12 @@ import Styles from './LeftSidebar.module.scss';
 /**
  *
  * @param {{
- * mainTableDetails:mainTableDetailsType[]
+ * mainTableDetails:mainTableDetailsType[],
+ * toggleSidebar:Function
  * }} props
  */
 
-function LeftSideBar({ mainTableDetails }) {
+function LeftSideBar({ mainTableDetails, toggleSidebar }) {
   const [width, setWidth] = useState(250);
 
   function WidthHandler(e, direction, ref, d) {
@@ -34,6 +35,7 @@ function LeftSideBar({ mainTableDetails }) {
         topLeft: false,
       }}>
       <div className={Styles.container}>
+        <div className={Styles.close} onClick={toggleSidebar} />
         <TableList mainTableDetails={mainTableDetails} />
       </div>
     </Resizable>
