@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
+import Styles from './RightSidebar.module.scss';
 
 /**
- *
  * @param {{
+ * mainTableDetails:mainTableDetailsType[],
+ * toggleSidebar:Function
  * }} props
  */
 
-function SideBar(props) {
-  const [width, setWidth] = useState(280);
+function SideBar({ mainTableDetails, toggleSidebar }) {
+  const [width, setWidth] = useState(300);
 
   function WidthHandler(e, direction, ref, d) {
     setWidth((width) => width + d.width);
   }
   return (
     <Resizable
-      style={{
-        display: 'flex',
-        borderLeft: '2px solid black',
-      }}
+      className={Styles.resize}
       minWidth='15%'
-      maxWidth='20%'
+      maxWidth='22%'
       size={{ width: width, height: '170vh' }}
       onResizeStop={WidthHandler}
       enable={{
@@ -33,12 +32,9 @@ function SideBar(props) {
         bottomLeft: false,
         topLeft: false,
       }}>
-      <div
-        style={{
-          width: '100%',
-          backgroundColor: '#F5F5F5',
-        }}
-      />
+      <div className={Styles.container}>
+        <div className={Styles.close} onClick={toggleSidebar} />
+      </div>
     </Resizable>
   );
 }

@@ -23,7 +23,7 @@ import {
   columnConstraintCheckboxList,
   getTableLevelCheckboxList,
 } from '../../utils/checkedItemsForAddAttr';
-
+import { oracleBanned } from '../../utils/helper-function/OracleBannedWords';
 const parser = require('js-sql-parser');
 
 /** @param {{
@@ -240,9 +240,16 @@ function AddAttributeModal({
       const attrIndex = givenTable.attributes.findIndex(
         (attr) => attr.name === val,
       );
-      attrIndex > -1
-        ? dispatch({ type: 'ATTRIBUTENAME_ALREADY_EXIST', payload: { val } })
-        : dispatch({ type: 'ATTRIBUTENAME_ALL_OK', payload: { val } });
+      if (attrIndex > -1) {
+        dispatch({ type: 'ATTRIBUTENAME_ALREADY_EXIST', payload: { val } });
+      } else {
+        const bool = oracleBanned.includes(val.toUpperCase().trim());
+        if (bool) {
+          dispatch({ type: 'ATTRIBUTENAME_IS_BANNED', payload: { val } });
+        } else {
+          dispatch({ type: 'ATTRIBUTENAME_ALL_OK', payload: { val } });
+        }
+      }
     } else {
       dispatch({ type: 'ATTRIBUTENAME_CANNOT_NULL', payload: { val } });
     }

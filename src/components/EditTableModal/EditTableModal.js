@@ -3,6 +3,7 @@ import Input from '../../components/UI/Input/Input';
 import Modal from '../../components/UI/Modal/Modal';
 import TableColorPickerList from '../TableColorPickerList/TableColorPickerList';
 import Styles from './EditTableModal.module.scss';
+import { oracleBanned } from '../../utils/helper-function/OracleBannedWords';
 import '../../utils/Types';
 /**
  * @param {{showModalState:boolean,
@@ -45,7 +46,13 @@ function EditTableModal({
           (table) => table.tableName === tableName.trim(),
         );
         if (index === -1) {
-          setTableError(false);
+          const bool = oracleBanned.includes(tableName.toUpperCase().trim());
+          if (bool) {
+            setTableError(true);
+            setCreteTableMessage('this is reserved word by oracle');
+          } else {
+            setTableError(false);
+          }
         } else {
           setTableError(true);
           if (createTableInputDirty) {

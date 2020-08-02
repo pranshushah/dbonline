@@ -4,7 +4,6 @@ import '../../utils/Types';
 import TableList from '../Explorer/TableList/TableList';
 import Styles from './LeftSidebar.module.scss';
 /**
- *
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
  * toggleSidebar:Function

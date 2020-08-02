@@ -5,6 +5,7 @@ import TableColorPickerList from '../TableColorPickerList/TableColorPickerList';
 import Modal from '../UI/Modal/Modal';
 import '../../utils/Types';
 import Styles from './CreateTableModal.module.scss';
+import { oracleBanned } from '../../utils/helper-function/OracleBannedWords';
 /**
  * @param {{showModalState:boolean,
  * onModalConfirmed:Function,
@@ -35,7 +36,15 @@ function CreateTableModal({
         (table) => table.tableName === createTableInputValue.trim(),
       );
       if (index === -1) {
-        setTableError(false);
+        const bool = oracleBanned.includes(
+          createTableInputValue.toUpperCase().trim(),
+        );
+        if (bool) {
+          setTableError(true);
+          setCreteTableMessage('this is reserved word by oracle');
+        } else {
+          setTableError(false);
+        }
       } else {
         setTableError(true);
         if (createTableInputDirty) {

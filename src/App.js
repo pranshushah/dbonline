@@ -182,7 +182,12 @@ export default function App() {
             onMainTableDetailsChange={mainTableDetailsChangeHandler}
             onTableDndDetailsChange={tableDndDetailsHandler}
           />
-          {showRightSidebar && <RightSideBar />}
+          {showRightSidebar && (
+            <RightSideBar
+              mainTableDetails={mainTableDetails}
+              toggleSidebar={showRightSidebarHandler}
+            />
+          )}
         </div>
       </ContextMenuTrigger>
       <ContextMenu id='same_unique_identifier' className={'menu'}>

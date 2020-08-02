@@ -76,6 +76,15 @@ export function AddAttributeReducer(state, action) {
         AddAttributeInputValueErrorMessage: "attribute name can't be empty",
       };
     }
+    case 'ATTRIBUTENAME_IS_BANNED': {
+      return {
+        ...state,
+        AddAttributeInputValue: action.payload.val,
+        attributeValueError: true,
+        AddAttributeInputValueDirty: true,
+        AddAttributeInputValueErrorMessage: 'this is reserved word by oracle',
+      };
+    }
     case 'ATTRIBUTENAME_ALL_OK': {
       return {
         ...state,
