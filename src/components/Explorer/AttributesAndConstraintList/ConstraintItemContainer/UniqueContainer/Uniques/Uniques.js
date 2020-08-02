@@ -8,17 +8,13 @@ import Styles from './Uniques.module.scss';
  * }} props
  */
 
-export default function Uniques({ table, show }) {
-  const keys = table.tableLevelConstraint?.UNIQUETABLELEVEL.map(
-    (checkObj, index) => (
-      <li
-        key={index}
-        className={
-          show ? [Styles.show, Styles.container].join(' ') : Styles.container
-        }>
-        {checkObj.constraintName}
-      </li>
-    ),
+export default function Uniques({ children, show }) {
+  return (
+    <li
+      className={
+        show ? [Styles.show, Styles.container].join(' ') : Styles.container
+      }>
+      {children}
+    </li>
   );
-  return keys;
 }

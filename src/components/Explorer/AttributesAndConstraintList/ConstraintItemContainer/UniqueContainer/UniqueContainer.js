@@ -1,6 +1,5 @@
 import Styles from './Unique.module.scss';
 import React, { useState } from 'react';
-import Uniques from './Uniques/Uniques';
 /**
  * @param {{
  * table:mainTableDetailsType
@@ -8,7 +7,7 @@ import Uniques from './Uniques/Uniques';
  * }} props
  */
 
-function PrimaryKeyContainer({ table, show }) {
+function PrimaryKeyContainer({ children, show }) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
@@ -18,11 +17,11 @@ function PrimaryKeyContainer({ table, show }) {
   }
   return (
     <li
-      onClick={toogleArrow}
       className={
         show ? [Styles.container, Styles.show].join(' ') : Styles.container
       }>
       <span
+        onClick={toogleArrow}
         className={
           open
             ? [Styles.liContainer, Styles.down].join(' ')
@@ -34,7 +33,7 @@ function PrimaryKeyContainer({ table, show }) {
         className={
           show ? [Styles.show, Styles.container].join(' ') : Styles.container
         }>
-        <Uniques table={table} show={open} />
+        {children.map((child) => React.cloneElement(child, { show: open }))}
       </ul>
     </li>
   );

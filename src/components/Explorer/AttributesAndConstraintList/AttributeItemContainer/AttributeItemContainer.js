@@ -1,6 +1,5 @@
 import Styles from './AttributeItemContainer.module.scss';
 import React, { useState } from 'react';
-import AttrItem from '../AttributeItem/AttributeItem';
 /**
  * @param {{
  * table:mainTableDetailsType,
@@ -8,7 +7,7 @@ import AttrItem from '../AttributeItem/AttributeItem';
  * }} props
  */
 
-function AttrListContainer({ table, parentShow }) {
+function AttrListContainer({ children, parentShow }) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
@@ -16,9 +15,6 @@ function AttrListContainer({ table, parentShow }) {
   if (!parentShow && open) {
     setOpen(false);
   }
-  const attrsItems = table.attributes.map((attrObj) => (
-    <AttrItem key={attrObj.id} attr={attrObj} show={open} />
-  ));
   return (
     <li className={Styles.text}>
       <span
@@ -30,7 +26,9 @@ function AttrListContainer({ table, parentShow }) {
         }>
         attributes
       </span>
-      <ul className={Styles.container}>{attrsItems}</ul>
+      <ul className={Styles.container}>
+        {children.map((child) => React.cloneElement(child, { show: open }))}
+      </ul>
     </li>
   );
 }

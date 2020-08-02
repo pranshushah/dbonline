@@ -8,15 +8,13 @@ import Styles from './Checks.module.scss';
  * }} props
  */
 
-export default function Checks({ table, show }) {
-  const keys = table.tableLevelConstraint?.CHECK.map((checkObj, index) => (
+export default function Checks({ children, show }) {
+  return (
     <li
-      key={index}
       className={
         show ? [Styles.show, Styles.container].join(' ') : Styles.container
       }>
-      {checkObj.constraintName}
+      {children}
     </li>
-  ));
-  return keys;
+  );
 }

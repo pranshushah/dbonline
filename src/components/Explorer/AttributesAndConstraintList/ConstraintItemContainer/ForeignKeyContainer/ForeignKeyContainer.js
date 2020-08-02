@@ -1,14 +1,12 @@
 import Styles from './ForeignKeyContainer.module.scss';
 import React, { useState } from 'react';
-import ForeignKeys from './ForeignKeys/ForeignKeys';
 /**
  * @param {{
- * table:mainTableDetailsType
  * show:boolean,
  * }} props
  */
 
-function ForeignKeyContainer({ table, show }) {
+function ForeignKeyContainer({ children, show }) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
@@ -18,11 +16,11 @@ function ForeignKeyContainer({ table, show }) {
   }
   return (
     <li
-      onClick={toogleArrow}
       className={
         show ? [Styles.container, Styles.show].join(' ') : Styles.container
       }>
       <span
+        onClick={toogleArrow}
         className={
           open
             ? [Styles.liContainer, Styles.down].join(' ')
@@ -34,7 +32,7 @@ function ForeignKeyContainer({ table, show }) {
         className={
           show ? [Styles.show, Styles.container].join(' ') : Styles.container
         }>
-        <ForeignKeys table={table} show={open} />
+        {children.map((child) => React.cloneElement(child, { show: open }))}
       </ul>
     </li>
   );

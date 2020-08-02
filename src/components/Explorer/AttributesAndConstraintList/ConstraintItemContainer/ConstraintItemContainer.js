@@ -1,17 +1,14 @@
 import Styles from './ConstraintItemContainer.module.scss';
 import React, { useState } from 'react';
-import PrimaryKey from './PrimaryKeyContainer/PrimaryKeyContainer';
-import ForeignKey from './ForeignKeyContainer/ForeignKeyContainer';
-import UniqueConstraint from './UniqueContainer/UniqueContainer';
-import CheckConstraint from './CheckContainer/CheckContainer';
+
 /**
  * @param {{
- * table:mainTableDetailsType
  * parentShow:boolean,
+ * children:React.Component[]
  * }} props
  */
 
-function ConstraintItemContainer({ table, parentShow }) {
+function ConstraintItemContainer({ children, parentShow }) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
@@ -31,10 +28,7 @@ function ConstraintItemContainer({ table, parentShow }) {
         constraints
       </span>
       <ul className={Styles.container}>
-        <PrimaryKey table={table} show={open} />
-        <ForeignKey table={table} show={open} />
-        <UniqueConstraint table={table} show={open} />
-        <CheckConstraint table={table} show={open} />
+        {children.map((child) => React.cloneElement(child, { show: open }))}
       </ul>
     </li>
   );
