@@ -9,6 +9,7 @@ function SelectReferencingAttr({
   selectedTable,
   mainTableDetails,
   onAttrSelected,
+  value,
 }) {
   const index = mainTableDetails.findIndex(
     (mainTableDetail) => mainTableDetail.id === selectedTable,

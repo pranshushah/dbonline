@@ -3,7 +3,7 @@ import Select from 'react-select';
 import '../../utils/Types';
 
 /**
- * @param {{currentTable:mainTableDetailsType,allTables:mainTableDetailsType[],onAttrSelected:Function}} props
+ * @param {{primaryKeyValues:Array,currentTable:mainTableDetailsType,allTables:mainTableDetailsType[],onAttrSelected:Function}} props
  */
 
 function primaryKeyDropDown({
@@ -11,6 +11,7 @@ function primaryKeyDropDown({
   onAttrSelected,
   currentTable,
   currentValue,
+  primaryKeyValues,
 }) {
   const index = allTables.findIndex(
     (mainTableDetail) => mainTableDetail.id === currentTable.id,
@@ -55,7 +56,6 @@ function primaryKeyDropDown({
       color: 'rgb(235, 235, 235)',
     }),
     option: (base, state) => {
-      console.log(state);
       return {
         ...base,
         background:
@@ -78,6 +78,7 @@ function primaryKeyDropDown({
   return (
     <Select
       options={options}
+      value={primaryKeyValues}
       isMulti
       styles={customStyles}
       onChange={uniqueSelectHandler}

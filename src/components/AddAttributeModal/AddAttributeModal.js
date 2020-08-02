@@ -665,6 +665,7 @@ function AddAttributeModal({
                 <MultipleUniqueDropDown
                   allTables={mainTableDetails}
                   currentTable={givenTable}
+                  uniques={tableLevelUnique}
                   onAttrSelected={tableLevelUniqueHandler}
                   currentValue={AddAttributeInputValue}
                 />
@@ -696,6 +697,7 @@ function AddAttributeModal({
                 <PrimaryKeyDropDown
                   allTables={mainTableDetails}
                   currentTable={givenTable}
+                  primaryKeyValues={primaryKey}
                   onAttrSelected={primaryKeyHandler}
                   currentValue={AddAttributeInputValue}
                 />

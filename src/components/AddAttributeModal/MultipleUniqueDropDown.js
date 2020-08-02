@@ -3,7 +3,11 @@ import Select from 'react-select';
 import '../../utils/Types';
 
 /**
- * @param {{currentTable:mainTableDetailsType,allTables:mainTableDetailsType[],onAttrSelected:Function}} props
+ * @param {{currentTable:mainTableDetailsType,
+ * allTables:mainTableDetailsType[],
+ * onAttrSelected:Function,
+ * uniques:Array
+ * }} props
  */
 
 function MultipleUniqueDropDown({
@@ -11,6 +15,7 @@ function MultipleUniqueDropDown({
   onAttrSelected,
   currentTable,
   currentValue,
+  uniques,
 }) {
   const index = allTables.findIndex(
     (mainTableDetail) => mainTableDetail.id === currentTable.id,
@@ -55,7 +60,6 @@ function MultipleUniqueDropDown({
       color: 'rgb(235, 235, 235)',
     }),
     option: (base, state) => {
-      console.log(state);
       return {
         ...base,
         background:
@@ -79,6 +83,7 @@ function MultipleUniqueDropDown({
     <Select
       styles={customStyles}
       options={options}
+      value={uniques}
       isMulti
       onChange={uniqueSelectHandler}
       placeholder='Select Composite Unique Key'
