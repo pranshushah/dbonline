@@ -116,6 +116,11 @@ function Input(
           placeholder='x'
           {...props}
           ref={ref?.inputRef}
+          style={
+            usingFor === 'sidebar'
+              ? { fontSize: '18px', paddingTop: '26px' }
+              : null
+          }
         />
         <label className={Styles.inputLabelContainer}>
           <span className={Styles.inputLabelContent}>{label}</span>

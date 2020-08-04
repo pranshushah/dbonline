@@ -1,4 +1,5 @@
 @import '../../utils/scss/variables';
+@import '../../utils/scss/spaces';
 .container {
   background-color: $sideBarColor;
   color: $tertiaryColor;
@@ -23,11 +24,14 @@
   }
 }
 
+.contentContainer {
+  padding: getSpace(8) * 1px getSpace(1) * 1px;
+}
 .resize {
   display: flex;
   border-left: 2px solid rgb(60, 60, 60);
 }
 
 .resize:hover {
-  border-left: 1px solid rgba(60, 60, 60, 0.5);
+  border-left: 2px solid rgba(60, 60, 60, 0.5);
 }

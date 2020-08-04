@@ -3,10 +3,13 @@ import React, { useState } from 'react';
 /**
  * @param {{
  * show:boolean,
+ * table:mainTableDetailsType,
+ * onItemClicked:Function,
+ * item:object
  * }} props
  */
 
-function PrimaryKeyContainer({ children, show }) {
+function PrimaryKeyContainer({ children, show, onItemClicked, item }) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);

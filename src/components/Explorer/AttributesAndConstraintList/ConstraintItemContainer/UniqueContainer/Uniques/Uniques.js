@@ -4,11 +4,13 @@ import Styles from './Uniques.module.scss';
 /**
  * @param {{
  * table:mainTableDetailsType
- * show:boolean
+ * show:boolean,
+ * item:object,
+ * onItemClicked:Function,
  * }} props
  */
 
-export default function Uniques({ children, show }) {
+export default function Uniques({ children, show, item, onItemClicked }) {
   return (
     <li
       className={

@@ -14,7 +14,9 @@ function AttrAndConstraintList({ children, show }) {
       className={
         show ? [Styles.container, Styles.show].join(' ') : Styles.container
       }>
-      {children.map((child) => React.cloneElement(child, { parentShow: show }))}
+      {children.map((child, index) =>
+        React.cloneElement(child, { parentShow: show, key: index }),
+      )}
     </ul>
   );
 }

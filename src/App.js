@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import './styles.css';
 import Nav from './components/Nav/Nav';
 import MainGround from './components/MainGround/MainGround';
@@ -9,10 +9,52 @@ import './utils/Types';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { useLocalStorage } from './utils/customHooks/useLocalStorage';
 import { code } from './utils/helper-function/createCode';
+import { EXPLORERCONSTANT } from './utils/constant/explorer';
+import cloneDeep from 'clone-deep';
+const parser = require('js-sql-parser');
 
+const defaultRightSidebarState = {
+  selectedTable: {},
+  showCheckConstraint: false,
+  selectedCheckConstraintName: '',
+};
+function rightSidebarReducer(state, action) {
+  switch (action.type) {
+    case 'CHECKCONSTRAINT_CONTAINER_SHOW': {
+      return {
+        ...state,
+        selectedTable: action.payload.table,
+        showCheckConstraint: true,
+        selectedCheckConstraintName: action.payload.name,
+      };
+    }
+    case 'DEFAULT_STATE': {
+      return defaultRightSidebarState;
+    }
+    default: {
+      return state;
+    }
+  }
+}
 export default function App() {
+  //right sidebar state
+  const [state, dispatch] = useReducer(
+    rightSidebarReducer,
+    defaultRightSidebarState,
+  );
+  const {
+    selectedTable,
+    showCheckConstraint,
+    selectedCheckConstraintName,
+  } = state;
+  const [tempCheckConstraintName, setTempCheckConstraintName] = useState('');
+  const [
+    tempCheckConstraintExpression,
+    setTempCheckConstraintExpression,
+  ] = useState({});
+  //app state
   const [showGrid, toggleShowGrid] = useState(true);
-  const [showRightSidebar, toogleRightSidebar] = useState(false);
+  const [showRightSidebar, setShowRightSidebar] = useState(false);
   const [showModal, updateShowModal] = useState(false);
   const [showLeftSidebar, toogleLeftSidebar] = useState(true);
   const [tableDndDetails, updateTableDndDetails] = useLocalStorage(
@@ -59,12 +101,90 @@ export default function App() {
     updateShowModal(false);
   }
 
+  function cleanupRightSidebar() {
+    dispatch({ type: 'DEFAULT_STATE' });
+    setShowRightSidebar(false);
+    setTempCheckConstraintName('');
+    setTempCheckConstraintExpression('');
+  }
+
+  /**
+   *
+   * @param {mainTableDetailsType} table
+   * @param {string} type
+   * @param {object} itemObj
+   */
+  function explorerItemClickHandler(table, type, itemObj) {
+    switch (type) {
+      case EXPLORERCONSTANT.CHECK: {
+        dispatch({
+          type: 'CHECKCONSTRAINT_CONTAINER_SHOW',
+          payload: { table, name: itemObj.constraintName },
+        });
+        setTempCheckConstraintName(itemObj.constraintName);
+        const str = parser.stringify(itemObj.AST).split('WHERE')[1];
+
+        setTempCheckConstraintExpression(str.substring(2, str.length - 1));
+        setShowRightSidebar(true);
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+  }
+
+  function confirmCheckConstraintClickHandler() {
+    let finalConstraintName;
+    if (tempCheckConstraintName.length === 0) {
+      finalConstraintName = selectedCheckConstraintName;
+    } else {
+      finalConstraintName = tempCheckConstraintName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === selectedTable.id,
+    );
+    const constraintIndex = newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint?.CHECK.findIndex((checkObj) => {
+      return checkObj.constraintName === selectedCheckConstraintName;
+    });
+    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK[
+      constraintIndex
+    ].constraintName = finalConstraintName;
+    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK[
+      constraintIndex
+    ].AST = parser.parse(
+      `select * from boom WHERE (${tempCheckConstraintExpression})`,
+    );
+    updateMainTableDetails(newMainTableDetails);
+    cleanupRightSidebar();
+  }
+  function deleteCheckConstraintClickHandler() {
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === selectedTable.id,
+    );
+    const constraintIndex = newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint?.CHECK.findIndex((checkObj) => {
+      return checkObj.constraintName === selectedCheckConstraintName;
+    });
+    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK.splice(
+      constraintIndex,
+      1,
+    );
+    updateMainTableDetails(newMainTableDetails);
+    cleanupRightSidebar();
+  }
+
   function showGridHandler() {
     toggleShowGrid((prevShowGrid) => !prevShowGrid);
   }
 
   function showRightSidebarHandler() {
-    toogleRightSidebar((prevshowRightSidebar) => !prevshowRightSidebar);
+    setShowRightSidebar((prevshowRightSidebar) => !prevshowRightSidebar);
   }
 
   function showLeftSidebarHandler() {
@@ -173,6 +293,7 @@ export default function App() {
             <LeftSideBar
               mainTableDetails={mainTableDetails}
               toggleSidebar={showLeftSidebarHandler}
+              onItemClicked={explorerItemClickHandler}
             />
           )}
           <MainGround
@@ -186,6 +307,16 @@ export default function App() {
             <RightSideBar
               mainTableDetails={mainTableDetails}
               toggleSidebar={showRightSidebarHandler}
+              onCancel={cleanupRightSidebar}
+              table={selectedTable}
+              showCheckConstraint={showCheckConstraint}
+              checkConstraintName={tempCheckConstraintName}
+              checkExpr={tempCheckConstraintExpression}
+              onCheckConstraintNameChange={setTempCheckConstraintName}
+              onCheckExprChange={setTempCheckConstraintExpression}
+              initialCheckConstraintName={selectedCheckConstraintName}
+              onConfirmCheckConstraintClick={confirmCheckConstraintClickHandler}
+              onDeleteCheckConstraint={deleteCheckConstraintClickHandler}
             />
           )}
         </div>

@@ -28,7 +28,9 @@ function ConstraintItemContainer({ children, parentShow }) {
         constraints
       </span>
       <ul className={Styles.container}>
-        {children.map((child) => React.cloneElement(child, { show: open }))}
+        {children.map((child, index) =>
+          React.cloneElement(child, { show: open, key: index }),
+        )}
       </ul>
     </li>
   );

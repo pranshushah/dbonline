@@ -4,9 +4,9 @@
 @import '../../../utils/scss/variables';
 
 .button {
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0);
   cursor: pointer;
-  outline: none;
+  outline-style: none;
   border-radius: 0.1rem;
   transition: 0.1s background-color ease-in-out;
 }
@@ -17,7 +17,7 @@
 }
 
 .primary {
-  color: $tertiaryColor;
+  color: #ffffff;
   background-color: $primaryColor;
 }
 
@@ -39,7 +39,7 @@
 .invertedPrimary {
   background-color: transparent;
   color: $primaryColor;
-  outline: 1px solid $primaryColor;
+  border: 1px solid $primaryColor;
 }
 
 .invertedPrimary:hover {
@@ -49,7 +49,7 @@
 
 .invertedPrimary:active {
   color: darken($color: $primaryColor, $amount: 10);
-  outline: 1px solid darken($color: $primaryColor, $amount: 10);
+  border: 1px solid darken($color: $primaryColor, $amount: 10);
 }
 
 .secondary {
@@ -74,7 +74,7 @@
 .invertedSecondary {
   background-color: transparent;
   color: $secondaryColor;
-  outline: 1px solid $secondaryColor;
+  border: 1px solid $secondaryColor;
 }
 
 .invertedSecondary:hover {
@@ -84,7 +84,7 @@
 
 .invertedSecondary:active {
   color: darken($color: $secondaryColor, $amount: 10);
-  outline: 1px solid darken($color: $secondaryColor, $amount: 10);
+  border: 1px solid darken($color: $secondaryColor, $amount: 10);
 }
 
 .danger {
@@ -110,7 +110,7 @@
 .invertedDanger {
   background-color: transparent;
   color: $dangerColor;
-  outline: 1px solid $dangerColor;
+  border: 1px solid $dangerColor;
 }
 
 .invertedDanger:hover {
@@ -120,7 +120,7 @@
 
 .invertedDanger:active {
   color: darken($color: $dangerColor, $amount: 10);
-  outline: 1px solid darken($color: $dangerColor, $amount: 10);
+  border: 1px solid darken($color: $dangerColor, $amount: 10);
 }
 
 .medium {

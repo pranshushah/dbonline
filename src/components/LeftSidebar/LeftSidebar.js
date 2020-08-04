@@ -3,19 +3,24 @@ import { Resizable } from 're-resizable';
 import '../../utils/Types';
 import TableList from '../Explorer/TableList/TableList';
 import Styles from './LeftSidebar.module.scss';
+import TableItem from '../Explorer/TableList/TableItem/TableItem';
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
- * toggleSidebar:Function
+ * toggleSidebar:Function,
+ * onItemClicked:Function
  * }} props
  */
 
-function LeftSideBar({ mainTableDetails, toggleSidebar }) {
+function LeftSideBar({ mainTableDetails, toggleSidebar, onItemClicked }) {
   const [width, setWidth] = useState(250);
 
   function WidthHandler(e, direction, ref, d) {
     setWidth((width) => width + d.width);
   }
+  const list = mainTableDetails.map((table) => (
+    <TableItem key={table.id} table={table} onItemClicked={onItemClicked} />
+  ));
   return (
     <Resizable
       className={Styles.resize}
@@ -35,7 +40,7 @@ function LeftSideBar({ mainTableDetails, toggleSidebar }) {
       }}>
       <div className={Styles.container}>
         <div className={Styles.close} onClick={toggleSidebar} />
-        <TableList mainTableDetails={mainTableDetails} />
+        <TableList mainTableDetails={mainTableDetails}>{list}</TableList>
       </div>
     </Resizable>
   );

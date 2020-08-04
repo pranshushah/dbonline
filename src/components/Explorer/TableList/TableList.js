@@ -1,18 +1,14 @@
 import React from 'react';
 import '../../../utils/Types';
 import Styles from './TableList.module.scss';
-import TableItem from './TableItem/TableItem';
 /**
  *
  * @param {{
- * mainTableDetails:mainTableDetailsType[]
+ * children:React.Component[]
  * }} props
  */
-function TableList({ mainTableDetails }) {
-  const list = mainTableDetails.map((table) => (
-    <TableItem key={table.id} table={table} />
-  ));
-  return <ul className={Styles.container}>{list}</ul>;
+function TableList({ children }) {
+  return <ul className={Styles.container}>{children}</ul>;
 }
 
 export default TableList;

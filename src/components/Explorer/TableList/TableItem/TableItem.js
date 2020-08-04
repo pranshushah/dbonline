@@ -15,11 +15,12 @@ import CheckConstraint from '../../AttributesAndConstraintList/ConstraintItemCon
 
 /**
  * @param {{
- * table:mainTableDetailsType
+ * table:mainTableDetailsType,
+ * onItemClicked:Function
  * }} props
  */
 
-function TableItem({ table }) {
+function TableItem({ table, onItemClicked }) {
   const [open, setOpen] = useState(false);
 
   function toggleHandle() {
@@ -27,12 +28,20 @@ function TableItem({ table }) {
   }
   const foreigns = table.tableLevelConstraint?.FOREIGNKEY.map(
     (foreignObj, index) => (
-      <ForeignKeys key={index}>{foreignObj.constraintName}</ForeignKeys>
+      <ForeignKeys key={index} table={table} item={foreignObj}>
+        {foreignObj.constraintName}
+      </ForeignKeys>
     ),
   );
 
   const checks = table.tableLevelConstraint?.CHECK.map((checkObj, index) => (
-    <Checks key={index}>{checkObj.constraintName}</Checks>
+    <Checks
+      key={index}
+      onItemClicked={onItemClicked}
+      item={checkObj}
+      table={table}>
+      {checkObj.constraintName}
+    </Checks>
   ));
 
   const uniques = table.tableLevelConstraint?.UNIQUETABLELEVEL.map(
@@ -53,12 +62,15 @@ function TableItem({ table }) {
           {attrsItems}
         </AttributeItemContainer>
         <ConstraintItemContainer table={table}>
-          <PrimaryKey>
+          <PrimaryKey
+            table={table}
+            onItemClicked={onItemClicked}
+            item={table.tableLevelConstraint?.PRIMARYKEY}>
             {table.tableLevelConstraint?.PRIMARYKEY?.constraintName}
           </PrimaryKey>
           <ForeignKeyContainer>{foreigns}</ForeignKeyContainer>
           <UniqueConstraint>{uniques}</UniqueConstraint>
-          <CheckConstraint>{checks}</CheckConstraint>
+          <CheckConstraint table={table}>{checks}</CheckConstraint>
         </ConstraintItemContainer>
       </AttrAndConstraintList>
     </li>

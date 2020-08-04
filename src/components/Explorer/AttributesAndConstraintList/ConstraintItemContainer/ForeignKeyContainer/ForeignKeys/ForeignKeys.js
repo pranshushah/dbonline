@@ -4,11 +4,13 @@ import Styles from './ForeignKeys.module.scss';
 /**
  * @param {{
  * table:mainTableDetailsType
- * show:boolean
+ * show:boolean,
+ * item:object,
+ * onItemClicked:Function
  * }} props
  */
 
-export default function ForeignKeys({ children, show }) {
+export default function ForeignKeys({ children, show, item, onItemClicked }) {
   return (
     <li
       className={

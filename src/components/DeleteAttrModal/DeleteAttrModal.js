@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Modal from '../UI/Modal/Modal';
-import Input from '../UI/Input/Input';
 import Style from './DeleteAttrModal.module.scss';
 import '../../utils/Types';
 /**
@@ -20,23 +19,12 @@ function DeleteAttrModal({
   attrName,
   givenTable,
 }) {
-  const [deleteTableInputValue, updateCreateTableInputValue] = useState('');
-  const [tableError, setTableError] = useState(true);
-
-  function createTableInputValueHandler(e) {
-    updateCreateTableInputValue(e.target.value);
-  }
-
   function cancelModalHandler() {
-    updateCreateTableInputValue('');
     onModalClosed();
-    setTableError(true);
   }
 
   function confirmModalHandler() {
     onModalConfirmed();
-    setTableError(true);
-    updateCreateTableInputValue('');
   }
 
   let lis = [];
@@ -111,34 +99,17 @@ function DeleteAttrModal({
     }
   }
 
-  useEffect(() => {
-    if (attrName === deleteTableInputValue && attrName) {
-      setTableError(false);
-      console.log(deleteTableInputValue);
-      console.log(attrName);
-    }
-  }, [deleteTableInputValue, attrName]);
-
   return (
     <Modal
-      size='large'
+      size='medium'
       title={`Are sure You want To Delete ${attrName} in ${tableName} table`}
       show={showModalState}
       canConfirm
       canCancel
       danger
-      confirmDisabled={tableError}
       modalConfirmed={confirmModalHandler}
       modalClosed={cancelModalHandler}>
       <div className={Style.container}>
-        <h1 className={Style.header}>Please Enter Attribute Name To Confirm</h1>
-        <Input
-          label='Attribute Name'
-          autoFocus
-          value={deleteTableInputValue}
-          onChange={createTableInputValueHandler}
-          dimension='medium'
-        />
         <ul className={Style.listContainer}>{lis}</ul>
       </div>
     </Modal>
