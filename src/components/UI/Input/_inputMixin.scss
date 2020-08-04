@@ -30,7 +30,7 @@
     &:focus + .inputLabelContainer .inputLabelContent,
     &:not(:placeholder-shown) + .inputLabelContainer .inputLabelContent {
       transform: translateY(-100%);
-      font-size: getFontSize($size - 3) * 1px;
+      font-size: getFontSize($size - 3) * 1px !important;
       padding-bottom: 4px;
       transition: all 0.3s ease;
     }

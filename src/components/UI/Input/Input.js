@@ -123,7 +123,11 @@ function Input(
           }
         />
         <label className={Styles.inputLabelContainer}>
-          <span className={Styles.inputLabelContent}>{label}</span>
+          <span
+            className={Styles.inputLabelContent}
+            style={usingFor === 'sidebar' ? { fontSize: '20px' } : null}>
+            {label}
+          </span>
         </label>
       </div>
       {error && errorMessage && (

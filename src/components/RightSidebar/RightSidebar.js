@@ -2,20 +2,27 @@ import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
 import Styles from './RightSidebar.module.scss';
 import EditCheckConstraint from './EditCheckConstraint/EditCheckConstraint';
+import EditUniqueConstraint from './EditUniqueConstraint/EditUniqueConstraint';
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
  * toggleSidebar:Function,
  * table:mainTableDetailsType,
  * showCheckConstraint:boolean,
- * checkConstraintName:string,
+ * constraintName:string,
  * checkExpr:string,
- * onCheckConstraintNameChange:Function,
+ * onConstraintNameChange:Function,
  * onCheckExprChange:Function,
  * initialCheckConstraintName:string,
  * onCancel:Function,
  * onConfirmCheckConstraintClick:Function,
- * onDeleteCheckConstraint:Function
+ * onDeleteCheckConstraint:Function,
+ * showUniqueConstraint:boolean,
+ * initialUniqueConstraintName:string,
+ * selectedTableUnique:Array,
+ * onTableLevelUniqueChange:Array,
+ * onDeleteUniqueConstraint:Function,
+ * onConfirmUniqueConstraintClick:Function
  * }} props
  */
 
@@ -24,14 +31,20 @@ function SideBar({
   toggleSidebar,
   table,
   showCheckConstraint,
-  checkConstraintName,
+  constraintName,
   checkExpr,
-  onCheckConstraintNameChange,
+  onConstraintNameChange,
   onCheckExprChange,
   initialCheckConstraintName,
   onCancel,
   onConfirmCheckConstraintClick,
   onDeleteCheckConstraint,
+  showUniqueConstraint,
+  initialUniqueConstraintName,
+  selectedTableUnique,
+  onTableLevelUniqueChange,
+  onDeleteUniqueConstraint,
+  onConfirmUniqueConstraintClick,
 }) {
   const [width, setWidth] = useState(300);
 
@@ -61,14 +74,27 @@ function SideBar({
           {showCheckConstraint && (
             <EditCheckConstraint
               table={table}
-              checkConstraintName={checkConstraintName}
+              checkConstraintName={constraintName}
               checkExpr={checkExpr}
-              onCheckConstraintNameChange={onCheckConstraintNameChange}
+              onCheckConstraintNameChange={onConstraintNameChange}
               onCheckExprChange={onCheckExprChange}
               onCancel={onCancel}
               initialCheckConstraintName={initialCheckConstraintName}
               onConfirmCheckConstraintClick={onConfirmCheckConstraintClick}
               onDeleteCheckConstraint={onDeleteCheckConstraint}
+            />
+          )}
+          {showUniqueConstraint && (
+            <EditUniqueConstraint
+              table={table}
+              uniqueConstraintName={constraintName}
+              initialUniqueConstraintName={initialUniqueConstraintName}
+              onUniqueConstraintNameChange={onConstraintNameChange}
+              selectedTableUnique={selectedTableUnique}
+              onTableLevelUniqueChange={onTableLevelUniqueChange}
+              onCancel={onCancel}
+              onDeleteUniqueConstraint={onDeleteUniqueConstraint}
+              onConfirmUniqueConstraintClick={onConfirmUniqueConstraintClick}
             />
           )}
         </div>

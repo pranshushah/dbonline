@@ -17,6 +17,8 @@ const defaultRightSidebarState = {
   selectedTable: {},
   showCheckConstraint: false,
   selectedCheckConstraintName: '',
+  showUniqueConstraint: true,
+  selectedUniqueConstraintName: '',
 };
 function rightSidebarReducer(state, action) {
   switch (action.type) {
@@ -26,6 +28,14 @@ function rightSidebarReducer(state, action) {
         selectedTable: action.payload.table,
         showCheckConstraint: true,
         selectedCheckConstraintName: action.payload.name,
+      };
+    }
+    case 'UNIQUECONSTRAINT_CONTAINER_SHOW': {
+      return {
+        ...state,
+        selectedTable: action.payload.table,
+        showUniqueConstraint: true,
+        selectedUniqueConstraintName: action.payload.name,
       };
     }
     case 'DEFAULT_STATE': {
@@ -46,12 +56,16 @@ export default function App() {
     selectedTable,
     showCheckConstraint,
     selectedCheckConstraintName,
+    showUniqueConstraint,
+    selectedUniqueConstraintName,
   } = state;
-  const [tempCheckConstraintName, setTempCheckConstraintName] = useState('');
+  const [tempConstraintName, setTempConstraintName] = useState('');
   const [
     tempCheckConstraintExpression,
     setTempCheckConstraintExpression,
   ] = useState({});
+  const [tempTableLevelUnique, setTempTableLevelUnique] = useState([]);
+
   //app state
   const [showGrid, toggleShowGrid] = useState(true);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
@@ -104,8 +118,9 @@ export default function App() {
   function cleanupRightSidebar() {
     dispatch({ type: 'DEFAULT_STATE' });
     setShowRightSidebar(false);
-    setTempCheckConstraintName('');
+    setTempConstraintName('');
     setTempCheckConstraintExpression('');
+    setTempTableLevelUnique([]);
   }
 
   /**
@@ -121,10 +136,34 @@ export default function App() {
           type: 'CHECKCONSTRAINT_CONTAINER_SHOW',
           payload: { table, name: itemObj.constraintName },
         });
-        setTempCheckConstraintName(itemObj.constraintName);
+        setTempConstraintName(itemObj.constraintName);
         const str = parser.stringify(itemObj.AST).split('WHERE')[1];
-
         setTempCheckConstraintExpression(str.substring(2, str.length - 1));
+        setShowRightSidebar(true);
+        break;
+      }
+      case EXPLORERCONSTANT.UNIQUE: {
+        const selectedOptions = [];
+        const uniqueIndex = table.tableLevelConstraint.UNIQUETABLELEVEL.findIndex(
+          (uniqObj) => uniqObj.constraintName === itemObj.constraintName,
+        );
+        table.tableLevelConstraint.UNIQUETABLELEVEL[
+          uniqueIndex
+        ].attributes.forEach((uid) => {
+          const index = table.attributes.findIndex(
+            (attrObj) => attrObj.id === uid,
+          );
+          selectedOptions.push({
+            label: table.attributes[index].name,
+            value: uid,
+          });
+        });
+        dispatch({
+          type: 'UNIQUECONSTRAINT_CONTAINER_SHOW',
+          payload: { table, name: itemObj.constraintName },
+        });
+        setTempConstraintName(itemObj.constraintName);
+        setTempTableLevelUnique(selectedOptions);
         setShowRightSidebar(true);
         break;
       }
@@ -136,10 +175,10 @@ export default function App() {
 
   function confirmCheckConstraintClickHandler() {
     let finalConstraintName;
-    if (tempCheckConstraintName.length === 0) {
+    if (tempConstraintName.length === 0) {
       finalConstraintName = selectedCheckConstraintName;
     } else {
-      finalConstraintName = tempCheckConstraintName;
+      finalConstraintName = tempConstraintName;
     }
     const newMainTableDetails = cloneDeep(mainTableDetails);
     const tableIndex = newMainTableDetails.findIndex(
@@ -161,6 +200,52 @@ export default function App() {
     updateMainTableDetails(newMainTableDetails);
     cleanupRightSidebar();
   }
+  function confirmUniqueConstraintClickHandler() {
+    let finalConstraintName;
+    if (tempConstraintName.length === 0) {
+      finalConstraintName = selectedUniqueConstraintName;
+    } else {
+      finalConstraintName = tempConstraintName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+
+    const tableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === selectedTable.id,
+    );
+
+    const constraintIndex = newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint?.UNIQUETABLELEVEL.findIndex((uniqueObj) => {
+      return uniqueObj.constraintName === selectedUniqueConstraintName;
+    });
+
+    newMainTableDetails[tableIndex].tableLevelConstraint.UNIQUETABLELEVEL[
+      constraintIndex
+    ].constraintName = finalConstraintName;
+
+    newMainTableDetails[tableIndex].tableLevelConstraint.UNIQUETABLELEVEL[
+      constraintIndex
+    ].attributes = tempTableLevelUnique.map((item) => item.value);
+
+    newMainTableDetails[tableIndex].attributes.forEach((attrObj) => {
+      const index = attrObj.inTableLevelUniquConstraint.findIndex(
+        (unique) => unique === selectedUniqueConstraintName,
+      );
+      if (index > -1) {
+        attrObj.inTableLevelUniquConstraint.splice(index, 1);
+      }
+      const hasIndex = tempTableLevelUnique
+        .map((item) => item.value)
+        .findIndex((uid) => uid === attrObj.id);
+      if (hasIndex > -1) {
+        attrObj.inTableLevelUniquConstraint.push(finalConstraintName);
+      }
+    });
+
+    updateMainTableDetails(newMainTableDetails);
+    cleanupRightSidebar();
+  }
+
   function deleteCheckConstraintClickHandler() {
     const newMainTableDetails = cloneDeep(mainTableDetails);
     const tableIndex = newMainTableDetails.findIndex(
@@ -175,6 +260,32 @@ export default function App() {
       constraintIndex,
       1,
     );
+    updateMainTableDetails(newMainTableDetails);
+    cleanupRightSidebar();
+  }
+
+  function deleteUniqueConstraintClickHandler() {
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === selectedTable.id,
+    );
+
+    const constraintIndex = newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint?.UNIQUETABLELEVEL.findIndex((uniqueObj) => {
+      return uniqueObj.constraintName === selectedCheckConstraintName;
+    });
+
+    newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint.UNIQUETABLELEVEL.splice(constraintIndex, 1);
+    newMainTableDetails[tableIndex].attributes.forEach((attrObj) => {
+      attrObj.inTableLevelUniquConstraint = attrObj.inTableLevelUniquConstraint.filter(
+        (unique) => {
+          return unique !== selectedUniqueConstraintName;
+        },
+      );
+    });
     updateMainTableDetails(newMainTableDetails);
     cleanupRightSidebar();
   }
@@ -264,6 +375,8 @@ export default function App() {
     };
   }, [mainTableDetails]);
 
+  console.log(mainTableDetails);
+
   return (
     <>
       <Nav
@@ -310,13 +423,21 @@ export default function App() {
               onCancel={cleanupRightSidebar}
               table={selectedTable}
               showCheckConstraint={showCheckConstraint}
-              checkConstraintName={tempCheckConstraintName}
+              constraintName={tempConstraintName}
               checkExpr={tempCheckConstraintExpression}
-              onCheckConstraintNameChange={setTempCheckConstraintName}
+              onConstraintNameChange={setTempConstraintName}
               onCheckExprChange={setTempCheckConstraintExpression}
               initialCheckConstraintName={selectedCheckConstraintName}
               onConfirmCheckConstraintClick={confirmCheckConstraintClickHandler}
               onDeleteCheckConstraint={deleteCheckConstraintClickHandler}
+              showUniqueConstraint={showUniqueConstraint}
+              initialUniqueConstraintName={selectedUniqueConstraintName}
+              selectedTableUnique={tempTableLevelUnique}
+              onTableLevelUniqueChange={setTempTableLevelUnique}
+              onDeleteUniqueConstraint={deleteUniqueConstraintClickHandler}
+              onConfirmUniqueConstraintClick={
+                confirmUniqueConstraintClickHandler
+              }
             />
           )}
         </div>

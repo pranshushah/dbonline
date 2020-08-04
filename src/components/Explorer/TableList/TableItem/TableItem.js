@@ -46,7 +46,13 @@ function TableItem({ table, onItemClicked }) {
 
   const uniques = table.tableLevelConstraint?.UNIQUETABLELEVEL.map(
     (uniqueObj, index) => (
-      <Uniques key={index}>{uniqueObj.constraintName}</Uniques>
+      <Uniques
+        key={index}
+        onItemClicked={onItemClicked}
+        item={uniqueObj}
+        table={table}>
+        {uniqueObj.constraintName}
+      </Uniques>
     ),
   );
   const attrsItems = table.attributes.map((attrObj) => (
