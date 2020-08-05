@@ -1,5 +1,6 @@
 import Styles from './PrimaryKeyContainer.module.scss';
 import React, { useState } from 'react';
+import { EXPLORERCONSTANT } from '../../../../../utils/constant/explorer';
 /**
  * @param {{
  * show:boolean,
@@ -9,13 +10,16 @@ import React, { useState } from 'react';
  * }} props
  */
 
-function PrimaryKeyContainer({ children, show, onItemClicked, item }) {
+function PrimaryKeyContainer({ children, show, onItemClicked, item, table }) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
   }
   if (!show && open) {
     setOpen(false);
+  }
+  function constraintClickHandler() {
+    onItemClicked(table, EXPLORERCONSTANT.PRIMARY, item);
   }
   return (
     <li
@@ -36,6 +40,7 @@ function PrimaryKeyContainer({ children, show, onItemClicked, item }) {
           show ? [Styles.container, Styles.show].join(' ') : Styles.container
         }>
         <li
+          onClick={constraintClickHandler}
           className={
             open
               ? [Styles.elementShow, Styles.elementContainer].join(' ')

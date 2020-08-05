@@ -3,10 +3,10 @@ import { Resizable } from 're-resizable';
 import Styles from './RightSidebar.module.scss';
 import EditCheckConstraint from './EditCheckConstraint/EditCheckConstraint';
 import EditUniqueConstraint from './EditUniqueConstraint/EditUniqueConstraint';
+import EditForeignConstraint from './EditForeignConstraint/EditForeignConstraint';
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
- * toggleSidebar:Function,
  * table:mainTableDetailsType,
  * showCheckConstraint:boolean,
  * constraintName:string,
@@ -19,16 +19,31 @@ import EditUniqueConstraint from './EditUniqueConstraint/EditUniqueConstraint';
  * onDeleteCheckConstraint:Function,
  * showUniqueConstraint:boolean,
  * initialUniqueConstraintName:string,
- * selectedTableUnique:Array,
- * onTableLevelUniqueChange:Array,
+ * selectedMultipleSelect:Array,
+ * onMultipleSelectChange:Function,
  * onDeleteUniqueConstraint:Function,
- * onConfirmUniqueConstraintClick:Function
+ * onConfirmUniqueConstraintClick:Function,
+ * showPrimaryConstraint:boolean,
+ * initialPrimaryConstraintName:string,
+ * onDeletePrimaryConstraint:Function,
+ * onConfirmPrimaryConstraintClick:Function,
+ * referencedAtt:object,
+ * referencingTable:object,
+ * referencingAtt:object,
+ * initialForeignConstraintName:string,
+ * showForeignConstraint:boolean,
+ * onReferencedAttChange:Function,
+ * onReferencingAttChange:Function,
+ * onReferencingTableChange:Function,
+ * onDeleteForeignConstraint:Function,
+ * onConfirmForeignConstraintClick:Function,
+ * foreignCheckedItem:Function,
+ * onForeignCheckedItem:Function,
  * }} props
  */
 
 function SideBar({
   mainTableDetails,
-  toggleSidebar,
   table,
   showCheckConstraint,
   constraintName,
@@ -41,10 +56,26 @@ function SideBar({
   onDeleteCheckConstraint,
   showUniqueConstraint,
   initialUniqueConstraintName,
-  selectedTableUnique,
-  onTableLevelUniqueChange,
+  selectedMultipleSelect,
+  onMultipleSelectChange,
   onDeleteUniqueConstraint,
   onConfirmUniqueConstraintClick,
+  showPrimaryConstraint,
+  initialPrimaryConstraintName,
+  onDeletePrimaryConstraint,
+  onConfirmPrimaryConstraintClick,
+  referencedAtt,
+  referencingTable,
+  referencingAtt,
+  initialForeignConstraintName,
+  showForeignConstraint,
+  onReferencedAttChange,
+  onReferencingAttChange,
+  onReferencingTableChange,
+  onDeleteForeignConstraint,
+  onConfirmForeignConstraintClick,
+  foreignCheckedItem,
+  onForeignCheckedItem,
 }) {
   const [width, setWidth] = useState(300);
 
@@ -90,11 +121,44 @@ function SideBar({
               uniqueConstraintName={constraintName}
               initialUniqueConstraintName={initialUniqueConstraintName}
               onUniqueConstraintNameChange={onConstraintNameChange}
-              selectedTableUnique={selectedTableUnique}
-              onTableLevelUniqueChange={onTableLevelUniqueChange}
+              selectedTableUnique={selectedMultipleSelect}
+              onTableLevelUniqueChange={onMultipleSelectChange}
               onCancel={onCancel}
               onDeleteUniqueConstraint={onDeleteUniqueConstraint}
               onConfirmUniqueConstraintClick={onConfirmUniqueConstraintClick}
+            />
+          )}
+          {showPrimaryConstraint && (
+            <EditUniqueConstraint
+              table={table}
+              uniqueConstraintName={constraintName}
+              initialUniqueConstraintName={initialPrimaryConstraintName}
+              onUniqueConstraintNameChange={onConstraintNameChange}
+              selectedTableUnique={selectedMultipleSelect}
+              onTableLevelUniqueChange={onMultipleSelectChange}
+              onCancel={onCancel}
+              onDeleteUniqueConstraint={onDeletePrimaryConstraint}
+              onConfirmUniqueConstraintClick={onConfirmPrimaryConstraintClick}
+            />
+          )}
+          {showForeignConstraint && (
+            <EditForeignConstraint
+              mainTableDetails={mainTableDetails}
+              table={table}
+              foreignConstraintName={constraintName}
+              onForeignConstraintNameChange={onConstraintNameChange}
+              onCancel={onCancel}
+              referencedAtt={referencedAtt}
+              referencingTable={referencingTable}
+              referencingAtt={referencingAtt}
+              onReferencedAttChange={onReferencedAttChange}
+              onReferencingAttChange={onReferencingAttChange}
+              onReferencingTableChange={onReferencingTableChange}
+              initialForeignConstraintName={initialForeignConstraintName}
+              onDeleteForeignConstraint={onDeleteForeignConstraint}
+              onConfirmForeignConstraintClick={onConfirmForeignConstraintClick}
+              onForeignCheckedItem={onForeignCheckedItem}
+              foreignCheckedItem={foreignCheckedItem}
             />
           )}
         </div>

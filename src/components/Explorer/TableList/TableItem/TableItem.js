@@ -28,7 +28,11 @@ function TableItem({ table, onItemClicked }) {
   }
   const foreigns = table.tableLevelConstraint?.FOREIGNKEY.map(
     (foreignObj, index) => (
-      <ForeignKeys key={index} table={table} item={foreignObj}>
+      <ForeignKeys
+        key={index}
+        table={table}
+        onItemClicked={onItemClicked}
+        item={foreignObj}>
         {foreignObj.constraintName}
       </ForeignKeys>
     ),

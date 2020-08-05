@@ -9,8 +9,6 @@ function ConstraintCheckBoxContainer({
   checkedConstraintObj,
   onConstraintChecked,
   checkBoxList,
-  stl,
-  ...props
 }) {
   const style = {
     display: 'flex',
