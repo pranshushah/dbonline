@@ -281,7 +281,12 @@ function AddAttributeModal({
     let val = e.target.value;
     if (val === '' || val === '-') {
     } else {
-      val = parseInt(val);
+      const tempVal = parseInt(val);
+      if (tempVal) {
+        val = tempVal;
+      } else {
+        val = '';
+      }
     }
     dispatch({
       type: 'PRECISION_INPUT_OK',

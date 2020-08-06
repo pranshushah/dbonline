@@ -23,7 +23,10 @@ const defaultRightSidebarState = {
   selectedPrimaryConstraintName: '',
   showForeignConstraint: false,
   selectedForeignConstraintName: '',
+  showAttribute: false,
+  selectedAttributeName: '',
 };
+
 function rightSidebarReducer(state, action) {
   switch (action.type) {
     case 'CLOSE_PREVIOUS_BLOCK': {
@@ -67,6 +70,14 @@ function rightSidebarReducer(state, action) {
         selectedForeignConstraintName: action.payload.name,
       };
     }
+    case 'ATTRIBUTE_SHOW': {
+      return {
+        ...state,
+        selectedTable: action.payload.table,
+        showAttribute: true,
+        selectedAttributeName: action.payload.name,
+      };
+    }
     case 'DEFAULT_STATE': {
       return defaultRightSidebarState;
     }
@@ -91,6 +102,8 @@ export default function App() {
     selectedPrimaryConstraintName,
     showForeignConstraint,
     selectedForeignConstraintName,
+    showAttribute,
+    selectedAttributeName,
   } = state;
   const [tempConstraintName, setTempConstraintName] = useState('');
   const [
@@ -98,11 +111,13 @@ export default function App() {
     setTempCheckConstraintExpression,
   ] = useState({});
   const [tempMultiSelect, setTempMultiSelect] = useState([]);
-  const [referencedAtt, setReferencedAtt] = useState({});
+  const [tempSingleSelect, setTempSingleSelect] = useState({});
   const [referencingTable, setReferencingTable] = useState({});
   const [referencingAtt, setReferencingAtt] = useState({});
-  const [foreignCheckedItem, setForeignCheckedItem] = useState({});
-
+  const [checkedItem, setCheckedItem] = useState({});
+  const [sizeInputValue, setSizeInputValue] = useState('');
+  const [preInputValue, setPreInputValue] = useState('');
+  const [defaultValue, setDefaultValue] = useState('');
   //app state
   const [showGrid, toggleShowGrid] = useState(true);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
@@ -158,10 +173,13 @@ export default function App() {
     setTempConstraintName('');
     setTempCheckConstraintExpression('');
     setTempMultiSelect([]);
-    setReferencedAtt({});
+    setTempSingleSelect({});
     setReferencingTable({});
     setReferencingAtt({});
-    setForeignCheckedItem({});
+    setCheckedItem({});
+    setPreInputValue('');
+    setSizeInputValue('');
+    setDefaultValue('');
   }
 
   /**
@@ -247,7 +265,7 @@ export default function App() {
           (attrObj) => attrObj.id === itemObj.ReferencingAtt,
         );
 
-        setReferencedAtt({
+        setTempSingleSelect({
           label: table.attributes[referencedAttIndex].name,
           value: itemObj.referencedAtt,
         });
@@ -265,14 +283,53 @@ export default function App() {
           value: itemObj.ReferencingAtt,
         });
         if (itemObj.cascade) {
-          setForeignCheckedItem({ CASCADE: true });
+          setCheckedItem({ CASCADE: true });
         } else {
           if (itemObj.setNull) {
-            setForeignCheckedItem({ 'SET-NULL': true });
+            setCheckedItem({ 'SET-NULL': true });
           }
         }
         setTempConstraintName(itemObj.constraintName);
         setShowRightSidebar(true);
+        break;
+      }
+      case EXPLORERCONSTANT.ATTRIBUTE: {
+        //         NOT-NULL: true
+        // UNIQUE: true
+        // AUTO-INCREMENT: true
+        // DEFAULT: true
+
+        const tempConstraint = {};
+        if (itemObj.isNOTNULL) {
+          tempConstraint['NOT-NULL'] = true;
+        }
+        if (itemObj.isUNIQUE) {
+          tempConstraint['UNIQUE'] = true;
+        }
+        if (itemObj.isAUTOINCREMENT) {
+          tempConstraint['AUTO-INCREMENT'] = true;
+        }
+        if (itemObj.DEFAULT) {
+          tempConstraint['DEFAULT'] = true;
+          setDefaultValue(itemObj.DEFAULT);
+        }
+        dispatch({
+          type: 'ATTRIBUTE_SHOW',
+          payload: { table, name: itemObj.name },
+        });
+        if (itemObj.size) {
+          setSizeInputValue(itemObj.size);
+        }
+        if (itemObj.precision) {
+          setPreInputValue(itemObj.precision);
+        }
+        setTempSingleSelect({
+          label: itemObj.dataType,
+          value: itemObj.dataType,
+        });
+        setTempConstraintName(itemObj.name);
+        setShowRightSidebar(true);
+        setCheckedItem(tempConstraint);
         break;
       }
       default: {
@@ -299,12 +356,12 @@ export default function App() {
     });
     newMainTableDetails[tableIndex].tableLevelConstraint.CHECK[
       constraintIndex
-    ].constraintName = finalConstraintName;
-    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK[
-      constraintIndex
-    ].AST = parser.parse(
-      `select * from boom WHERE (${tempCheckConstraintExpression})`,
-    );
+    ] = {
+      constraintName: finalConstraintName,
+      AST: parser.parse(
+        `select * from boom WHERE (${tempCheckConstraintExpression})`,
+      ),
+    };
     updateMainTableDetails(newMainTableDetails);
     cleanupRightSidebar();
   }
@@ -329,11 +386,10 @@ export default function App() {
 
     newMainTableDetails[tableIndex].tableLevelConstraint.UNIQUETABLELEVEL[
       constraintIndex
-    ].constraintName = finalConstraintName;
-
-    newMainTableDetails[tableIndex].tableLevelConstraint.UNIQUETABLELEVEL[
-      constraintIndex
-    ].attributes = tempMultiSelect.map((item) => item.value);
+    ] = {
+      constraintName: finalConstraintName,
+      attributes: tempMultiSelect.map((item) => item.value),
+    };
 
     newMainTableDetails[tableIndex].attributes.forEach((attrObj) => {
       const index = attrObj.inTableLevelUniquConstraint.findIndex(
@@ -367,15 +423,10 @@ export default function App() {
       (table) => table.id === selectedTable.id,
     );
 
-    newMainTableDetails[
-      tableIndex
-    ].tableLevelConstraint.PRIMARYKEY.constraintName = finalConstraintName;
-
-    newMainTableDetails[
-      tableIndex
-    ].tableLevelConstraint.PRIMARYKEY.attributes = tempMultiSelect.map(
-      (item) => item.value,
-    );
+    newMainTableDetails[tableIndex].tableLevelConstraint.PRIMARYKEY = {
+      constraintName: finalConstraintName,
+      attributes: tempMultiSelect.map((item) => item.value),
+    };
 
     newMainTableDetails[tableIndex].attributes.forEach((attrObj) => {
       const hasIndex = tempMultiSelect
@@ -388,6 +439,123 @@ export default function App() {
       }
     });
 
+    updateMainTableDetails(newMainTableDetails);
+    cleanupRightSidebar();
+  }
+
+  function confirmForeignConstraintClickHandler() {
+    let finalConstraintName;
+    if (tempConstraintName.length === 0) {
+      finalConstraintName = selectedForeignConstraintName;
+    } else {
+      finalConstraintName = tempConstraintName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const referencedTableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === selectedTable.id,
+    );
+
+    const referencedAttIndex = newMainTableDetails[
+      referencedTableIndex
+    ].attributes.findIndex((attrObj) => attrObj.id === tempSingleSelect.value);
+
+    const referencingTableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === referencingTable.value,
+    );
+
+    const referencingAttIndex = newMainTableDetails[
+      referencingTableIndex
+    ].attributes.findIndex((attrObj) => attrObj.id === referencingAtt.value);
+
+    //delete old stuff
+
+    const foreignConstraintIndex = newMainTableDetails[
+      referencedTableIndex
+    ].tableLevelConstraint.FOREIGNKEY.findIndex(
+      (foreignObj) =>
+        foreignObj.constraintName === selectedForeignConstraintName,
+    );
+
+    const oldReferencedAttIndex = newMainTableDetails[
+      referencedTableIndex
+    ].attributes.findIndex(
+      (attrObj) =>
+        attrObj.id ===
+        newMainTableDetails[referencedTableIndex].tableLevelConstraint
+          .FOREIGNKEY[foreignConstraintIndex].referencedAtt,
+    );
+
+    delete newMainTableDetails[referencedTableIndex].attributes[
+      oldReferencedAttIndex
+    ].isFOREIGNKEY;
+
+    // add new stuff
+
+    newMainTableDetails[referencedTableIndex].attributes[
+      referencedAttIndex
+    ].dataType =
+      newMainTableDetails[referencingTableIndex].attributes[
+        referencingAttIndex
+      ].dataType;
+
+    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
+      'size'
+    ] =
+      newMainTableDetails[referencingTableIndex].attributes[
+        referencingAttIndex
+      ]?.size;
+
+    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
+      'precision'
+    ] =
+      newMainTableDetails[referencingTableIndex].attributes[
+        referencingAttIndex
+      ]?.precision;
+
+    newMainTableDetails[referencedTableIndex].attributes[
+      referencedAttIndex
+    ].isFOREIGNKEY = true;
+
+    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
+      foreignConstraintIndex
+    ] = {
+      referencedAtt: tempSingleSelect.value,
+      ReferencingAtt: referencingAtt.value,
+      ReferencingTable: referencingTable.value,
+      constraintName: finalConstraintName,
+      cascade: checkedItem['CASCADE'] ? true : false,
+      setNull: checkedItem['SET-NULL'] ? true : false,
+    };
+
+    updateMainTableDetails(newMainTableDetails);
+    cleanupRightSidebar();
+  }
+
+  function confirmAttributeClickHandler() {
+    let finalAttributeName;
+    if (tempConstraintName.length === 0) {
+      finalAttributeName = selectedAttributeName;
+    } else {
+      finalAttributeName = tempConstraintName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (table) => table.tableName === selectedTable.tableName,
+    );
+    const attrIndex = newMainTableDetails[tableIndex].attributes.findIndex(
+      (attrObj) => attrObj.name === selectedAttributeName,
+    );
+    newMainTableDetails[tableIndex].attributes[attrIndex] = {
+      ...newMainTableDetails[tableIndex].attributes[attrIndex],
+      name: finalAttributeName,
+      dataType: tempSingleSelect.value,
+      size: sizeInputValue ? sizeInputValue : undefined,
+      precision: preInputValue ? preInputValue : undefined,
+      isNOTNULL: checkedItem['NOT-NULL'] ? true : false,
+      isUNIQUE: checkedItem['UNIQUE'] ? true : false,
+      isAUTOINCREMENT: checkedItem['AUTO-INCREMENT'] ? true : false,
+      DEFAULT: checkedItem['DEFAULT'] ? defaultValue : undefined,
+    };
     updateMainTableDetails(newMainTableDetails);
     cleanupRightSidebar();
   }
@@ -484,116 +652,77 @@ export default function App() {
     cleanupRightSidebar();
   }
 
-  function confirmForeignConstraintClickHandler() {
-    let finalConstraintName;
-    if (tempConstraintName.length === 0) {
-      finalConstraintName = selectedForeignConstraintName;
-    } else {
-      finalConstraintName = tempConstraintName;
-    }
+  function deleteAttributeHandler() {
     const newMainTableDetails = cloneDeep(mainTableDetails);
-    const referencedTableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === selectedTable.id,
+
+    const index = newMainTableDetails.findIndex(
+      (table) => table.tableName === selectedTable.tableName,
     );
 
-    const referencedAttIndex = newMainTableDetails[
-      referencedTableIndex
-    ].attributes.findIndex((attrObj) => attrObj.id === referencedAtt.value);
+    const selectedAttributeIndexForDeleteAttribute = newMainTableDetails[
+      index
+    ].attributes.findIndex((attrObj) => attrObj.name === selectedAttributeName);
 
-    const referencingTableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === referencingTable.value,
+    newMainTableDetails[index].attributes.splice(
+      selectedAttributeIndexForDeleteAttribute,
+      1,
     );
 
-    const referencingAttIndex = newMainTableDetails[
-      referencingTableIndex
-    ].attributes.findIndex((attrObj) => attrObj.id === referencingAtt.value);
+    // clean-up
 
-    //delete old stuff
+    //unique-key
+    if (
+      selectedTable.attributes[selectedAttributeIndexForDeleteAttribute]
+        ?.inTableLevelUniquConstraint.length !== 0
+    ) {
+      selectedTable.attributes[
+        selectedAttributeIndexForDeleteAttribute
+      ].inTableLevelUniquConstraint.forEach((cName) => {
+        newMainTableDetails[index].attributes.forEach((attr) => {
+          attr.inTableLevelUniquConstraint = attr?.inTableLevelUniquConstraint.filter(
+            (entity) => entity !== cName,
+          );
+        });
+      });
+      newMainTableDetails[
+        index
+      ].tableLevelConstraint.UNIQUETABLELEVEL = newMainTableDetails[
+        index
+      ].tableLevelConstraint.UNIQUETABLELEVEL.filter((obj) => {
+        return !selectedTable.attributes[
+          selectedAttributeIndexForDeleteAttribute
+        ].inTableLevelUniquConstraint.includes(obj.constraintName);
+      });
+    }
 
-    const foreignConstraintIndex = newMainTableDetails[
-      referencedTableIndex
-    ].tableLevelConstraint.FOREIGNKEY.findIndex(
-      (foreignObj) =>
-        foreignObj.constraintName === selectedForeignConstraintName,
-    );
+    // foreign-key
 
-    const oldReferencedAttIndex = newMainTableDetails[
-      referencedTableIndex
-    ].attributes.findIndex(
-      (attrObj) =>
-        attrObj.id ===
-        newMainTableDetails[referencedTableIndex].tableLevelConstraint
-          .FOREIGNKEY[foreignConstraintIndex].referencedAtt,
-    );
+    if (
+      selectedTable.attributes[selectedAttributeIndexForDeleteAttribute]
+        ?.isFOREIGNKEY
+    ) {
+      newMainTableDetails[
+        index
+      ].tableLevelConstraint.FOREIGNKEY = newMainTableDetails[
+        index
+      ].tableLevelConstraint.FOREIGNKEY.filter(
+        (obj) =>
+          !obj.referencedAtt ===
+          selectedTable.attributes[selectedAttributeIndexForDeleteAttribute].id,
+      );
+    }
 
-    delete newMainTableDetails[referencedTableIndex].attributes[
-      oldReferencedAttIndex
-    ].isFOREIGNKEY;
-
-    // add new stuff
-
-    newMainTableDetails[referencedTableIndex].attributes[
-      referencedAttIndex
-    ].dataType =
-      newMainTableDetails[referencingTableIndex].attributes[
-        referencingAttIndex
-      ].dataType;
-
-    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
-      'size'
-    ] =
-      newMainTableDetails[referencingTableIndex].attributes[
-        referencingAttIndex
-      ]?.size;
-
-    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
-      'precision'
-    ] =
-      newMainTableDetails[referencingTableIndex].attributes[
-        referencingAttIndex
-      ]?.precision;
-
-    newMainTableDetails[referencedTableIndex].attributes[
-      referencedAttIndex
-    ].isFOREIGNKEY = true;
-
-    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-      foreignConstraintIndex
-    ].referencedAtt = referencedAtt.value;
-
-    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-      foreignConstraintIndex
-    ].ReferencingAtt = referencingAtt.value;
-
-    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-      foreignConstraintIndex
-    ].ReferencingTable = referencingTable.value;
-
-    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-      foreignConstraintIndex
-    ].constraintName = finalConstraintName;
-
-    if (foreignCheckedItem['CASCADE']) {
-      console.log('bbom');
-      newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-        foreignConstraintIndex
-      ].cascade = true;
-      newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-        foreignConstraintIndex
-      ].setNull = false;
-    } else {
-      if (foreignCheckedItem['SET-NULL']) {
-        newMainTableDetails[
-          referencedTableIndex
-        ].tableLevelConstraint.FOREIGNKEY[
-          foreignConstraintIndex
-        ].setNull = true;
-        newMainTableDetails[
-          referencedTableIndex
-        ].tableLevelConstraint.FOREIGNKEY[
-          foreignConstraintIndex
-        ].cascade = false;
-      }
+    //primary-key
+    if (
+      selectedTable.attributes[selectedAttributeIndexForDeleteAttribute]
+        .isPRIMARYKEY
+    ) {
+      newMainTableDetails[index].attributes.forEach((attr) => {
+        if (attr.isPRIMARYKEY) {
+          delete attr.isPRIMARYKEY;
+        }
+      });
+      newMainTableDetails[index].tableLevelConstraint.PRIMARYKEY = null;
     }
 
     updateMainTableDetails(newMainTableDetails);
@@ -619,63 +748,27 @@ export default function App() {
   useEffect(() => {
     function shortcutHandler(e) {
       // shift + d (details sidebar toggle)
-      if (
-        !e.altKey &&
-        e.which === 68 &&
-        e.isTrusted &&
-        !e.ctrlKey &&
-        e.shiftKey
-      ) {
+      if (!e.altKey && e.which === 68 && !e.ctrlKey && e.shiftKey) {
         showRightSidebarHandler();
       }
       // shift + e (explorer sidebar toggle)
-      if (
-        !e.altKey &&
-        e.which === 69 &&
-        e.isTrusted &&
-        !e.ctrlKey &&
-        e.shiftKey
-      ) {
+      if (!e.altKey && e.which === 69 && !e.ctrlKey && e.shiftKey) {
         showLeftSidebarHandler();
       }
       // alt + g (grid toggle)
-      else if (
-        e.altKey &&
-        e.which === 71 &&
-        !e.shiftKey &&
-        !e.ctrlKey &&
-        e.isTrusted
-      ) {
+      else if (e.altKey && e.which === 71 && !e.shiftKey && !e.ctrlKey) {
         showGridHandler();
       }
       //alt + t (new table)
-      else if (
-        !e.ctrlKey &&
-        e.which === 84 &&
-        e.altKey &&
-        !e.shiftKey &&
-        e.isTrusted
-      ) {
+      else if (!e.ctrlKey && e.which === 84 && e.altKey && !e.shiftKey) {
         newTableCreatedHandler();
       }
       // alt + c (get code)
-      else if (
-        !e.ctrlKey &&
-        e.which === 67 &&
-        e.altKey &&
-        !e.shiftKey &&
-        e.isTrusted
-      ) {
+      else if (!e.ctrlKey && e.which === 67 && e.altKey && !e.shiftKey) {
         code(mainTableDetails);
       }
       // alt + p (print design)
-      else if (
-        !e.ctrlKey &&
-        e.which === 80 &&
-        e.altKey &&
-        !e.shiftKey &&
-        e.isTrusted
-      ) {
+      else if (!e.ctrlKey && e.which === 80 && e.altKey && !e.shiftKey) {
         pdf();
       }
     }
@@ -754,20 +847,30 @@ export default function App() {
               onConfirmPrimaryConstraintClick={
                 confirmPrimaryConstraintClickHandler
               }
-              referencedAtt={referencedAtt}
+              singleSelect={tempSingleSelect}
               referencingTable={referencingTable}
               referencingAtt={referencingAtt}
               initialForeignConstraintName={selectedForeignConstraintName}
               showForeignConstraint={showForeignConstraint}
-              onReferencedAttChange={setReferencedAtt}
+              onSingleSelectChange={setTempSingleSelect}
               onReferencingAttChange={setReferencingAtt}
               onReferencingTableChange={setReferencingTable}
               onDeleteForeignConstraint={deleteForeignConstraintClickHandler}
               onConfirmForeignConstraintClick={
                 confirmForeignConstraintClickHandler
               }
-              foreignCheckedItem={foreignCheckedItem}
-              onForeignCheckedItem={setForeignCheckedItem}
+              checkedItem={checkedItem}
+              onCheckedItemChange={setCheckedItem}
+              showAttribute={showAttribute}
+              initialAttributeName={selectedAttributeName}
+              sizeInput={sizeInputValue}
+              preInput={preInputValue}
+              onSizeInputChange={setSizeInputValue}
+              onPreInputChange={setPreInputValue}
+              defaultValue={defaultValue}
+              onDefaultValueChange={setDefaultValue}
+              onDeleteAttribute={deleteAttributeHandler}
+              onConfirmAttribute={confirmAttributeClickHandler}
             />
           )}
         </div>

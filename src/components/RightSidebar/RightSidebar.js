@@ -4,6 +4,7 @@ import Styles from './RightSidebar.module.scss';
 import EditCheckConstraint from './EditCheckConstraint/EditCheckConstraint';
 import EditUniqueConstraint from './EditUniqueConstraint/EditUniqueConstraint';
 import EditForeignConstraint from './EditForeignConstraint/EditForeignConstraint';
+import EditAttribute from './EditAttribute/EditAttribute';
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
@@ -32,13 +33,23 @@ import EditForeignConstraint from './EditForeignConstraint/EditForeignConstraint
  * referencingAtt:object,
  * initialForeignConstraintName:string,
  * showForeignConstraint:boolean,
- * onReferencedAttChange:Function,
+ * onSingleSelectChange:Function,
  * onReferencingAttChange:Function,
  * onReferencingTableChange:Function,
  * onDeleteForeignConstraint:Function,
  * onConfirmForeignConstraintClick:Function,
- * foreignCheckedItem:Function,
- * onForeignCheckedItem:Function,
+ * checkedItem:Object,
+ * onCheckedItemChange:Function,
+ * showAttribute:boolean,
+ * initialAttributeName:string,
+ * sizeInput:string,
+ * preInput:string,
+ * onSizeInputChange:Function,
+ * onPreInputChange:Function,
+ * defaultValue:string,
+ * onDefaultValueChange:Function,
+ * onDeleteAttribute:Function,
+ * onConfirmAttribute:Function
  * }} props
  */
 
@@ -64,18 +75,28 @@ function SideBar({
   initialPrimaryConstraintName,
   onDeletePrimaryConstraint,
   onConfirmPrimaryConstraintClick,
-  referencedAtt,
+  singleSelect,
   referencingTable,
   referencingAtt,
   initialForeignConstraintName,
   showForeignConstraint,
-  onReferencedAttChange,
+  onSingleSelectChange,
   onReferencingAttChange,
   onReferencingTableChange,
   onDeleteForeignConstraint,
   onConfirmForeignConstraintClick,
-  foreignCheckedItem,
-  onForeignCheckedItem,
+  checkedItem,
+  onCheckedItemChange,
+  showAttribute,
+  sizeInput,
+  preInput,
+  onSizeInputChange,
+  onPreInputChange,
+  initialAttributeName,
+  defaultValue,
+  onDefaultValueChange,
+  onDeleteAttribute,
+  onConfirmAttribute,
 }) {
   const [width, setWidth] = useState(300);
 
@@ -148,17 +169,39 @@ function SideBar({
               foreignConstraintName={constraintName}
               onForeignConstraintNameChange={onConstraintNameChange}
               onCancel={onCancel}
-              referencedAtt={referencedAtt}
+              referencedAtt={singleSelect}
               referencingTable={referencingTable}
               referencingAtt={referencingAtt}
-              onReferencedAttChange={onReferencedAttChange}
+              onReferencedAttChange={onSingleSelectChange}
               onReferencingAttChange={onReferencingAttChange}
               onReferencingTableChange={onReferencingTableChange}
               initialForeignConstraintName={initialForeignConstraintName}
               onDeleteForeignConstraint={onDeleteForeignConstraint}
               onConfirmForeignConstraintClick={onConfirmForeignConstraintClick}
-              onForeignCheckedItem={onForeignCheckedItem}
-              foreignCheckedItem={foreignCheckedItem}
+              onForeignCheckedItem={onCheckedItemChange}
+              foreignCheckedItem={checkedItem}
+            />
+          )}
+          {showAttribute && (
+            <EditAttribute
+              table={table}
+              attributeName={constraintName}
+              onAttributeChange={onConstraintNameChange}
+              showAttribute={showAttribute}
+              sizeInput={sizeInput}
+              preInput={preInput}
+              onSizeInputChange={onSizeInputChange}
+              onPreInputChange={onPreInputChange}
+              initialAttriuteName={initialAttributeName}
+              onCancel={onCancel}
+              dataType={singleSelect}
+              onDataTypeChange={onSingleSelectChange}
+              columnLevelConstraint={checkedItem}
+              onColumnLevelConstraintChange={onCheckedItemChange}
+              defaultValue={defaultValue}
+              onDefaultValueChange={onDefaultValueChange}
+              onDeleteAttribute={onDeleteAttribute}
+              onConfirmAttribute={onConfirmAttribute}
             />
           )}
         </div>

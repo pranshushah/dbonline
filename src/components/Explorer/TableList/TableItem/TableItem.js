@@ -60,7 +60,12 @@ function TableItem({ table, onItemClicked }) {
     ),
   );
   const attrsItems = table.attributes.map((attrObj) => (
-    <AttrItem key={attrObj.id} attr={attrObj} />
+    <AttrItem
+      key={attrObj.id}
+      attr={attrObj}
+      onItemClicked={onItemClicked}
+      table={table}
+    />
   ));
   return (
     <li className={open ? Styles.itemPaddingContainer : null}>
