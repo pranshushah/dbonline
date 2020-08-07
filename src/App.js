@@ -10,82 +10,13 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { useLocalStorage } from './utils/customHooks/useLocalStorage';
 import { code } from './utils/helper-function/createCode';
 import { EXPLORERCONSTANT } from './utils/constant/explorer';
+import {
+  defaultRightSidebarState,
+  rightSidebarReducer,
+} from './utils/reducers/AppReducer';
 import cloneDeep from 'clone-deep';
 const parser = require('js-sql-parser');
 
-const defaultRightSidebarState = {
-  selectedTable: {},
-  showCheckConstraint: false,
-  selectedCheckConstraintName: '',
-  showUniqueConstraint: false,
-  selectedUniqueConstraintName: '',
-  showPrimaryConstraint: false,
-  selectedPrimaryConstraintName: '',
-  showForeignConstraint: false,
-  selectedForeignConstraintName: '',
-  showAttribute: false,
-  selectedAttributeName: '',
-};
-
-function rightSidebarReducer(state, action) {
-  switch (action.type) {
-    case 'CLOSE_PREVIOUS_BLOCK': {
-      return {
-        ...state,
-        showCheckConstraint: false,
-        showForeignConstraint: false,
-        showPrimaryConstraint: false,
-        showUniqueConstraint: false,
-      };
-    }
-    case 'CHECKCONSTRAINT_CONTAINER_SHOW': {
-      return {
-        ...state,
-        selectedTable: action.payload.table,
-        showCheckConstraint: true,
-        selectedCheckConstraintName: action.payload.name,
-      };
-    }
-    case 'UNIQUECONSTRAINT_CONTAINER_SHOW': {
-      return {
-        ...state,
-        selectedTable: action.payload.table,
-        showUniqueConstraint: true,
-        selectedUniqueConstraintName: action.payload.name,
-      };
-    }
-    case 'PRIMARYCONSTRAINT_CONTAINER_SHOW': {
-      return {
-        ...state,
-        selectedTable: action.payload.table,
-        showPrimaryConstraint: true,
-        selectedPrimaryConstraintName: action.payload.name,
-      };
-    }
-    case 'FOREIGNCONSTRAINT_CONTAINER_SHOW': {
-      return {
-        ...state,
-        selectedTable: action.payload.table,
-        showForeignConstraint: true,
-        selectedForeignConstraintName: action.payload.name,
-      };
-    }
-    case 'ATTRIBUTE_SHOW': {
-      return {
-        ...state,
-        selectedTable: action.payload.table,
-        showAttribute: true,
-        selectedAttributeName: action.payload.name,
-      };
-    }
-    case 'DEFAULT_STATE': {
-      return defaultRightSidebarState;
-    }
-    default: {
-      return state;
-    }
-  }
-}
 export default function App() {
   //right sidebar state
   const [state, dispatch] = useReducer(
@@ -338,33 +269,11 @@ export default function App() {
     }
   }
 
-  function confirmCheckConstraintClickHandler() {
-    let finalConstraintName;
-    if (tempConstraintName.length === 0) {
-      finalConstraintName = selectedCheckConstraintName;
-    } else {
-      finalConstraintName = tempConstraintName;
-    }
-    const newMainTableDetails = cloneDeep(mainTableDetails);
-    const tableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === selectedTable.id,
-    );
-    const constraintIndex = newMainTableDetails[
-      tableIndex
-    ].tableLevelConstraint?.CHECK.findIndex((checkObj) => {
-      return checkObj.constraintName === selectedCheckConstraintName;
-    });
-    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK[
-      constraintIndex
-    ] = {
-      constraintName: finalConstraintName,
-      AST: parser.parse(
-        `select * from boom WHERE (${tempCheckConstraintExpression})`,
-      ),
-    };
+  function rightSideBarAfterConfirmOrDelete(newMainTableDetails) {
     updateMainTableDetails(newMainTableDetails);
     cleanupRightSidebar();
   }
+
   function confirmUniqueConstraintClickHandler() {
     let finalConstraintName;
     if (tempConstraintName.length === 0) {
@@ -443,141 +352,6 @@ export default function App() {
     cleanupRightSidebar();
   }
 
-  function confirmForeignConstraintClickHandler() {
-    let finalConstraintName;
-    if (tempConstraintName.length === 0) {
-      finalConstraintName = selectedForeignConstraintName;
-    } else {
-      finalConstraintName = tempConstraintName;
-    }
-    const newMainTableDetails = cloneDeep(mainTableDetails);
-    const referencedTableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === selectedTable.id,
-    );
-
-    const referencedAttIndex = newMainTableDetails[
-      referencedTableIndex
-    ].attributes.findIndex((attrObj) => attrObj.id === tempSingleSelect.value);
-
-    const referencingTableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === referencingTable.value,
-    );
-
-    const referencingAttIndex = newMainTableDetails[
-      referencingTableIndex
-    ].attributes.findIndex((attrObj) => attrObj.id === referencingAtt.value);
-
-    //delete old stuff
-
-    const foreignConstraintIndex = newMainTableDetails[
-      referencedTableIndex
-    ].tableLevelConstraint.FOREIGNKEY.findIndex(
-      (foreignObj) =>
-        foreignObj.constraintName === selectedForeignConstraintName,
-    );
-
-    const oldReferencedAttIndex = newMainTableDetails[
-      referencedTableIndex
-    ].attributes.findIndex(
-      (attrObj) =>
-        attrObj.id ===
-        newMainTableDetails[referencedTableIndex].tableLevelConstraint
-          .FOREIGNKEY[foreignConstraintIndex].referencedAtt,
-    );
-
-    delete newMainTableDetails[referencedTableIndex].attributes[
-      oldReferencedAttIndex
-    ].isFOREIGNKEY;
-
-    // add new stuff
-
-    newMainTableDetails[referencedTableIndex].attributes[
-      referencedAttIndex
-    ].dataType =
-      newMainTableDetails[referencingTableIndex].attributes[
-        referencingAttIndex
-      ].dataType;
-
-    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
-      'size'
-    ] =
-      newMainTableDetails[referencingTableIndex].attributes[
-        referencingAttIndex
-      ]?.size;
-
-    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
-      'precision'
-    ] =
-      newMainTableDetails[referencingTableIndex].attributes[
-        referencingAttIndex
-      ]?.precision;
-
-    newMainTableDetails[referencedTableIndex].attributes[
-      referencedAttIndex
-    ].isFOREIGNKEY = true;
-
-    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
-      foreignConstraintIndex
-    ] = {
-      referencedAtt: tempSingleSelect.value,
-      ReferencingAtt: referencingAtt.value,
-      ReferencingTable: referencingTable.value,
-      constraintName: finalConstraintName,
-      cascade: checkedItem['CASCADE'] ? true : false,
-      setNull: checkedItem['SET-NULL'] ? true : false,
-    };
-
-    updateMainTableDetails(newMainTableDetails);
-    cleanupRightSidebar();
-  }
-
-  function confirmAttributeClickHandler() {
-    let finalAttributeName;
-    if (tempConstraintName.length === 0) {
-      finalAttributeName = selectedAttributeName;
-    } else {
-      finalAttributeName = tempConstraintName;
-    }
-    const newMainTableDetails = cloneDeep(mainTableDetails);
-    const tableIndex = newMainTableDetails.findIndex(
-      (table) => table.tableName === selectedTable.tableName,
-    );
-    const attrIndex = newMainTableDetails[tableIndex].attributes.findIndex(
-      (attrObj) => attrObj.name === selectedAttributeName,
-    );
-    newMainTableDetails[tableIndex].attributes[attrIndex] = {
-      ...newMainTableDetails[tableIndex].attributes[attrIndex],
-      name: finalAttributeName,
-      dataType: tempSingleSelect.value,
-      size: sizeInputValue ? sizeInputValue : undefined,
-      precision: preInputValue ? preInputValue : undefined,
-      isNOTNULL: checkedItem['NOT-NULL'] ? true : false,
-      isUNIQUE: checkedItem['UNIQUE'] ? true : false,
-      isAUTOINCREMENT: checkedItem['AUTO-INCREMENT'] ? true : false,
-      DEFAULT: checkedItem['DEFAULT'] ? defaultValue : undefined,
-    };
-    updateMainTableDetails(newMainTableDetails);
-    cleanupRightSidebar();
-  }
-
-  function deleteCheckConstraintClickHandler() {
-    const newMainTableDetails = cloneDeep(mainTableDetails);
-    const tableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === selectedTable.id,
-    );
-    const constraintIndex = newMainTableDetails[
-      tableIndex
-    ].tableLevelConstraint?.CHECK.findIndex((checkObj) => {
-      return checkObj.constraintName === selectedCheckConstraintName;
-    });
-    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK.splice(
-      constraintIndex,
-      1,
-    );
-    updateMainTableDetails(newMainTableDetails);
-    cleanupRightSidebar();
-  }
-
   function deleteUniqueConstraintClickHandler() {
     const newMainTableDetails = cloneDeep(mainTableDetails);
     const tableIndex = newMainTableDetails.findIndex(
@@ -613,118 +387,6 @@ export default function App() {
     newMainTableDetails[tableIndex].attributes.forEach((attrObj) => {
       delete attrObj.isPRIMARYKEY;
     });
-    updateMainTableDetails(newMainTableDetails);
-    cleanupRightSidebar();
-  }
-  function deleteForeignConstraintClickHandler() {
-    const newMainTableDetails = cloneDeep(mainTableDetails);
-    const referencedTableIndex = newMainTableDetails.findIndex(
-      (table) => table.id === selectedTable.id,
-    );
-
-    const foreignConstraintIndex = newMainTableDetails[
-      referencedTableIndex
-    ].tableLevelConstraint.FOREIGNKEY.findIndex(
-      (foreignObj) =>
-        foreignObj.constraintName === selectedForeignConstraintName,
-    );
-
-    const referencedAttIndex = newMainTableDetails[
-      referencedTableIndex
-    ].attributes.findIndex(
-      (attrObj) =>
-        attrObj.id ===
-        newMainTableDetails[referencedTableIndex].tableLevelConstraint
-          .FOREIGNKEY[foreignConstraintIndex].referencedAtt,
-    );
-
-    newMainTableDetails[
-      referencedTableIndex
-    ].tableLevelConstraint.FOREIGNKEY.splice(foreignConstraintIndex, 1);
-
-    delete newMainTableDetails[referencedTableIndex].attributes[
-      referencedAttIndex
-    ].isFOREIGNKEY;
-
-    // add new stuff
-
-    updateMainTableDetails(newMainTableDetails);
-    cleanupRightSidebar();
-  }
-
-  function deleteAttributeHandler() {
-    const newMainTableDetails = cloneDeep(mainTableDetails);
-
-    const index = newMainTableDetails.findIndex(
-      (table) => table.tableName === selectedTable.tableName,
-    );
-
-    const selectedAttributeIndexForDeleteAttribute = newMainTableDetails[
-      index
-    ].attributes.findIndex((attrObj) => attrObj.name === selectedAttributeName);
-
-    newMainTableDetails[index].attributes.splice(
-      selectedAttributeIndexForDeleteAttribute,
-      1,
-    );
-
-    // clean-up
-
-    //unique-key
-    if (
-      selectedTable.attributes[selectedAttributeIndexForDeleteAttribute]
-        ?.inTableLevelUniquConstraint.length !== 0
-    ) {
-      selectedTable.attributes[
-        selectedAttributeIndexForDeleteAttribute
-      ].inTableLevelUniquConstraint.forEach((cName) => {
-        newMainTableDetails[index].attributes.forEach((attr) => {
-          attr.inTableLevelUniquConstraint = attr?.inTableLevelUniquConstraint.filter(
-            (entity) => entity !== cName,
-          );
-        });
-      });
-      newMainTableDetails[
-        index
-      ].tableLevelConstraint.UNIQUETABLELEVEL = newMainTableDetails[
-        index
-      ].tableLevelConstraint.UNIQUETABLELEVEL.filter((obj) => {
-        return !selectedTable.attributes[
-          selectedAttributeIndexForDeleteAttribute
-        ].inTableLevelUniquConstraint.includes(obj.constraintName);
-      });
-    }
-
-    // foreign-key
-
-    if (
-      selectedTable.attributes[selectedAttributeIndexForDeleteAttribute]
-        ?.isFOREIGNKEY
-    ) {
-      newMainTableDetails[
-        index
-      ].tableLevelConstraint.FOREIGNKEY = newMainTableDetails[
-        index
-      ].tableLevelConstraint.FOREIGNKEY.filter(
-        (obj) =>
-          !obj.referencedAtt ===
-          selectedTable.attributes[selectedAttributeIndexForDeleteAttribute].id,
-      );
-    }
-
-    //primary-key
-    if (
-      selectedTable.attributes[selectedAttributeIndexForDeleteAttribute]
-        .isPRIMARYKEY
-    ) {
-      newMainTableDetails[index].attributes.forEach((attr) => {
-        if (attr.isPRIMARYKEY) {
-          delete attr.isPRIMARYKEY;
-        }
-      });
-      newMainTableDetails[index].tableLevelConstraint.PRIMARYKEY = null;
-    }
-
     updateMainTableDetails(newMainTableDetails);
     cleanupRightSidebar();
   }
@@ -832,8 +494,6 @@ export default function App() {
               onConstraintNameChange={setTempConstraintName}
               onCheckExprChange={setTempCheckConstraintExpression}
               initialCheckConstraintName={selectedCheckConstraintName}
-              onConfirmCheckConstraintClick={confirmCheckConstraintClickHandler}
-              onDeleteCheckConstraint={deleteCheckConstraintClickHandler}
               showUniqueConstraint={showUniqueConstraint}
               initialUniqueConstraintName={selectedUniqueConstraintName}
               selectedMultipleSelect={tempMultiSelect}
@@ -856,10 +516,6 @@ export default function App() {
               onSingleSelectChange={setTempSingleSelect}
               onReferencingAttChange={setReferencingAtt}
               onReferencingTableChange={setReferencingTable}
-              onDeleteForeignConstraint={deleteForeignConstraintClickHandler}
-              onConfirmForeignConstraintClick={
-                confirmForeignConstraintClickHandler
-              }
               checkedItem={checkedItem}
               onCheckedItemChange={setCheckedItem}
               showAttribute={showAttribute}
@@ -870,8 +526,9 @@ export default function App() {
               onPreInputChange={setPreInputValue}
               defaultValue={defaultValue}
               onDefaultValueChange={setDefaultValue}
-              onDeleteAttribute={deleteAttributeHandler}
-              onConfirmAttribute={confirmAttributeClickHandler}
+              onRightSideBarAfterConfirmOrDelete={
+                rightSideBarAfterConfirmOrDelete
+              }
             />
           )}
         </div>

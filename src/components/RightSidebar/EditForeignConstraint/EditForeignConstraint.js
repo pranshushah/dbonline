@@ -8,6 +8,8 @@ import Select from 'react-select';
 import ConstraintCheckBoxContainer from '../../AddAttributeModal/constraintCheckboxContainer';
 import { foreignConstraintCheckboxList } from '../../../utils/checkedItemsForAddAttr/index';
 import { customStyles } from '../../../utils/selectStyle';
+import cloneDeep from 'clone-deep';
+
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
@@ -22,10 +24,9 @@ import { customStyles } from '../../../utils/selectStyle';
  * onReferencingAttChange:Function,
  * onReferencingTableChange:Function,
  * initialForeignConstraintName:string,
- * onDeleteForeignConstraint:Function,
- * onConfirmForeignConstraintClick:Function
  * onForeignCheckedItem:Function,
  * foreignCheckedItem:object,
+ * onRightSideBarAfterConfirmOrDelete:Function,
  * }} props
  */
 
@@ -42,10 +43,9 @@ function EditUniqueConstraint({
   onReferencingAttChange,
   onReferencingTableChange,
   initialForeignConstraintName,
-  onDeleteForeignConstraint,
-  onConfirmForeignConstraintClick,
   onForeignCheckedItem,
   foreignCheckedItem,
+  onRightSideBarAfterConfirmOrDelete,
 }) {
   const [foreignConstraintNameError, setForeignConstraintNameError] = useState(
     false,
@@ -93,7 +93,7 @@ function EditUniqueConstraint({
 
   function confirmModalHandler() {
     setShowDeleteModal(false);
-    onDeleteForeignConstraint();
+    deleteForeignConstraintClickHandler();
   }
   function cancelModalHandler() {
     setShowDeleteModal(false);
@@ -136,7 +136,125 @@ function EditUniqueConstraint({
     onForeignCheckedItem(newCheckedItems);
   }
 
-  console.log(foreignCheckedItem);
+  function deleteForeignConstraintClickHandler() {
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const referencedTableIndex = newMainTableDetails.findIndex(
+      (givenTable) => givenTable.id === table.id,
+    );
+
+    const foreignConstraintIndex = newMainTableDetails[
+      referencedTableIndex
+    ].tableLevelConstraint.FOREIGNKEY.findIndex(
+      (foreignObj) => foreignObj.constraintName === foreignConstraintName,
+    );
+
+    const referencedAttIndex = newMainTableDetails[
+      referencedTableIndex
+    ].attributes.findIndex(
+      (attrObj) =>
+        attrObj.id ===
+        newMainTableDetails[referencedTableIndex].tableLevelConstraint
+          .FOREIGNKEY[foreignConstraintIndex].referencedAtt,
+    );
+
+    newMainTableDetails[
+      referencedTableIndex
+    ].tableLevelConstraint.FOREIGNKEY.splice(foreignConstraintIndex, 1);
+
+    delete newMainTableDetails[referencedTableIndex].attributes[
+      referencedAttIndex
+    ].isFOREIGNKEY;
+
+    // add new stuff
+    onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
+  }
+
+  function confirmForeignConstraintClickHandler() {
+    let finalConstraintName;
+    if (foreignConstraintName.length === 0) {
+      finalConstraintName = initialForeignConstraintName;
+    } else {
+      finalConstraintName = foreignConstraintName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const referencedTableIndex = newMainTableDetails.findIndex(
+      (givenTable) => givenTable.id === table.id,
+    );
+
+    const referencedAttIndex = newMainTableDetails[
+      referencedTableIndex
+    ].attributes.findIndex((attrObj) => attrObj.id === referencedAtt.value);
+
+    const referencingTableIndex = newMainTableDetails.findIndex(
+      (table) => table.id === referencingTable.value,
+    );
+
+    const referencingAttIndex = newMainTableDetails[
+      referencingTableIndex
+    ].attributes.findIndex((attrObj) => attrObj.id === referencingAtt.value);
+
+    //delete old stuff
+
+    const foreignConstraintIndex = newMainTableDetails[
+      referencedTableIndex
+    ].tableLevelConstraint.FOREIGNKEY.findIndex(
+      (foreignObj) =>
+        foreignObj.constraintName === initialForeignConstraintName,
+    );
+
+    const oldReferencedAttIndex = newMainTableDetails[
+      referencedTableIndex
+    ].attributes.findIndex(
+      (attrObj) =>
+        attrObj.id ===
+        newMainTableDetails[referencedTableIndex].tableLevelConstraint
+          .FOREIGNKEY[foreignConstraintIndex].referencedAtt,
+    );
+
+    delete newMainTableDetails[referencedTableIndex].attributes[
+      oldReferencedAttIndex
+    ].isFOREIGNKEY;
+
+    // add new stuff
+
+    newMainTableDetails[referencedTableIndex].attributes[
+      referencedAttIndex
+    ].dataType =
+      newMainTableDetails[referencingTableIndex].attributes[
+        referencingAttIndex
+      ].dataType;
+
+    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
+      'size'
+    ] =
+      newMainTableDetails[referencingTableIndex].attributes[
+        referencingAttIndex
+      ]?.size;
+
+    newMainTableDetails[referencedTableIndex].attributes[referencedAttIndex][
+      'precision'
+    ] =
+      newMainTableDetails[referencingTableIndex].attributes[
+        referencingAttIndex
+      ]?.precision;
+
+    newMainTableDetails[referencedTableIndex].attributes[
+      referencedAttIndex
+    ].isFOREIGNKEY = true;
+
+    newMainTableDetails[referencedTableIndex].tableLevelConstraint.FOREIGNKEY[
+      foreignConstraintIndex
+    ] = {
+      referencedAtt: referencedAtt.value,
+      ReferencingAtt: referencingAtt.value,
+      ReferencingTable: referencingTable.value,
+      constraintName: finalConstraintName,
+      cascade: foreignCheckedItem['CASCADE'] ? true : false,
+      setNull: foreignCheckedItem['SET-NULL'] ? true : false,
+    };
+
+    onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
+  }
 
   return (
     <div>
@@ -218,7 +336,7 @@ function EditUniqueConstraint({
           <Button
             dimension='small'
             className={Styles.button}
-            onClick={onConfirmForeignConstraintClick}
+            onClick={confirmForeignConstraintClickHandler}
             disabled={containerError}>
             Confirm
           </Button>

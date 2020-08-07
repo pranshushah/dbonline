@@ -38,6 +38,8 @@ function DeleteTableModal({
   useEffect(() => {
     if (tableName === deleteTableInputValue) {
       setTableError(false);
+    } else {
+      setTableError(true);
     }
   }, [deleteTableInputValue, tableName]);
 

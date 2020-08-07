@@ -16,8 +16,6 @@ import EditAttribute from './EditAttribute/EditAttribute';
  * onCheckExprChange:Function,
  * initialCheckConstraintName:string,
  * onCancel:Function,
- * onConfirmCheckConstraintClick:Function,
- * onDeleteCheckConstraint:Function,
  * showUniqueConstraint:boolean,
  * initialUniqueConstraintName:string,
  * selectedMultipleSelect:Array,
@@ -36,8 +34,6 @@ import EditAttribute from './EditAttribute/EditAttribute';
  * onSingleSelectChange:Function,
  * onReferencingAttChange:Function,
  * onReferencingTableChange:Function,
- * onDeleteForeignConstraint:Function,
- * onConfirmForeignConstraintClick:Function,
  * checkedItem:Object,
  * onCheckedItemChange:Function,
  * showAttribute:boolean,
@@ -48,8 +44,7 @@ import EditAttribute from './EditAttribute/EditAttribute';
  * onPreInputChange:Function,
  * defaultValue:string,
  * onDefaultValueChange:Function,
- * onDeleteAttribute:Function,
- * onConfirmAttribute:Function
+ * onRightSideBarAfterConfirmOrDelete:Function
  * }} props
  */
 
@@ -63,8 +58,6 @@ function SideBar({
   onCheckExprChange,
   initialCheckConstraintName,
   onCancel,
-  onConfirmCheckConstraintClick,
-  onDeleteCheckConstraint,
   showUniqueConstraint,
   initialUniqueConstraintName,
   selectedMultipleSelect,
@@ -83,8 +76,6 @@ function SideBar({
   onSingleSelectChange,
   onReferencingAttChange,
   onReferencingTableChange,
-  onDeleteForeignConstraint,
-  onConfirmForeignConstraintClick,
   checkedItem,
   onCheckedItemChange,
   showAttribute,
@@ -95,8 +86,7 @@ function SideBar({
   initialAttributeName,
   defaultValue,
   onDefaultValueChange,
-  onDeleteAttribute,
-  onConfirmAttribute,
+  onRightSideBarAfterConfirmOrDelete,
 }) {
   const [width, setWidth] = useState(300);
 
@@ -132,8 +122,10 @@ function SideBar({
               onCheckExprChange={onCheckExprChange}
               onCancel={onCancel}
               initialCheckConstraintName={initialCheckConstraintName}
-              onConfirmCheckConstraintClick={onConfirmCheckConstraintClick}
-              onDeleteCheckConstraint={onDeleteCheckConstraint}
+              onRightSideBarAfterConfirmOrDelete={
+                onRightSideBarAfterConfirmOrDelete
+              }
+              mainTableDetails={mainTableDetails}
             />
           )}
           {showUniqueConstraint && (
@@ -176,10 +168,11 @@ function SideBar({
               onReferencingAttChange={onReferencingAttChange}
               onReferencingTableChange={onReferencingTableChange}
               initialForeignConstraintName={initialForeignConstraintName}
-              onDeleteForeignConstraint={onDeleteForeignConstraint}
-              onConfirmForeignConstraintClick={onConfirmForeignConstraintClick}
               onForeignCheckedItem={onCheckedItemChange}
               foreignCheckedItem={checkedItem}
+              onRightSideBarAfterConfirmOrDelete={
+                onRightSideBarAfterConfirmOrDelete
+              }
             />
           )}
           {showAttribute && (
@@ -200,8 +193,10 @@ function SideBar({
               onColumnLevelConstraintChange={onCheckedItemChange}
               defaultValue={defaultValue}
               onDefaultValueChange={onDefaultValueChange}
-              onDeleteAttribute={onDeleteAttribute}
-              onConfirmAttribute={onConfirmAttribute}
+              onRightSideBarAfterConfirmOrDelete={
+                onRightSideBarAfterConfirmOrDelete
+              }
+              mainTableDetails={mainTableDetails}
             />
           )}
         </div>

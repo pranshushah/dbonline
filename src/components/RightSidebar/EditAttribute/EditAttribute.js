@@ -8,6 +8,7 @@ import { columnConstraintCheckboxList } from '../../../utils/checkedItemsForAddA
 import ConstraintCheckBoxContainer from '../../AddAttributeModal/constraintCheckboxContainer';
 import DeleteAttrModal from '../../DeleteAttrModal/DeleteAttrModal';
 import { customStyles } from '../../../utils/selectStyle';
+import cloneDeep from 'clone-deep';
 
 import {
   oracleSizeError,
@@ -33,8 +34,8 @@ import Select from 'react-select';
  * onColumnLevelConstraintChange:Function,
  * defaultValue:string,
  * onDefaultValueChange:Function,
- * onDeleteAttribute:Function,
- * onConfirmAttribute:Function,
+ * onRightSideBarAfterConfirmOrDelete:Function,
+ * mainTableDetails:mainTableDetailsType[],
  * }} props
  */
 
@@ -54,8 +55,8 @@ function EditCheckConstraint({
   onColumnLevelConstraintChange,
   defaultValue,
   onDefaultValueChange,
-  onDeleteAttribute,
-  onConfirmAttribute,
+  onRightSideBarAfterConfirmOrDelete,
+  mainTableDetails,
 }) {
   const [attributeError, setAttributeError] = useState(false);
   const [attributeErrorErrorMessage, setAttributeErrorErrorMessage] = useState(
@@ -161,7 +162,7 @@ function EditCheckConstraint({
 
   function confirmModalHandler() {
     setShowDeleteModal(false);
-    onDeleteAttribute();
+    deleteAttributeHandler();
   }
   function cancelModalHandler() {
     setShowDeleteModal(false);
@@ -185,6 +186,109 @@ function EditCheckConstraint({
       setContainerError(false);
     }
   }, [defaultValueError, sizeError, attributeError]);
+
+  function deleteAttributeHandler() {
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+
+    const index = newMainTableDetails.findIndex(
+      (givenTable) => givenTable.tableName === table.tableName,
+    );
+
+    const selectedAttributeIndexForDeleteAttribute = newMainTableDetails[
+      index
+    ].attributes.findIndex((attrObj) => attrObj.name === initialAttriuteName);
+
+    newMainTableDetails[index].attributes.splice(
+      selectedAttributeIndexForDeleteAttribute,
+      1,
+    );
+
+    // clean-up
+
+    //unique-key
+    if (
+      table.attributes[selectedAttributeIndexForDeleteAttribute]
+        ?.inTableLevelUniquConstraint.length !== 0
+    ) {
+      table.attributes[
+        selectedAttributeIndexForDeleteAttribute
+      ].inTableLevelUniquConstraint.forEach((cName) => {
+        newMainTableDetails[index].attributes.forEach((attr) => {
+          attr.inTableLevelUniquConstraint = attr?.inTableLevelUniquConstraint.filter(
+            (entity) => entity !== cName,
+          );
+        });
+      });
+      newMainTableDetails[
+        index
+      ].tableLevelConstraint.UNIQUETABLELEVEL = newMainTableDetails[
+        index
+      ].tableLevelConstraint.UNIQUETABLELEVEL.filter((obj) => {
+        return !table.attributes[
+          selectedAttributeIndexForDeleteAttribute
+        ].inTableLevelUniquConstraint.includes(obj.constraintName);
+      });
+    }
+
+    // foreign-key
+
+    if (
+      table.attributes[selectedAttributeIndexForDeleteAttribute]?.isFOREIGNKEY
+    ) {
+      newMainTableDetails[
+        index
+      ].tableLevelConstraint.FOREIGNKEY = newMainTableDetails[
+        index
+      ].tableLevelConstraint.FOREIGNKEY.filter(
+        (obj) =>
+          !obj.referencedAtt ===
+          table.attributes[selectedAttributeIndexForDeleteAttribute].id,
+      );
+    }
+
+    //primary-key
+    if (
+      table.attributes[selectedAttributeIndexForDeleteAttribute].isPRIMARYKEY
+    ) {
+      newMainTableDetails[index].attributes.forEach((attr) => {
+        if (attr.isPRIMARYKEY) {
+          delete attr.isPRIMARYKEY;
+        }
+      });
+      newMainTableDetails[index].tableLevelConstraint.PRIMARYKEY = null;
+    }
+
+    onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
+  }
+
+  function confirmAttributeClickHandler() {
+    let finalAttributeName;
+    if (attributeName.length === 0) {
+      finalAttributeName = initialAttriuteName;
+    } else {
+      finalAttributeName = attributeName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (givenTable) => givenTable.tableName === table.tableName,
+    );
+    const attrIndex = newMainTableDetails[tableIndex].attributes.findIndex(
+      (attrObj) => attrObj.name === initialAttriuteName,
+    );
+    newMainTableDetails[tableIndex].attributes[attrIndex] = {
+      ...newMainTableDetails[tableIndex].attributes[attrIndex],
+      name: finalAttributeName,
+      dataType: dataType.value,
+      size: sizeInput ? sizeInput : undefined,
+      precision: preInput ? preInput : undefined,
+      isNOTNULL: columnLevelConstraint['NOT-NULL'] ? true : false,
+      isUNIQUE: columnLevelConstraint['UNIQUE'] ? true : false,
+      isAUTOINCREMENT: columnLevelConstraint['AUTO-INCREMENT'] ? true : false,
+      DEFAULT: columnLevelConstraint['DEFAULT'] ? defaultValue : undefined,
+    };
+    onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
+  }
+
   return (
     <div>
       <DeleteAttrModal
@@ -286,7 +390,7 @@ function EditCheckConstraint({
         <div className={Styles.button}>
           <Button
             dimension='small'
-            onClick={onConfirmAttribute}
+            onClick={confirmAttributeClickHandler}
             className={Styles.button}
             disabled={containerError}>
             Confirm

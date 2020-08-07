@@ -4,10 +4,13 @@ import Input from '../../UI/Input/Input';
 import Modal from '../../UI/Modal/Modal';
 import { constraintError } from '../../../utils/helper-function/constraintError';
 import Styles from './EditCheckConstraint.module.scss';
+import cloneDeep from 'clone-deep';
 const parser = require('js-sql-parser');
 
 /**
  * @param {{
+ * onRightSideBarAfterConfirmOrDelete:Function,
+ * mainTableDetails:mainTableDetailsType[],
  * table:mainTableDetailsType,
  * checkConstraintName:string,
  * checkExpr:string,
@@ -15,8 +18,6 @@ const parser = require('js-sql-parser');
  * onCheckConstraintNameChange:Function,
  * onCheckExprChange:Function,
  * onCancel:Function,
- * onConfirmCheckConstraintClick:Function,
- * onDeleteCheckConstraint:Function
  * }} props
  */
 
@@ -28,8 +29,8 @@ function EditCheckConstraint({
   onCancel,
   onCheckConstraintNameChange,
   onCheckExprChange,
-  onConfirmCheckConstraintClick,
-  onDeleteCheckConstraint,
+  onRightSideBarAfterConfirmOrDelete,
+  mainTableDetails,
 }) {
   const [checkConstraintNameError, setCheckConstraintNameError] = useState(
     false,
@@ -57,6 +58,8 @@ function EditCheckConstraint({
           setCheckExprError(true);
           setCheckExprErrorMessage('invalid expression');
         }
+      } else {
+        setCheckExprError(true);
       }
     }
   }, [checkExpr, checkExprDirty]);
@@ -93,13 +96,53 @@ function EditCheckConstraint({
   }
   function confirmModalHandler() {
     setShowDeleteModal(false);
-    onDeleteCheckConstraint();
+    deleteCheckConstraintClickHandler();
   }
   function cancelModalHandler() {
     setShowDeleteModal(false);
   }
   function showModalHandler() {
     setShowDeleteModal(true);
+  }
+  function confirmCheckConstraintClickHandler() {
+    let finalConstraintName;
+    if (checkConstraintName.length === 0) {
+      finalConstraintName = initialCheckConstraintName;
+    } else {
+      finalConstraintName = checkConstraintName;
+    }
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (givenTable) => givenTable.id === table.id,
+    );
+    const constraintIndex = newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint?.CHECK.findIndex((checkObj) => {
+      return checkObj.constraintName === initialCheckConstraintName;
+    });
+    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK[
+      constraintIndex
+    ] = {
+      constraintName: finalConstraintName,
+      AST: parser.parse(`select * from boom WHERE (${checkExpr})`),
+    };
+    onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
+  }
+  function deleteCheckConstraintClickHandler() {
+    const newMainTableDetails = cloneDeep(mainTableDetails);
+    const tableIndex = newMainTableDetails.findIndex(
+      (givenTable) => givenTable.id === table.id,
+    );
+    const constraintIndex = newMainTableDetails[
+      tableIndex
+    ].tableLevelConstraint?.CHECK.findIndex((checkObj) => {
+      return checkObj.constraintName === checkConstraintName;
+    });
+    newMainTableDetails[tableIndex].tableLevelConstraint.CHECK.splice(
+      constraintIndex,
+      1,
+    );
+    onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
   }
   return (
     <div>
@@ -149,7 +192,7 @@ function EditCheckConstraint({
         </div>
         <div className={Styles.button}>
           <Button
-            onClick={onConfirmCheckConstraintClick}
+            onClick={confirmCheckConstraintClickHandler}
             dimension='small'
             className={Styles.button}
             disabled={containerError}>

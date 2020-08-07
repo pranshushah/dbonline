@@ -53,7 +53,8 @@
 
 .ReactVirtualized__Table {
   font-size: 14px;
-  border-top: 1px solid rgb(66, 66, 66);
+  color: rgb(220, 220, 220);
+  /* border-top: 1px solid rgb(66, 66, 66); */
 }
 .ReactVirtualized__Table__Grid {
   outline: none;
