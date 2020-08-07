@@ -4,6 +4,7 @@ import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import '../../utils/Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
+import { EXPLORERCONSTANT } from '../../utils/constant/explorer';
 
 import 'react-virtualized/styles.css';
 
@@ -15,21 +16,27 @@ import 'react-virtualized/styles.css';
 /**
  * @param {{
  * tableName:string,
+ * onRowClicked:Function,
  * mainTableDetails:mainTableDetailsType[],
  * tableDndDetails:tableDndDetailsObj[]
  * }} props
  */
 
-function MainTable({ mainTableDetails, tableName, tableDndDetails }) {
+function MainTable({
+  mainTableDetails,
+  tableName,
+  tableDndDetails,
+  onRowClicked,
+}) {
   let nameWidth = 85;
   let dataTypeWidth = 105;
   let tableWidth = 215;
 
-  const index = mainTableDetails.findIndex((mainTableDetail) => {
+  const tableIndex = mainTableDetails.findIndex((mainTableDetail) => {
     return mainTableDetail.tableName === tableName;
   });
   const tableData = [];
-  mainTableDetails[index].attributes.forEach((attribute) => {
+  mainTableDetails[tableIndex].attributes.forEach((attribute) => {
     if (attribute.name.length > 12) {
       nameWidth = 140;
       dataTypeWidth = 115;
@@ -60,10 +67,19 @@ function MainTable({ mainTableDetails, tableName, tableDndDetails }) {
     }
   }
 
+  function rowClickHandler({ index }) {
+    onRowClicked(
+      mainTableDetails[tableIndex],
+      EXPLORERCONSTANT.ATTRIBUTE,
+      mainTableDetails[tableIndex].attributes[index],
+    );
+  }
+
   return (
     <Table
       rowCount={tableData.length}
       rowGetter={rowGetterHandler}
+      onRowClick={rowClickHandler}
       height={tableData.length * 27}
       disableHeader
       width={tableWidth}

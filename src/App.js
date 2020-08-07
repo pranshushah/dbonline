@@ -818,6 +818,7 @@ export default function App() {
             tableDndDetails={tableDndDetails}
             onMainTableDetailsChange={mainTableDetailsChangeHandler}
             onTableDndDetailsChange={tableDndDetailsHandler}
+            onRowClicked={explorerItemClickHandler}
           />
           {showRightSidebar && (
             <RightSideBar

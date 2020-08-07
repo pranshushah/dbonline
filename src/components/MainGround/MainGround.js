@@ -17,12 +17,14 @@ import XArrow from 'react-xarrows';
  * mainTableDetails:mainTableDetailsType[],
  * onTableDndDetailsChange:Function,
  * onMainTableDetailsChange:Function,
+ * onRowClicked:Function,
  * }} props
  */
 function MainGround({
   showGrid,
   tableDndDetails,
   mainTableDetails,
+  onRowClicked,
   onTableDndDetailsChange,
   onMainTableDetailsChange,
 }) {
@@ -236,6 +238,7 @@ function MainGround({
             mainTableDetails={mainTableDetails}
             tableName={tableDndDetail.tableName}
             tableDndDetails={tableDndDetails}
+            onRowClicked={onRowClicked}
           />
           <AddAttributeLink
             tableDndDetail={tableDndDetail}

@@ -60,6 +60,8 @@
 }
 .ReactVirtualized__Table__row {
   border-bottom: 1px solid rgb(66, 66, 66);
+  cursor: pointer;
+  outline: none;
 }
 .firstColumn {
   margin: 0 4px 0 4px !important;
