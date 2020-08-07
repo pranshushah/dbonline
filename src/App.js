@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import './styles.css';
+import './styles.scss';
 import Nav from './components/Nav/Nav';
 import MainGround from './components/MainGround/MainGround';
 import RightSideBar from './components/RightSidebar/RightSidebar';
