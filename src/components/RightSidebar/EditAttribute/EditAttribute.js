@@ -7,6 +7,7 @@ import { dataTypes } from '../../../utils/attributeDataTypes';
 import { columnConstraintCheckboxList } from '../../../utils/checkedItemsForAddAttr';
 import ConstraintCheckBoxContainer from '../../AddAttributeModal/constraintCheckboxContainer';
 import DeleteAttrModal from '../../DeleteAttrModal/DeleteAttrModal';
+import { customStyles } from '../../../utils/selectStyle';
 
 import {
   oracleSizeError,
@@ -168,48 +169,7 @@ function EditCheckConstraint({
   function showModalHandler() {
     setShowDeleteModal(true);
   }
-  const customStyles = {
-    control: (base, state) => ({
-      ...base,
-      border: 'none',
-      background: '#3e4452',
-    }),
-    placeholder: (base, state) => ({
-      ...base,
-      color: 'white',
-    }),
-    singleValue: (base, state) => ({
-      ...base,
-      color: 'rgb(230,230,230)',
-    }),
-    menu: (base, state) => ({
-      ...base,
-      background: '#282c34',
-      color: 'rgb(235, 235, 235)',
-    }),
-    groupHeading: (base, state) => ({
-      ...base,
-      background: '#282c34',
-      color: 'rgba(235, 235, 235, 0.7)',
-    }),
-    option: (base, state) => ({
-      ...base,
-      background:
-        state.isFocused && state.isSelected
-          ? '#4b5263'
-          : state.isSelected
-          ? '#dcbc4f'
-          : state.isFocused
-          ? '#4b5263'
-          : '#282c34',
-      color:
-        state.isFocused && state.isSelected
-          ? 'rgb(235, 235, 235)'
-          : state.isSelected
-          ? 'rgb(30,30,30)'
-          : 'rgb(235, 235, 235)',
-    }),
-  };
+
   function checkBoxHandler(e) {
     e.persist();
     const newCheckedItems = {

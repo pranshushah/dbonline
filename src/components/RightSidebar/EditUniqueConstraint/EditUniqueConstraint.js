@@ -5,6 +5,7 @@ import Modal from '../../UI/Modal/Modal';
 import Styles from './EditUniqueConstraint.module.scss';
 import { constraintError } from '../../../utils/helper-function/constraintError';
 import Select from 'react-select';
+import { customStyles } from '../../../utils/selectStyle';
 
 /**
  * @param {{
@@ -74,51 +75,6 @@ function EditUniqueConstraint({
     }
   }, [uniqueValueError, uniqueConstraintNameError]);
 
-  const customStyles = {
-    control: (base, state) => ({
-      ...base,
-      border: 'none',
-      background: '#3e4452',
-    }),
-    placeholder: (base, state) => ({
-      ...base,
-      color: 'white',
-      fontSize: '16px',
-    }),
-    multiValue: (base, state) => ({
-      ...base,
-      background: '#dcbc4f',
-      color: 'rgb(35,35,35)',
-    }),
-    multiValueLabel: (base, state) => ({
-      ...base,
-      color: 'rgb(35,35,35)',
-    }),
-    menu: (base, state) => ({
-      ...base,
-      background: '#282c34',
-      color: 'rgb(235, 235, 235)',
-    }),
-    option: (base, state) => {
-      return {
-        ...base,
-        background:
-          state.isFocused && state.isSelected
-            ? '#4b5263'
-            : state.isSelected
-            ? '#dcbc4f'
-            : state.isFocused
-            ? '#4b5263'
-            : '#282c34',
-        color:
-          state.isFocused && state.isSelected
-            ? 'rgb(235, 235, 235)'
-            : state.isSelected
-            ? 'rgb(30,30,30)'
-            : 'rgb(235, 235, 235)',
-      };
-    },
-  };
   function confirmModalHandler() {
     setShowDeleteModal(false);
     onDeleteUniqueConstraint();

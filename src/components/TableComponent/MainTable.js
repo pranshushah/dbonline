@@ -4,9 +4,7 @@ import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import '../../utils/Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
-import EditIcon from '../UI/editIcon/Edit';
-import DeleteIcon from '../UI/DeleteIcon/Delete';
-import Styles from './MainTable.module.css';
+
 import 'react-virtualized/styles.css';
 
 /**
@@ -31,7 +29,7 @@ function MainTable({
 }) {
   let nameWidth = 85;
   let dataTypeWidth = 105;
-  let tableWidth = 255;
+  let tableWidth = 215;
 
   const index = mainTableDetails.findIndex((mainTableDetail) => {
     return mainTableDetail.tableName === tableName;
@@ -41,7 +39,7 @@ function MainTable({
     if (attribute.name.length > 12) {
       nameWidth = 140;
       dataTypeWidth = 115;
-      tableWidth = 330;
+      tableWidth = 280;
     }
     tableData.push({
       name: `${attribute.name}`,
@@ -53,7 +51,6 @@ function MainTable({
           : ``
       }`,
       isPrimaryKey: attribute.isPRIMARYKEY,
-      edit: '',
     });
   });
 
@@ -67,28 +64,6 @@ function MainTable({
     } else {
       return '';
     }
-  }
-
-  function editCellRendererHandler(attrName, attrIndex, tableName, onDelete) {
-    return (
-      <>
-        <span className={Styles.Icon}>
-          <EditIcon size={'sm'} />
-        </span>
-        <span
-          className={Styles.Icon}
-          onClick={onDelete.bind(
-            this,
-            tableName,
-            attrName,
-            attrIndex,
-            mainTableDetails[index],
-          )}
-          style={{ marginLeft: '2px' }}>
-          <DeleteIcon size={'sm'} />
-        </span>
-      </>
-    );
   }
 
   return (
@@ -117,20 +92,6 @@ function MainTable({
         dataKey='dataType'
         width={dataTypeWidth}
         className='border'
-      />
-      <Column
-        label='edit'
-        dataKey='edit'
-        width={48}
-        className='lastBorder'
-        cellRenderer={({ rowData, rowIndex }) =>
-          editCellRendererHandler(
-            rowData.name,
-            rowIndex,
-            tableName,
-            onAttrDelete,
-          )
-        }
       />
     </Table>
   );
