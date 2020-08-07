@@ -8,7 +8,6 @@ import MainTable from '../TableComponent/MainTable';
 import DeleteTableModal from '../DeleteTableModal/DeleteTableModal';
 import EditTableModal from '../EditTableModal/EditTableModal';
 import mainGroundReducer from '../../utils/reducers/mainGroundReducer';
-import DeleteAttrModal from '../DeleteAttrModal/DeleteAttrModal';
 import XArrow from 'react-xarrows';
 
 /**
@@ -45,7 +44,6 @@ function MainGround({
     addAttributeShowModal: false,
     showDeleteTableModal: false,
     showEditTableModal: false,
-    showDeleteAttributeModal: false,
     selectedTableDndDetailsForAddModal: {},
     selectedTableDetailsForAddModal: {},
     selectedTableDndDetailsForDeleteModal: {},
@@ -53,7 +51,6 @@ function MainGround({
     selectedTableDndDetailsForEditModal: {},
     selectedTableDetailsForEditModal: {},
     selectedTableNameForDeleteAttribute: '',
-    selectedAttributeNameForDeleteAttribute: '',
     selectedAttributeIndexForDeleteAttribute: -1,
   });
 
@@ -61,17 +58,12 @@ function MainGround({
     addAttributeShowModal,
     showDeleteTableModal,
     showEditTableModal,
-    showDeleteAttributeModal,
     selectedTableDndDetailsForAddModal,
     selectedTableDetailsForAddModal,
     selectedTableDndDetailsForDeleteModal,
     selectedTableDetailsForDeleteModal,
     selectedTableDndDetailsForEditModal,
     selectedTableDetailsForEditModal,
-    selectedTableNameForDeleteAttribute,
-    selectedAttributeNameForDeleteAttribute,
-    selectedAttributeIndexForDeleteAttribute,
-    selectedTableForDeleteAttribute,
   } = state;
 
   const [editTableName, setEditTableName] = useState('');
@@ -213,109 +205,6 @@ function MainGround({
     dispatch({ type: 'EDIT_MODAL_CONFIRM' });
   }
 
-  function attrDeleteHandler(
-    tableName,
-    deleteAttrName,
-    deleteAttrIndex,
-    givenTable,
-  ) {
-    dispatch({
-      type: 'DELETE_ATTRIBUTE_START',
-      payload: {
-        tableName: tableName,
-        attributeName: deleteAttrName,
-        attributeIndex: deleteAttrIndex,
-        selectedTable: givenTable,
-      },
-    });
-  }
-
-  function deleteAttributeCancelHandler() {
-    dispatch({ type: 'DELETE_ATTRIBUTE_CANCEL' });
-  }
-
-  function deleteAttributeConfirmHandler() {
-    /**
-     * @type {mainTableDetailsType[]}
-     */
-    const newMainTableDetails = JSON.parse(
-      JSON.stringify([...mainTableDetails]),
-    );
-    const index = newMainTableDetails.findIndex(
-      (table) => table.tableName === selectedTableNameForDeleteAttribute,
-    );
-
-    newMainTableDetails[index].attributes.splice(
-      selectedAttributeIndexForDeleteAttribute,
-      1,
-    );
-
-    // clean-up
-
-    //unique-key
-    if (
-      selectedTableForDeleteAttribute.attributes[
-        selectedAttributeIndexForDeleteAttribute
-      ]?.inTableLevelUniquConstraint.length !== 0
-    ) {
-      selectedTableForDeleteAttribute.attributes[
-        selectedAttributeIndexForDeleteAttribute
-      ].inTableLevelUniquConstraint.forEach((cName) => {
-        newMainTableDetails[index].attributes.forEach((attr) => {
-          attr.inTableLevelUniquConstraint = attr?.inTableLevelUniquConstraint.filter(
-            (entity) => entity !== cName,
-          );
-        });
-      });
-      newMainTableDetails[
-        index
-      ].tableLevelConstraint.UNIQUETABLELEVEL = newMainTableDetails[
-        index
-      ].tableLevelConstraint.UNIQUETABLELEVEL.filter((obj) => {
-        return !selectedTableForDeleteAttribute.attributes[
-          selectedAttributeIndexForDeleteAttribute
-        ].inTableLevelUniquConstraint.includes(obj.constraintName);
-      });
-    }
-
-    // foreign-key
-
-    if (
-      selectedTableForDeleteAttribute.attributes[
-        selectedAttributeIndexForDeleteAttribute
-      ]?.isFOREIGNKEY
-    ) {
-      newMainTableDetails[
-        index
-      ].tableLevelConstraint.FOREIGNKEY = newMainTableDetails[
-        index
-      ].tableLevelConstraint.FOREIGNKEY.filter(
-        (obj) =>
-          !obj.referencedAtt ===
-          selectedTableForDeleteAttribute.attributes[
-            selectedAttributeIndexForDeleteAttribute
-          ].id,
-      );
-    }
-
-    //primary-key
-    if (
-      selectedTableForDeleteAttribute.attributes[
-        selectedAttributeIndexForDeleteAttribute
-      ].isPRIMARYKEY
-    ) {
-      newMainTableDetails[index].attributes.forEach((attr) => {
-        if (attr.isPRIMARYKEY) {
-          delete attr.isPRIMARYKEY;
-        }
-      });
-      newMainTableDetails[index].tableLevelConstraint.PRIMARYKEY = null;
-    }
-
-    onMainTableDetailsChange(newMainTableDetails);
-    dispatch({ type: 'DELETE_ATTRIBUTE_CONFIRM' });
-  }
-
   const tables = tableDndDetails.map((tableDndDetail) => {
     const index = mainTableDetails.findIndex(
       (tableObj) => tableObj.id === tableDndDetail.id,
@@ -346,7 +235,6 @@ function MainGround({
           <MainTable
             mainTableDetails={mainTableDetails}
             tableName={tableDndDetail.tableName}
-            onAttrDelete={attrDeleteHandler}
             tableDndDetails={tableDndDetails}
           />
           <AddAttributeLink
@@ -394,16 +282,6 @@ function MainGround({
             onTableNameChange={setEditTableName}
             mainTableDetails={mainTableDetails}
             selectedTable={selectedTableDetailsForEditModal}
-          />
-        )}
-        {showDeleteAttributeModal && (
-          <DeleteAttrModal
-            showModalState={showDeleteAttributeModal}
-            onModalClosed={deleteAttributeCancelHandler}
-            onModalConfirmed={deleteAttributeConfirmHandler}
-            tableName={selectedTableNameForDeleteAttribute}
-            attrName={selectedAttributeNameForDeleteAttribute}
-            givenTable={selectedTableForDeleteAttribute}
           />
         )}
       </div>

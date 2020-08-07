@@ -72,36 +72,6 @@ export default function mainGroundReducer(state, action) {
         selectedTableDetailsForEditModal: null,
       };
     }
-    case 'DELETE_ATTRIBUTE_START': {
-      return {
-        ...state,
-        showDeleteAttributeModal: true,
-        selectedTableNameForDeleteAttribute: action.payload.tableName,
-        selectedAttributeNameForDeleteAttribute: action.payload.attributeName,
-        selectedAttributeIndexForDeleteAttribute: action.payload.attributeIndex,
-        selectedTableForDeleteAttribute: action.payload.selectedTable,
-      };
-    }
-    case 'DELETE_ATTRIBUTE_CANCEL': {
-      return {
-        ...state,
-        showDeleteAttributeModal: false,
-        selectedTableNameForDeleteAttribute: '',
-        selectedAttributeNameForDeleteAttribute: '',
-        selectedAttributeIndexForDeleteAttribute: -1,
-        selectedTableForDeleteAttribute: null,
-      };
-    }
-    case 'DELETE_ATTRIBUTE_CONFIRM': {
-      return {
-        ...state,
-        showDeleteAttributeModal: false,
-        selectedTableNameForDeleteAttribute: '',
-        selectedAttributeNameForDeleteAttribute: '',
-        selectedAttributeIndexForDeleteAttribute: -1,
-        selectedTableForDeleteAttribute: null,
-      };
-    }
     default: {
       return state;
     }

@@ -15,18 +15,12 @@ import 'react-virtualized/styles.css';
 /**
  * @param {{
  * tableName:string,
- * mainTableDetails:mainTableDetailsType[]
- * onAttrDelete:Function
+ * mainTableDetails:mainTableDetailsType[],
  * tableDndDetails:tableDndDetailsObj[]
  * }} props
  */
 
-function MainTable({
-  mainTableDetails,
-  tableName,
-  onAttrDelete,
-  tableDndDetails,
-}) {
+function MainTable({ mainTableDetails, tableName, tableDndDetails }) {
   let nameWidth = 85;
   let dataTypeWidth = 105;
   let tableWidth = 215;
