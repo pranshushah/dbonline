@@ -80,6 +80,7 @@ function MainGround({
 
   const [editTableName, setEditTableName] = useState('');
   const [editTableColor, setEditTableColor] = useState('');
+  const [opacity, setOpacity] = useState(0.8);
 
   function cancelAddModalHandler() {
     dispatch({ type: 'ADD_MODAL_CANCEL' });
@@ -231,10 +232,10 @@ function MainGround({
               start={tableDndDetail.id}
               end={foreignObj.ReferencingTable}
               color={tableDndDetail.color}
-              strokeWidth={3}
+              strokeWidth={4}
               passProps={{
                 cursor: 'pointer',
-                opacity: 0.8,
+                opacity: opacity,
                 onMouseEnter: (e) => {
                   dispatch({
                     type: 'SHOW_TOOLTIP',
@@ -245,9 +246,11 @@ function MainGround({
                       table: mainTableDetails[index],
                     },
                   });
+                  setOpacity(1);
                 },
                 onMouseLeave: () => {
                   dispatch({ type: 'CLOSE_TOOLTIP' });
+                  setOpacity(0.8);
                 },
               }}
             />
