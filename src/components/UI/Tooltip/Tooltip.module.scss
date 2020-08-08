@@ -1,0 +1,33 @@
+@import '../../../utils/scss/variables';
+.Tooltip {
+  display: block;
+  width: 220px;
+  background-color: $sideBarColor;
+  color: $textColor;
+  border-radius: 6px;
+  padding: 8px;
+  position: fixed;
+  z-index: 1;
+  margin-left: -20px;
+}
+
+.Tooltip::after {
+  border: solid;
+  border-color: $sideBarColor transparent;
+  border-width: 12px 6px 0 6px;
+  content: '';
+  left: 45%;
+  bottom: -10px;
+  position: absolute;
+}
+
+.rel {
+  position: relative;
+}
+
+.text {
+  padding: 2px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

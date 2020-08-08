@@ -1,3 +1,4 @@
+@import './utils/scss/variables';
 * {
   box-sizing: border-box;
   padding: 0px;
@@ -25,7 +26,7 @@
 
 .menu {
   background-color: rgb(40, 40, 40);
-  color: whitesmoke;
+  color: $textColor;
   padding-top: 8px;
   padding-bottom: 1rem;
   text-transform: capitalize;
@@ -53,7 +54,7 @@
 
 .ReactVirtualized__Table {
   font-size: 14px;
-  color: rgb(220, 220, 220);
+  color: rgba(255, 255, 255, 0.9);
   /* border-top: 1px solid rgb(66, 66, 66); */
 }
 .ReactVirtualized__Table__Grid {

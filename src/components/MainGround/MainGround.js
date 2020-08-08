@@ -9,7 +9,7 @@ import DeleteTableModal from '../DeleteTableModal/DeleteTableModal';
 import EditTableModal from '../EditTableModal/EditTableModal';
 import mainGroundReducer from '../../utils/reducers/mainGroundReducer';
 import XArrow from 'react-xarrows';
-
+import Tooltip from '../UI/Tooltip/Tooltip';
 /**
  * @param {{
  * showGrid:boolean,
@@ -54,6 +54,11 @@ function MainGround({
     selectedTableDetailsForEditModal: {},
     selectedTableNameForDeleteAttribute: '',
     selectedAttributeIndexForDeleteAttribute: -1,
+    showToolTip: false,
+    x: null,
+    y: null,
+    selectedForeignObj: null,
+    foreignTooltipTable: null,
   });
 
   const {
@@ -66,6 +71,11 @@ function MainGround({
     selectedTableDetailsForDeleteModal,
     selectedTableDndDetailsForEditModal,
     selectedTableDetailsForEditModal,
+    showToolTip,
+    x,
+    y,
+    selectedForeignObj,
+    foreignTooltipTable,
   } = state;
 
   const [editTableName, setEditTableName] = useState('');
@@ -214,13 +224,32 @@ function MainGround({
     let relArrow = [];
     if (mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.length > 0) {
       relArrow = mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.map(
-        (foreignObj, index) => {
+        (foreignObj, i) => {
           return foreignObj.ReferencingTable === tableDndDetail.id ? null : (
             <XArrow
-              key={index}
+              key={i}
               start={tableDndDetail.id}
               end={foreignObj.ReferencingTable}
               color={tableDndDetail.color}
+              strokeWidth={3}
+              passProps={{
+                cursor: 'pointer',
+                opacity: 0.8,
+                onMouseEnter: (e) => {
+                  dispatch({
+                    type: 'SHOW_TOOLTIP',
+                    payload: {
+                      x: e.pageX,
+                      y: e.pageY,
+                      foreignObj,
+                      table: mainTableDetails[index],
+                    },
+                  });
+                },
+                onMouseLeave: () => {
+                  dispatch({ type: 'CLOSE_TOOLTIP' });
+                },
+              }}
             />
           );
         },
@@ -285,6 +314,15 @@ function MainGround({
             onTableNameChange={setEditTableName}
             mainTableDetails={mainTableDetails}
             selectedTable={selectedTableDetailsForEditModal}
+          />
+        )}
+        {showToolTip && (
+          <Tooltip
+            x={x}
+            y={y}
+            dataObj={selectedForeignObj}
+            givenTable={foreignTooltipTable}
+            mainTableDetails={mainTableDetails}
           />
         )}
       </div>

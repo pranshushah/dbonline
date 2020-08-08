@@ -72,6 +72,26 @@ export default function mainGroundReducer(state, action) {
         selectedTableDetailsForEditModal: null,
       };
     }
+    case 'SHOW_TOOLTIP': {
+      return {
+        ...state,
+        showToolTip: true,
+        x: action.payload.x,
+        y: action.payload.y,
+        selectedForeignObj: action.payload.foreignObj,
+        foreignTooltipTable: action.payload.table,
+      };
+    }
+    case 'CLOSE_TOOLTIP': {
+      return {
+        ...state,
+        showToolTip: false,
+        x: null,
+        y: null,
+        selectedForeignObj: null,
+        foreignTooltipTable: null,
+      };
+    }
     default: {
       return state;
     }

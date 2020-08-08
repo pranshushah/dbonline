@@ -58,7 +58,7 @@ export const customStyles = {
   }),
   multiValue: (base, state) => ({
     ...base,
-    background: '#dcbc4f',
+    background: '#ffd54f',
     color: 'rgb(35,35,35)',
   }),
   multiValueLabel: (base, state) => ({
@@ -82,7 +82,7 @@ export const customStyles = {
         state.isFocused && state.isSelected
           ? '#4b5263'
           : state.isSelected
-          ? '#dcbc4f'
+          ? '#ffd54f'
           : state.isFocused
           ? '#4b5263'
           : '#282c34',
