@@ -16,26 +16,29 @@ function PrimaryKeyContainer({ children, show }) {
     setOpen(false);
   }
   return (
-    <li
-      className={
-        show ? [Styles.container, Styles.show].join(' ') : Styles.container
-      }>
-      <span
-        onClick={toogleArrow}
+    <>
+      <li
         className={
-          open
-            ? [Styles.liContainer, Styles.down].join(' ')
-            : Styles.liContainer
+          show ? [Styles.container, Styles.show].join(' ') : Styles.container
         }>
-        check constraint
-      </span>
-      <ul
-        className={
-          show ? [Styles.show, Styles.container].join(' ') : Styles.container
-        }>
-        {children.map((child) => React.cloneElement(child, { show: open }))}
-      </ul>
-    </li>
+        <span
+          onClick={toogleArrow}
+          className={
+            open
+              ? [Styles.liContainer, Styles.down].join(' ')
+              : Styles.liContainer
+          }>
+          check constraint
+          <span title='add check constraint' className={Styles.add} />
+        </span>
+        <ul
+          className={
+            show ? [Styles.show, Styles.container].join(' ') : Styles.container
+          }>
+          {children.map((child) => React.cloneElement(child, { show: open }))}
+        </ul>
+      </li>
+    </>
   );
 }
 

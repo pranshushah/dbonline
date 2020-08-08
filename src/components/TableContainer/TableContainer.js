@@ -60,8 +60,8 @@ function TableContainer({
         <div
           style={{
             position: 'relative',
-            border: '1px solid rgb(66, 66, 66)',
-            borderRadius: '1px',
+            borderRadius: '4px',
+            borderTop: 'none',
           }}>
           <TableHeader className='.handle' bgColor={tableDndDetail.color}>
             {tableDndDetail.tableName}

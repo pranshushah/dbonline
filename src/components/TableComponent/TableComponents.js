@@ -16,7 +16,7 @@ const TableCard = styled.div`
 `;
 
 const TableHeader = styled.h3`
-  color: rgb(226, 226, 226);
+  color: rgb(230, 230, 230);
   width: 100%;
   background: ${(props) => props.bgColor};
   text-align: left;

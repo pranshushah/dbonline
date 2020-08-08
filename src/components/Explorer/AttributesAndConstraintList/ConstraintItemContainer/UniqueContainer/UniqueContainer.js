@@ -28,6 +28,7 @@ function PrimaryKeyContainer({ children, show }) {
             : Styles.liContainer
         }>
         unique constraints
+        <span title='add unique constraint' className={Styles.add} />
       </span>
       <ul
         className={

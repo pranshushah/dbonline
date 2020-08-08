@@ -27,6 +27,7 @@ function ForeignKeyContainer({ children, show }) {
             : Styles.liContainer
         }>
         foreign keys
+        <span title='add foreign key' className={Styles.add} />
       </span>
       <ul
         className={

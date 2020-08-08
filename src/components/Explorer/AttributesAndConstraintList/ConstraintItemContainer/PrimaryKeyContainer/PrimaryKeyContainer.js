@@ -34,6 +34,9 @@ function PrimaryKeyContainer({ children, show, onItemClicked, item, table }) {
             : Styles.liContainer
         }>
         primary key
+        {children ? null : (
+          <span title='add Primary Key' className={Styles.add} />
+        )}
       </span>
       <ul
         className={

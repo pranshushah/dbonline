@@ -25,7 +25,7 @@ function ToolTip({ x, y, dataObj, mainTableDetails, givenTable }) {
   const referencingAttText =
     mainTableDetails[tableIndex].attributes[referencingAttIndex].name;
   return (
-    <div className={Styles.Tooltip} style={{ left: x - 85, top: y - 90 }}>
+    <div className={Styles.Tooltip} style={{ left: x - 75, top: y - 90 }}>
       <div className={Styles.rel}>
         <div className={Styles.text}>
           referenced attribute : {referencedAttText}
