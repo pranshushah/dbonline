@@ -44,13 +44,14 @@ function EditCheckConstraint({
   const [checkExprErrorMessage, setCheckExprErrorMessage] = useState('');
   const [containerError, setContainerError] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showExprError, setShowExprError] = useState(false);
 
   useEffect(() => {
     try {
       parser.parse(`select * from boom WHERE (${checkExpr})`);
       setCheckExprError(false);
     } catch {
-      if (checkExprDirty) {
+      if (showExprError) {
         if (checkExpr.length === 0) {
           setCheckExprError(true);
           setCheckExprErrorMessage("expression can't be empty");
@@ -62,7 +63,7 @@ function EditCheckConstraint({
         setCheckExprError(true);
       }
     }
-  }, [checkExpr, checkExprDirty]);
+  }, [checkExpr, showExprError]);
 
   useEffect(() => {
     if (initialCheckConstraintName === checkConstraintName) {
@@ -94,16 +95,32 @@ function EditCheckConstraint({
   function checkExpressionDirtyHandler() {
     setCheckExprDirty(true);
   }
+
+  function checkExpressionShowErrorHandler() {
+    if (checkExprDirty) {
+      setShowExprError(true);
+    } else {
+      setShowExprError(false);
+    }
+  }
+
   function confirmModalHandler() {
     setShowDeleteModal(false);
     deleteCheckConstraintClickHandler();
   }
+
   function cancelModalHandler() {
     setShowDeleteModal(false);
   }
+
   function showModalHandler() {
     setShowDeleteModal(true);
   }
+
+  function blurHandler() {
+    setShowExprError(true);
+  }
+
   function confirmCheckConstraintClickHandler() {
     let finalConstraintName;
     if (checkConstraintName.length === 0) {
@@ -172,10 +189,12 @@ function EditCheckConstraint({
           value={checkExpr}
           label='expression'
           required
-          onBlur={checkExpressionDirtyHandler}
-          error={checkExprError && checkExprDirty}
+          onBlur={blurHandler}
+          onFocus={checkExpressionDirtyHandler}
+          error={checkExprError && showExprError}
           errorMessage={checkExprErrorMessage}
           onChange={checkExpressionHandler}
+          onMouseLeave={checkExpressionShowErrorHandler}
           dimension='huge'
         />
       </div>

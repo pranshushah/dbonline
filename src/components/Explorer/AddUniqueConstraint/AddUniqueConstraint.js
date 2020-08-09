@@ -15,7 +15,6 @@ import deepClone from 'clone-deep';
  * onConfirm:Function,
  * onCancel:Function,
  * showModal:boolean,
- * title:string,
  * usingFor:("primary"|"unique")
  * }} props
  */

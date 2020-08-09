@@ -125,7 +125,13 @@ function Input(
         <label className={Styles.inputLabelContainer}>
           <span
             className={Styles.inputLabelContent}
-            style={usingFor === 'sidebar' ? { fontSize: '20px' } : null}>
+            style={
+              usingFor === 'sidebar'
+                ? { fontSize: '20px' }
+                : dimension === 'large'
+                ? { fontSize: '20px' }
+                : null
+            }>
             {label}
           </span>
         </label>
