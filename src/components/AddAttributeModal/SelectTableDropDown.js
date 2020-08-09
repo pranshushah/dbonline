@@ -1,17 +1,9 @@
 import React from 'react';
 import Select from 'react-select';
 import { customStyles } from '../../utils/selectStyle';
-/**
- * @typedef {object} tableDndDetailsObj
- * @property {number} top
- * @property {number} left
- * @property {string} tableName
- * @property {string} id
- * @property {string} color
- */
 
 /**
- * @param {{currentTable:string,otherTables:tableDndDetailsObj[],onTableSelected:Function}} props
+ * @param {{currentTable:string,otherTables:mainTableDetailsType[],onTableSelected:Function}} props
  */
 
 function TableNameDropDown({ otherTables, onTableSelected }) {

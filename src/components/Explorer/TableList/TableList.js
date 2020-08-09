@@ -4,6 +4,7 @@ import Styles from './TableList.module.scss';
 import { EXPLORERCONSTANT } from '../../../utils/constant/explorer';
 import AddUniqueConstraint from '../AddUniqueConstraint/AddUniqueConstraint';
 import AddCheckConstraint from '../AddCheckConstraint/AddCheckConstraint';
+import AddForeignConstraint from '../AddForeignConstraint/AddForeignConstraint';
 
 const defaultState = {
   showingModal: null,
@@ -29,6 +30,14 @@ function TableListReducer(state, action) {
       return {
         ...state,
         showingModal: EXPLORERCONSTANT.CHECK,
+        selectedTable: action.payload.table,
+      };
+    }
+
+    case 'SHOW_ADD_FOREIGN': {
+      return {
+        ...state,
+        showingModal: EXPLORERCONSTANT.FOREIGN,
         selectedTable: action.payload.table,
       };
     }
@@ -68,6 +77,11 @@ function TableList({ children, mainTableDetails, onMainTableDetailsChange }) {
       }
       case EXPLORERCONSTANT.CHECK: {
         dispatch({ type: 'SHOW_ADD_CHECK', payload: { table } });
+        break;
+      }
+
+      case EXPLORERCONSTANT.FOREIGN: {
+        dispatch({ type: 'SHOW_ADD_FOREIGN', payload: { table } });
         break;
       }
       default: {
@@ -113,6 +127,15 @@ function TableList({ children, mainTableDetails, onMainTableDetailsChange }) {
       )}
       {showingModal === EXPLORERCONSTANT.CHECK && (
         <AddCheckConstraint
+          showModal
+          mainTableDetails={mainTableDetails}
+          givenTable={selectedTable}
+          onCancel={cancelModalHandler}
+          onConfirm={modalConfirmHandler}
+        />
+      )}
+      {showingModal === EXPLORERCONSTANT.FOREIGN && (
+        <AddForeignConstraint
           showModal
           mainTableDetails={mainTableDetails}
           givenTable={selectedTable}

@@ -39,7 +39,6 @@ const parser = require('js-sql-parser');
 function AddAttributeModal({
   showModalState,
   onModalClosed,
-  allTableDndDetails,
   mainTableDetails,
   onModalConfirmed,
   givenTable,
@@ -730,7 +729,7 @@ function AddAttributeModal({
             {tableLevelCheckedItem['FOREIGN-KEY'] && (
               <div className={Styles.foreignDropDown}>
                 <TableNameDropDown
-                  otherTables={allTableDndDetails}
+                  otherTables={mainTableDetails}
                   onTableSelected={referencingTableSelectedHandler}
                 />
               </div>

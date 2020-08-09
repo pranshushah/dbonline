@@ -14,7 +14,6 @@ import Styles from './Modal.module.scss';
  * show:boolean,
  * modalClosed:Function,
  * modalConfirmed:Function,
- * topAligned:boolean,
  * canCancel:boolean,
  * canConfirm:boolean,
  * confirmDisabled:boolean

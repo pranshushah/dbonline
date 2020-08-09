@@ -80,7 +80,7 @@ function MainGround({
 
   const [editTableName, setEditTableName] = useState('');
   const [editTableColor, setEditTableColor] = useState('');
-  const [opacity, setOpacity] = useState(0.8);
+  const [opacity, setOpacity] = useState(0.7);
 
   function cancelAddModalHandler() {
     dispatch({ type: 'ADD_MODAL_CANCEL' });
@@ -236,7 +236,8 @@ function MainGround({
               passProps={{
                 cursor: 'pointer',
                 opacity: opacity,
-                onMouseEnter: (e) => {
+                onMouseOver: (e) => {
+                  console.log('boom');
                   dispatch({
                     type: 'SHOW_TOOLTIP',
                     payload: {
@@ -250,7 +251,7 @@ function MainGround({
                 },
                 onMouseLeave: () => {
                   dispatch({ type: 'CLOSE_TOOLTIP' });
-                  setOpacity(0.8);
+                  setOpacity(0.7);
                 },
               }}
             />
