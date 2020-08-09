@@ -8,11 +8,17 @@ import TableItem from '../Explorer/TableList/TableItem/TableItem';
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
  * toggleSidebar:Function,
- * onItemClicked:Function
+ * onItemClicked:Function,
+ * onMainTableDetailsChange:Function,
  * }} props
  */
 
-function LeftSideBar({ mainTableDetails, toggleSidebar, onItemClicked }) {
+function LeftSideBar({
+  mainTableDetails,
+  toggleSidebar,
+  onItemClicked,
+  onMainTableDetailsChange,
+}) {
   const [width, setWidth] = useState(250);
 
   function WidthHandler(e, direction, ref, d) {
@@ -40,7 +46,11 @@ function LeftSideBar({ mainTableDetails, toggleSidebar, onItemClicked }) {
       }}>
       <div className={Styles.container}>
         <div className={Styles.close} onClick={toggleSidebar} />
-        <TableList mainTableDetails={mainTableDetails}>{list}</TableList>
+        <TableList
+          mainTableDetails={mainTableDetails}
+          onMainTableDetailsChange={onMainTableDetailsChange}>
+          {list}
+        </TableList>
       </div>
     </Resizable>
   );

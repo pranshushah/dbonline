@@ -101,3 +101,7 @@ ul::-webkit-scrollbar {
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(180, 180, 180, 0.5);
 }
+
+svg {
+  z-index: 1;
+}

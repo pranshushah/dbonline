@@ -6,11 +6,19 @@ import { EXPLORERCONSTANT } from '../../../../../utils/constant/explorer';
  * show:boolean,
  * table:mainTableDetailsType,
  * onItemClicked:Function,
+ * onAddConstraintIconClicked:Function
  * item:object
  * }} props
  */
 
-function PrimaryKeyContainer({ children, show, onItemClicked, item, table }) {
+function PrimaryKeyContainer({
+  children,
+  show,
+  onItemClicked,
+  item,
+  table,
+  onAddConstraintIconClicked,
+}) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
@@ -20,6 +28,10 @@ function PrimaryKeyContainer({ children, show, onItemClicked, item, table }) {
   }
   function constraintClickHandler() {
     onItemClicked(table, EXPLORERCONSTANT.PRIMARY, item);
+  }
+  function addConstraintClickHandler(e) {
+    e.stopPropagation();
+    onAddConstraintIconClicked(table, EXPLORERCONSTANT.PRIMARY);
   }
   return (
     <li
@@ -35,7 +47,11 @@ function PrimaryKeyContainer({ children, show, onItemClicked, item, table }) {
         }>
         primary key
         {children ? null : (
-          <span title='add Primary Key' className={Styles.add} />
+          <span
+            title='add Primary Key'
+            className={Styles.add}
+            onClick={addConstraintClickHandler}
+          />
         )}
       </span>
       <ul

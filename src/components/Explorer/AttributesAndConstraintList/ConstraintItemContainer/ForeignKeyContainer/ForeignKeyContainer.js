@@ -1,18 +1,30 @@
 import Styles from './ForeignKeyContainer.module.scss';
 import React, { useState } from 'react';
+import { EXPLORERCONSTANT } from '../../../../../utils/constant/explorer';
 /**
  * @param {{
  * show:boolean,
+ * table:mainTableDetailsType,
+ * onAddConstraintIconClicked:Function,
  * }} props
  */
 
-function ForeignKeyContainer({ children, show }) {
+function ForeignKeyContainer({
+  children,
+  show,
+  table,
+  onAddConstraintIconClicked,
+}) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
   }
   if (!show && open) {
     setOpen(false);
+  }
+  function addConstraintClickHandler(e) {
+    e.stopPropagation();
+    onAddConstraintIconClicked(table, EXPLORERCONSTANT.FOREIGN);
   }
   return (
     <li
@@ -27,7 +39,11 @@ function ForeignKeyContainer({ children, show }) {
             : Styles.liContainer
         }>
         foreign keys
-        <span title='add foreign key' className={Styles.add} />
+        <span
+          title='add foreign key'
+          className={Styles.add}
+          onClick={addConstraintClickHandler}
+        />
       </span>
       <ul
         className={

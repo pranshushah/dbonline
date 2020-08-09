@@ -1,19 +1,31 @@
 import Styles from './Check.module.scss';
 import React, { useState } from 'react';
+import { EXPLORERCONSTANT } from '../../../../../utils/constant/explorer';
 /**
  * @param {{
  * table:mainTableDetailsType
  * show:boolean,
+ * onAddConstraintIconClicked:Function,
  * }} props
  */
 
-function PrimaryKeyContainer({ children, show }) {
+function PrimaryKeyContainer({
+  children,
+  show,
+  table,
+  onAddConstraintIconClicked,
+}) {
   const [open, setOpen] = useState(false);
   function toogleArrow() {
     setOpen((open) => !open);
   }
   if (!show && open) {
     setOpen(false);
+  }
+
+  function addConstraintClickHandler(e) {
+    e.stopPropagation();
+    onAddConstraintIconClicked(table, EXPLORERCONSTANT.CHECK);
   }
   return (
     <>
@@ -29,7 +41,11 @@ function PrimaryKeyContainer({ children, show }) {
               : Styles.liContainer
           }>
           check constraint
-          <span title='add check constraint' className={Styles.add} />
+          <span
+            title='add check constraint'
+            className={Styles.add}
+            onClick={addConstraintClickHandler}
+          />
         </span>
         <ul
           className={

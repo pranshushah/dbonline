@@ -472,6 +472,7 @@ export default function App() {
               mainTableDetails={mainTableDetails}
               toggleSidebar={showLeftSidebarHandler}
               onItemClicked={explorerItemClickHandler}
+              onMainTableDetailsChange={mainTableDetailsChangeHandler}
             />
           )}
           <MainGround

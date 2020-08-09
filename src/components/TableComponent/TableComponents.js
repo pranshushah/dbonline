@@ -11,7 +11,7 @@ const TableCard = styled.div`
   &:hover {
     box-shadow: 0 0px 24px 8px rgba(0, 0, 0, 0.2);
   }
-  max-height: 30vh;
+  z-index: 11;
   opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 

@@ -39,7 +39,6 @@ const parser = require('js-sql-parser');
 function AddAttributeModal({
   showModalState,
   onModalClosed,
-  tableName,
   allTableDndDetails,
   mainTableDetails,
   onModalConfirmed,
@@ -564,7 +563,7 @@ function AddAttributeModal({
       show={showModalState}
       primary
       confirmDisabled={modalError}
-      title={`Add Attribute to ${tableName}`}
+      title={`Add Attribute to ${givenTable.tableName}`}
       modalConfirmed={modalConfirmHandler}
       modalClosed={ModalCloseHandler}>
       <div className={Styles.container}>

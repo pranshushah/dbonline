@@ -16,11 +16,12 @@ import CheckConstraint from '../../AttributesAndConstraintList/ConstraintItemCon
 /**
  * @param {{
  * table:mainTableDetailsType,
- * onItemClicked:Function
+ * onItemClicked:Function,
+ * onAddConstraintIconClicked:Function,
  * }} props
  */
 
-function TableItem({ table, onItemClicked }) {
+function TableItem({ table, onItemClicked, onAddConstraintIconClicked }) {
   const [open, setOpen] = useState(false);
 
   function toggleHandle() {
@@ -79,13 +80,26 @@ function TableItem({ table, onItemClicked }) {
         <ConstraintItemContainer table={table}>
           <PrimaryKey
             table={table}
+            onAddConstraintIconClicked={onAddConstraintIconClicked}
             onItemClicked={onItemClicked}
             item={table.tableLevelConstraint?.PRIMARYKEY}>
             {table.tableLevelConstraint?.PRIMARYKEY?.constraintName}
           </PrimaryKey>
-          <ForeignKeyContainer>{foreigns}</ForeignKeyContainer>
-          <UniqueConstraint>{uniques}</UniqueConstraint>
-          <CheckConstraint table={table}>{checks}</CheckConstraint>
+          <ForeignKeyContainer
+            table={table}
+            onAddConstraintIconClicked={onAddConstraintIconClicked}>
+            {foreigns}
+          </ForeignKeyContainer>
+          <UniqueConstraint
+            table={table}
+            onAddConstraintIconClicked={onAddConstraintIconClicked}>
+            {uniques}
+          </UniqueConstraint>
+          <CheckConstraint
+            table={table}
+            onAddConstraintIconClicked={onAddConstraintIconClicked}>
+            {checks}
+          </CheckConstraint>
         </ConstraintItemContainer>
       </AttrAndConstraintList>
     </li>
