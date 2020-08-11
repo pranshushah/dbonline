@@ -3,13 +3,12 @@ import Input from '../../UI/Input/Input';
 import Modal from '../../UI/Modal/Modal';
 import Select from 'react-select';
 import Styles from './style.module.scss';
-import { constraintError } from '../../../utils/helper-function/constraintError';
 import { customStyles } from '../../../utils/selectStyle/';
 import { randomString } from '../../../utils/helper-function/randomString';
 import { foreignConstraintCheckboxList } from '../../../utils/checkedItemsForAddAttr';
 import ConstraintCheckBoxContainer from '../../AddAttributeModal/constraintCheckboxContainer';
 import deepClone from 'clone-deep';
-
+import { useConstraint } from '../../../utils/customHooks/useConstraint';
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
@@ -27,26 +26,16 @@ function AddUniqueConstraint({
   onCancel,
   showModal,
 }) {
-  const [constraintName, setConstraintName] = useState('');
-  const [constraintErr, setConstraintErr] = useState(false);
+  const [constraintName, setConstraintName, constraintErr] = useConstraint(
+    givenTable,
+  );
   const [referencedAtt, setReferencedAtt] = useState(null);
   const [referencingAtt, setReferencingAtt] = useState(null);
   const [referencingTable, setReferencingTable] = useState(null);
   const [containerError, setContainerError] = useState(true);
   const [checkedItem, setCheckItem] = useState({});
 
-  function constraintNameChangeHandler(e) {
-    setConstraintName(e.target.value.trim());
-  }
-
-  useEffect(() => {
-    if (constraintError(constraintName, givenTable)) {
-      setConstraintErr(true);
-    } else {
-      setConstraintErr(false);
-    }
-  }, [constraintName, givenTable]);
-
+  // this error decides if modal can be confirmed or not.
   useEffect(() => {
     if (!constraintErr && referencedAtt && referencingAtt && referencingTable) {
       setContainerError(false);
@@ -55,6 +44,7 @@ function AddUniqueConstraint({
     }
   }, [constraintErr, referencedAtt, referencingAtt, referencingTable]);
 
+  // all the options
   const referencedAttOptions = [];
   const referencingTableOptions = [];
   const referencingAttOptions = [];
@@ -71,6 +61,7 @@ function AddUniqueConstraint({
     const tableIndex = mainTableDetails.findIndex(
       (table) => table.id === referencingTable.value,
     );
+    // foreign keys can reference only unique and not null or primary key.
     mainTableDetails[tableIndex].attributes.forEach((attrObj) => {
       if ((attrObj.isNOTNULL && attrObj.isUNIQUE) || attrObj.isPRIMARYKEY) {
         referencingAttOptions.push({ label: attrObj.name, value: attrObj.id });
@@ -89,22 +80,20 @@ function AddUniqueConstraint({
   }
 
   function ModalconfirmHandler() {
-    let finalCname;
-    if (constraintName) {
-      finalCname = constraintName;
-    } else {
-      finalCname = randomString();
-    }
+    let finalCname = constraintName ? constraintName : randomString();
+
     const newMainTableDetails = deepClone(mainTableDetails);
     const referencedIndex = newMainTableDetails.findIndex(
       (table) => table.id === givenTable.id,
     );
+    // finding these indexes because we want to have same datatype for referncing and referenced attribute.
     const referencingTableIndex = newMainTableDetails.findIndex(
       (table) => table.id === referencingTable.value,
     );
     const referencingAttIndex = newMainTableDetails[
       referencingTableIndex
     ].attributes.findIndex((attrObj) => attrObj.id === referencingAtt.value);
+    // doing this weird thing in cascade because need to add radio buttons later
     newMainTableDetails[referencedIndex].tableLevelConstraint.FOREIGNKEY.push({
       constraintName: finalCname,
       referencedAtt: referencedAtt.value,
@@ -117,6 +106,7 @@ function AddUniqueConstraint({
         ? true
         : false,
     });
+    // using array.some because it will end after true.
     newMainTableDetails[referencedIndex].attributes.some((attrObj) => {
       let ret = false;
       if (attrObj.id === referencedAtt.value) {
@@ -156,7 +146,7 @@ function AddUniqueConstraint({
         <div className={Styles.inputContainer}>
           <Input
             value={constraintName}
-            onChange={constraintNameChangeHandler}
+            onChange={setConstraintName}
             error={constraintErr}
             label='constraint name'
             type='text'

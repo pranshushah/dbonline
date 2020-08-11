@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../UI/Modal/Modal';
 import Input from '../../UI/Input/Input';
-import { constraintError } from '../../../utils/helper-function/constraintError';
+
 import Styles from './AddCheckConstraint.module.scss';
 import { randomString } from '../../../utils/helper-function/randomString';
+import { useConstraint } from '../../../utils/customHooks/useConstraint';
 import deepClone from 'clone-deep';
 const parser = require('js-sql-parser');
 
@@ -23,8 +24,9 @@ function AddCheckConstraint({
   onConfirm,
   showModal,
 }) {
-  const [constraintName, setConstraintName] = useState('');
-  const [constraintErr, setConstraintErr] = useState(false);
+  const [constraintName, setConstraintName, constraintErr] = useConstraint(
+    givenTable,
+  );
   const [containerError, setContainerError] = useState(true);
   const [checkExpr, setCheckExpr] = useState('');
   const [checkExprDirty, setCheckExprDirty] = useState(false);
@@ -32,21 +34,10 @@ function AddCheckConstraint({
   const [checkExprErrorMessage, setCheckExprErrorMessage] = useState('');
   const [checkExprError, setCheckExprError] = useState(true);
 
-  function constraintNameChangeHandler(e) {
-    setConstraintName(e.target.value.trim());
-  }
-
   function checkExpressionHandler(e) {
     setCheckExpr(e.target.value);
   }
 
-  useEffect(() => {
-    if (constraintError(constraintName, givenTable)) {
-      setConstraintErr(true);
-    } else {
-      setConstraintErr(false);
-    }
-  }, [constraintName, givenTable]);
   useEffect(() => {
     try {
       parser.parse(`select * from boom WHERE (${checkExpr})`);
@@ -122,7 +113,7 @@ function AddCheckConstraint({
       <div className={Styles.container}>
         <Input
           value={constraintName}
-          onChange={constraintNameChangeHandler}
+          onChange={setConstraintName}
           error={constraintErr}
           label='constraint name'
           type='text'

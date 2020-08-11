@@ -9,6 +9,7 @@ import DeleteTableModal from '../DeleteTableModal/DeleteTableModal';
 import EditTableModal from '../EditTableModal/EditTableModal';
 import mainGroundReducer from '../../utils/reducers/mainGroundReducer';
 import XArrow from 'react-xarrows';
+import deepClone from 'clone-deep';
 import Tooltip from '../UI/Tooltip/Tooltip';
 /**
  * @param {{
@@ -86,10 +87,9 @@ function MainGround({
     dispatch({ type: 'ADD_MODAL_CANCEL' });
   }
 
-  function confirmAddModalHandler(newObj) {
-    let newTable = JSON.parse(
-      JSON.stringify({ ...selectedTableDetailsForAddModal }),
-    );
+  function confirmAddAttributeModalHandler(newObj) {
+    let newTable = deepClone(selectedTableDetailsForAddModal);
+
     newTable.attributes.push(newObj.attributes);
     if (newObj['FOREIGNKEY']) {
       newTable.tableLevelConstraint.FOREIGNKEY.push(newObj['FOREIGNKEY']);
@@ -127,7 +127,7 @@ function MainGround({
         newObj['UNIQUETABLE'],
       );
     }
-    const newMainTableDetails = [...mainTableDetails];
+    const newMainTableDetails = deepClone(mainTableDetails);
     const index = newMainTableDetails.findIndex(
       (table) => table.tableName === newTable.tableName,
     );
@@ -161,10 +161,8 @@ function MainGround({
   }
 
   function deleteTableModalConfirmHandler() {
-    const newTableDndDetails = JSON.parse(JSON.stringify([...tableDndDetails]));
-    const newMainTableDetails = JSON.parse(
-      JSON.stringify([...mainTableDetails]),
-    );
+    const newTableDndDetails = deepClone(tableDndDetails);
+    const newMainTableDetails = deepClone(mainTableDetails);
 
     const dndIndex = newTableDndDetails.findIndex(
       (table) =>
@@ -176,6 +174,7 @@ function MainGround({
     );
     newTableDndDetails.splice(dndIndex, 1);
     newMainTableDetails.splice(mainIndex, 1);
+
     onMainTableDetailsChange(newMainTableDetails);
     onTableDndDetailsChange(newTableDndDetails);
     dispatch({ type: 'DELETE_MODAL_CONFIRM' });
@@ -199,10 +198,9 @@ function MainGround({
   }
 
   function editTableModalConfirmHandler(newColor, newName) {
-    const newTableDndDetails = JSON.parse(JSON.stringify([...tableDndDetails]));
-    const newMainTableDetails = JSON.parse(
-      JSON.stringify([...mainTableDetails]),
-    );
+    const newTableDndDetails = deepClone(tableDndDetails);
+    const newMainTableDetails = deepClone(mainTableDetails);
+
     const dndIndex = newTableDndDetails.findIndex(
       (table) =>
         table.tableName === selectedTableDndDetailsForEditModal.tableName,
@@ -210,15 +208,19 @@ function MainGround({
     const mainIndex = newMainTableDetails.findIndex(
       (table) => table.tableName === selectedTableDetailsForEditModal.tableName,
     );
+
     newMainTableDetails[mainIndex].tableName = newName;
     newTableDndDetails[dndIndex].tableName = newName;
     newTableDndDetails[dndIndex].color = newColor;
+
     onMainTableDetailsChange(newMainTableDetails);
     onTableDndDetailsChange(newTableDndDetails);
+
     dispatch({ type: 'EDIT_MODAL_CONFIRM' });
   }
 
   const tables = tableDndDetails.map((tableDndDetail) => {
+    //tables in maintableDetails and tableDndDetails may have different Index so finding proper index for color
     const index = mainTableDetails.findIndex(
       (tableObj) => tableObj.id === tableDndDetail.id,
     );
@@ -236,8 +238,7 @@ function MainGround({
               passProps={{
                 cursor: 'pointer',
                 opacity: opacity,
-                onMouseOver: (e) => {
-                  console.log('boom');
+                onMouseMove: (e) => {
                   dispatch({
                     type: 'SHOW_TOOLTIP',
                     payload: {
@@ -286,50 +287,48 @@ function MainGround({
   });
   return (
     <Grid showGrid={showGrid}>
-      <div id='pdf' style={{ height: '100%' }}>
-        {tables}
-        {addAttributeShowModal && (
-          <AddAttributeModal
-            showModalState={addAttributeShowModal}
-            onModalConfirmed={confirmAddModalHandler}
-            onModalClosed={cancelAddModalHandler}
-            tableName={selectedTableDndDetailsForAddModal.tableName}
-            allTableDndDetails={tableDndDetails}
-            mainTableDetails={mainTableDetails}
-            givenTable={selectedTableDetailsForAddModal}
-          />
-        )}
-        {showDeleteTableModal && (
-          <DeleteTableModal
-            showModalState={showDeleteTableModal}
-            tableName={selectedTableDndDetailsForDeleteModal.tableName}
-            onModalClosed={deleteTableModalCancelHandler}
-            onModalConfirmed={deleteTableModalConfirmHandler}
-          />
-        )}
-        {showEditTableModal && (
-          <EditTableModal
-            showModalState={showEditTableModal}
-            onModalConfirmed={editTableModalConfirmHandler}
-            onModalClosed={editTableModalCancelHandler}
-            tableColor={editTableColor}
-            tableName={editTableName}
-            onTableColorChange={setEditTableColor}
-            onTableNameChange={setEditTableName}
-            mainTableDetails={mainTableDetails}
-            selectedTable={selectedTableDetailsForEditModal}
-          />
-        )}
-        {showToolTip && (
-          <Tooltip
-            x={x}
-            y={y}
-            dataObj={selectedForeignObj}
-            givenTable={foreignTooltipTable}
-            mainTableDetails={mainTableDetails}
-          />
-        )}
-      </div>
+      {tables}
+      {addAttributeShowModal && (
+        <AddAttributeModal
+          showModalState={addAttributeShowModal}
+          onModalConfirmed={confirmAddAttributeModalHandler}
+          onModalClosed={cancelAddModalHandler}
+          tableName={selectedTableDndDetailsForAddModal.tableName}
+          allTableDndDetails={tableDndDetails}
+          mainTableDetails={mainTableDetails}
+          givenTable={selectedTableDetailsForAddModal}
+        />
+      )}
+      {showDeleteTableModal && (
+        <DeleteTableModal
+          showModalState={showDeleteTableModal}
+          tableName={selectedTableDndDetailsForDeleteModal.tableName}
+          onModalClosed={deleteTableModalCancelHandler}
+          onModalConfirmed={deleteTableModalConfirmHandler}
+        />
+      )}
+      {showEditTableModal && (
+        <EditTableModal
+          showModalState={showEditTableModal}
+          onModalConfirmed={editTableModalConfirmHandler}
+          onModalClosed={editTableModalCancelHandler}
+          tableColor={editTableColor}
+          tableName={editTableName}
+          onTableColorChange={setEditTableColor}
+          onTableNameChange={setEditTableName}
+          mainTableDetails={mainTableDetails}
+          selectedTable={selectedTableDetailsForEditModal}
+        />
+      )}
+      {showToolTip && (
+        <Tooltip
+          x={x}
+          y={y}
+          dataObj={selectedForeignObj}
+          givenTable={foreignTooltipTable}
+          mainTableDetails={mainTableDetails}
+        />
+      )}
     </Grid>
   );
 }

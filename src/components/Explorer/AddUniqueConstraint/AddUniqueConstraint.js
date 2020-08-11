@@ -3,7 +3,7 @@ import Input from '../../UI/Input/Input';
 import Modal from '../../UI/Modal/Modal';
 import Select from 'react-select';
 import Styles from './style.module.scss';
-import { constraintError } from '../../../utils/helper-function/constraintError';
+import { useConstraint } from '../../../utils/customHooks/useConstraint';
 import { customStyles } from '../../../utils/selectStyle/';
 import { randomString } from '../../../utils/helper-function/randomString';
 import deepClone from 'clone-deep';
@@ -28,22 +28,11 @@ function AddUniqueConstraint({
   title,
   usingFor = 'unique',
 }) {
-  const [constraintName, setConstraintName] = useState('');
-  const [constraintErr, setConstraintErr] = useState(false);
+  const [constraintName, setConstraintName, constraintErr] = useConstraint(
+    givenTable,
+  );
   const [multiSelect, setMultiSelect] = useState(null);
   const [containerError, setContainerError] = useState(true);
-
-  function constraintNameChangeHandler(e) {
-    setConstraintName(e.target.value.trim());
-  }
-
-  useEffect(() => {
-    if (constraintError(constraintName, givenTable)) {
-      setConstraintErr(true);
-    } else {
-      setConstraintErr(false);
-    }
-  }, [constraintName, givenTable]);
 
   useEffect(() => {
     if (!constraintErr && multiSelect) {
@@ -144,7 +133,7 @@ function AddUniqueConstraint({
       <div className={Styles.container}>
         <Input
           value={constraintName}
-          onChange={constraintNameChangeHandler}
+          onChange={setConstraintName}
           error={constraintErr}
           label='constraint name'
           type='text'
