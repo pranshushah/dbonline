@@ -9,11 +9,11 @@ import uuid from 'uuid/v1';
 import ConstraintContainer from './ConstriantContainer';
 import Styles from './AddAttribute.module.scss';
 import '../../utils/Types';
+import { useConstraint } from '../../utils/customHooks/useConstraint';
 import MultipleUniqueDropDown from './MultipleUniqueDropDown';
 import PrimaryKeyDropDown from './PrimaryDropDown';
 import { randomString } from '../../utils/helper-function/randomString';
 import { oracleSizeError } from '../../utils/helper-function/size-pre-error';
-import { constraintError } from '../../utils/helper-function/constraintError';
 import {
   AddObjModal,
   AddAttributeReducer,
@@ -45,6 +45,26 @@ function AddAttributeModal({
 }) {
   const [state, dispatch] = useReducer(AddAttributeReducer, AddObjModal);
   const [modalError, setModalError] = useState(true);
+  const [
+    tableLevelUniqueConstraintName,
+    setTableLevelUniqueConstraintName,
+    tableLevelUniqueConstraintNameError,
+  ] = useConstraint(givenTable);
+  const [
+    primaryKeyConstraintName,
+    setPrimaryKeyConstraintName,
+    primaryKeyConstraintNameError,
+  ] = useConstraint(givenTable);
+  const [
+    foreignkeyConstraintName,
+    setForeignkeyConstraintName,
+    foreignkeyConstraintNameError,
+  ] = useConstraint(givenTable);
+  const [
+    checkConstraintName,
+    setCheckConstraintName,
+    checkConstraintNameError,
+  ] = useConstraint(givenTable);
   const {
     AddAttributeInputValue,
     selectedDataType,
@@ -62,7 +82,6 @@ function AddAttributeModal({
     primaryKey,
     checkConstraintExpression,
     checkConstraintExpressionObj,
-    checkConstraintNameError,
     attributeValueError,
     selectDataTypeError,
     sizeInputValueError,
@@ -72,30 +91,15 @@ function AddAttributeModal({
     primaryKeyError,
     selectedReferencingAttrError,
     checkConstraintExpressionError,
-    primaryKeyConstraintNameError,
-    foreignkeyConstraintNameError,
-    tableLevelUniqueConstraintNameError,
     checkConstraintExpressionObjError,
-    primaryKeyConstraintName,
-    foreignkeyConstraintName,
-    tableLevelUniqueConstraintName,
-    checkConstraintName,
     AddAttributeInputValueErrorMessage,
     sizeInputValueErrorMessage,
     defaultValueErrorMessage,
-    primaryKeyConstraintNameErrorMessage,
-    foreignkeyConstraintNameErrorMessage,
     checkConstraintExpressionErrorMessage,
-    tableLevelUniqueConstraintNameErrorMessage,
-    checkConstraintNameErrorMessage,
     sizeInputValueDirty,
     defaultValueDirty,
     checkConstraintExpressionDirty,
     AddAttributeInputValueDirty,
-    primaryKeyConstraintNameDirty,
-    foreignkeyConstraintNameDirty,
-    tableLevelUniqueConstraintNameDirty,
-    checkConstraintNameDirty,
   } = state;
 
   function modalCleanUp() {
@@ -412,44 +416,6 @@ function AddAttributeModal({
     }
   }, [tableLevelCheckedItem, primaryKey]);
 
-  // constraint name
-  // primaryKey-constraint
-  function primaryKeyConstraintNameChangeHandler(e) {
-    const value = e.target.value.trim();
-    const error = constraintError(value, givenTable);
-    dispatch({ type: 'PRIMARYKEY_CONSTRAINT_NAME', payload: { value, error } });
-  }
-
-  //foreign-key
-
-  function foreignKeyConstraintNameChangeHandler(e) {
-    const value = e.target.value.trim();
-    const error = constraintError(value, givenTable);
-    dispatch({ type: 'FOREIGNKEY_CONSTRAINT_NAME', payload: { value, error } });
-  }
-
-  // unique-name
-
-  function tableLevelUniqueConstraintNameChangeHandler(e) {
-    const value = e.target.value.trim();
-    const error = constraintError(value, givenTable);
-    dispatch({
-      type: 'TABLELEVEL_UNIQUE_CONSTRAINT_NAME',
-      payload: { value, error },
-    });
-  }
-
-  // check
-
-  function cehckConstraintNameChangeHandler(e) {
-    const value = e.target.value.trim();
-    const error = constraintError(value, givenTable);
-    dispatch({
-      type: 'CHECK_CONSTRAINT_NAME',
-      payload: { value, error },
-    });
-  }
-
   // check constrain expression
 
   function checkConstraintExpressionObjChangeHandler(val) {
@@ -649,13 +615,10 @@ function AddAttributeModal({
               <div className={Styles.uniqueInput}>
                 <Input
                   value={tableLevelUniqueConstraintName}
-                  onChange={tableLevelUniqueConstraintNameChangeHandler}
+                  onChange={setTableLevelUniqueConstraintName}
                   type='text'
-                  error={
-                    tableLevelUniqueConstraintNameDirty &&
-                    tableLevelUniqueConstraintNameError
-                  }
-                  errorMessage={tableLevelUniqueConstraintNameErrorMessage}
+                  error={tableLevelUniqueConstraintNameError}
+                  errorMessage={'constraint name already exist'}
                   dimension='huge'
                   label='unique constraint name'
                   color='blue'
@@ -682,13 +645,10 @@ function AddAttributeModal({
               <div className={Styles.primaryInput}>
                 <Input
                   value={primaryKeyConstraintName}
-                  onChange={primaryKeyConstraintNameChangeHandler}
+                  onChange={setPrimaryKeyConstraintName}
                   type='text'
-                  error={
-                    primaryKeyConstraintNameDirty &&
-                    primaryKeyConstraintNameError
-                  }
-                  errorMessage={primaryKeyConstraintNameErrorMessage}
+                  error={primaryKeyConstraintNameError}
+                  errorMessage={'constraint name already exist'}
                   label='Primary-key constraint name'
                   dimension='huge'
                   autoFocus
@@ -714,13 +674,10 @@ function AddAttributeModal({
               <div className={Styles.foreignInput}>
                 <Input
                   value={foreignkeyConstraintName}
-                  onChange={foreignKeyConstraintNameChangeHandler}
+                  onChange={setForeignkeyConstraintName}
                   type='text'
-                  error={
-                    foreignkeyConstraintNameDirty &&
-                    foreignkeyConstraintNameError
-                  }
-                  errorMessage={foreignkeyConstraintNameErrorMessage}
+                  error={foreignkeyConstraintNameError}
+                  errorMessage={'constraint name already exist'}
                   label='Foreign constraint name'
                   dimension='huge'
                 />
@@ -765,10 +722,10 @@ function AddAttributeModal({
               <div className={Styles.checkInput}>
                 <Input
                   value={checkConstraintName}
-                  onChange={cehckConstraintNameChangeHandler}
+                  onChange={setCheckConstraintName}
                   type='text'
-                  error={checkConstraintNameDirty && checkConstraintNameError}
-                  errorMessage={checkConstraintNameErrorMessage}
+                  error={checkConstraintNameError}
+                  errorMessage={'constraint name already exist'}
                   label='check constraint name'
                   dimension='huge'
                 />

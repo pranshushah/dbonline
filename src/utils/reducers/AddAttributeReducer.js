@@ -34,26 +34,13 @@ export const AddObjModal = {
   foreignkeyConstraintNameError: false,
   tableLevelUniqueConstraintNameError: false,
   checkConstraintExpressionObjError: false,
-  primaryKeyConstraintName: '',
-  foreignkeyConstraintName: '',
-  tableLevelUniqueConstraintName: '',
-  checkConstraintName: '',
   AddAttributeInputValueDirty: false,
   sizeInputValueDirty: false,
   defaultValueDirty: false,
   checkConstraintExpressionDirty: false,
-  primaryKeyConstraintNameDirty: false,
-  foreignkeyConstraintNameDirty: false,
-  tableLevelUniqueConstraintNameDirty: false,
-  checkConstraintNameDirty: false,
   AddAttributeInputValueErrorMessage: '',
   sizeInputValueErrorMessage: '',
   defaultValueErrorMessage: '',
-  checkConstraintExpressionErrorMessage: '',
-  primaryKeyConstraintNameErrorMessage: '',
-  foreignkeyConstraintNameErrorMessage: '',
-  tableLevelUniqueConstraintNameErrorMessage: '',
-  checkConstraintNameErrorMessage: '',
 };
 
 export function AddAttributeReducer(state, action) {
@@ -233,43 +220,6 @@ export function AddAttributeReducer(state, action) {
       return {
         ...state,
         primaryKeyError: false,
-      };
-    }
-    case 'PRIMARYKEY_CONSTRAINT_NAME': {
-      return {
-        ...state,
-        primaryKeyConstraintName: action.payload.value,
-        primaryKeyConstraintNameError: action.payload.error,
-        primaryKeyConstraintNameDirty: true,
-        primaryKeyConstraintNameErrorMessage: 'constraint name already exist',
-      };
-    }
-    case 'FOREIGNKEY_CONSTRAINT_NAME': {
-      return {
-        ...state,
-        foreignkeyConstraintName: action.payload.value,
-        foreignkeyConstraintNameError: action.payload.error,
-        foreignkeyConstraintNameDirty: true,
-        foreignkeyConstraintNameErrorMessage: 'constraint name already exist',
-      };
-    }
-    case 'TABLELEVEL_UNIQUE_CONSTRAINT_NAME': {
-      return {
-        ...state,
-        tableLevelUniqueConstraintName: action.payload.value,
-        tableLevelUniqueConstraintNameError: action.payload.error,
-        tableLevelUniqueConstraintNameDirty: true,
-        tableLevelUniqueConstraintNameErrorMessage:
-          'constraint name already exist',
-      };
-    }
-    case 'CHECK_CONSTRAINT_NAME': {
-      return {
-        ...state,
-        checkConstraintName: action.payload.value,
-        checkConstraintNameError: action.payload.error,
-        checkConstraintNameDirty: true,
-        checkConstraintNameErrorMessage: 'constraint name already exist',
       };
     }
     case 'CHECKOBJ_ALL_OK': {
