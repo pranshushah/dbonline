@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 const parser = require('js-sql-parser');
-export function useCheckExpr() {
+/**
+ *
+ * @param {("attribute"|"check")} usingFor
+ */
+export function useCheckExpr(usingFor = 'check') {
   const [checkExpr, setCheckExpr] = useState('');
   const [checkExprDirty, setCheckExprDirty] = useState(false);
   const [showExprError, setShowExprError] = useState(false);
   const [checkExprErrorMessage, setCheckExprErrorMessage] = useState('');
-  const [checkExprError, setCheckExprError] = useState(true);
+  const [checkExprError, setCheckExprError] = useState(
+    usingFor === 'check' ? true : false,
+  );
 
   function checkExpressionHandler(e) {
     setCheckExpr(e.target.value);
@@ -26,23 +32,25 @@ export function useCheckExpr() {
     setShowExprError(true);
   }
   useEffect(() => {
-    try {
-      parser.parse(`select * from boom WHERE (${checkExpr})`);
-      setCheckExprError(false);
-    } catch {
-      if (showExprError) {
-        if (checkExpr.length === 0) {
-          setCheckExprError(true);
-          setCheckExprErrorMessage("expression can't be empty");
+    if (checkExprDirty) {
+      try {
+        parser.parse(`select * from boom WHERE (${checkExpr})`);
+        setCheckExprError(false);
+      } catch {
+        if (showExprError) {
+          if (checkExpr.length === 0) {
+            setCheckExprError(true);
+            setCheckExprErrorMessage("expression can't be empty");
+          } else {
+            setCheckExprError(true);
+            setCheckExprErrorMessage('invalid expression');
+          }
         } else {
           setCheckExprError(true);
-          setCheckExprErrorMessage('invalid expression');
         }
-      } else {
-        setCheckExprError(true);
       }
     }
-  }, [showExprError, checkExpr]);
+  }, [showExprError, checkExpr, checkExprDirty]);
   return [
     checkExpr,
     checkExprError,
@@ -52,5 +60,6 @@ export function useCheckExpr() {
     checkExpressionFocusHandler,
     checkExpressionShowErrorHandler,
     blurHandler,
+    setCheckExprError,
   ];
 }

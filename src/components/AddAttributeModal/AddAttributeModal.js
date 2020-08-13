@@ -75,7 +75,8 @@ function AddAttributeModal({
     checkExpressionFocusHandler,
     checkExpressionShowErrorHandler,
     blurHandler,
-  ] = useCheckExpr();
+    setCheckExprError,
+  ] = useCheckExpr('attribute');
   const {
     AddAttributeInputValue,
     selectedDataType,
@@ -309,6 +310,11 @@ function AddAttributeModal({
       ...tableLevelCheckedItem,
       [e.target.name]: e.target.checked,
     };
+    if (newCheckedItems['CHECK']) {
+      setCheckExprError(true);
+    } else {
+      setCheckExprError(false);
+    }
     if (!newCheckedItems['FOREIGN-KEY'] && selectedReferencingTable) {
       dispatch({
         type: 'TABLEVELCHECKEDITEMS_FOREIGNKEY_REMOVED',
