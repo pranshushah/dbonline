@@ -8,6 +8,7 @@
   .link {
     display: inline-block;
     text-transform: capitalize;
+    cursor: pointer;
     color: $tertiaryColor;
     text-decoration: none;
     width: 100%;
@@ -37,6 +38,7 @@
       display: none;
       .subLink {
         display: block;
+        cursor: pointer;
         position: relative;
         text-align: center;
         width: 250px;

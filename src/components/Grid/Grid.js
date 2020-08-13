@@ -26,7 +26,7 @@ const Grid = styled.main`
     linear-gradient(#aaa 1px, transparent 1px), #00000d;
   background-size: 16px 16px, 16px 16px, 80px 80px, 80px 80px, 80px 80px,
     80px 80px, 80px 80px, 80px 80px`
-      : '00000d'};
+      : '#00000d'};
 
   @media print {
     & {

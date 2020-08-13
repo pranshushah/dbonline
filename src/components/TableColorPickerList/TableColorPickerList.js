@@ -51,7 +51,7 @@ function TableColorPickerList({
   });
   return (
     <>
-      <h3 className={Styles.heading}>*Pick Your Color</h3>
+      <h3 className={Styles.heading}>Select color for table:</h3>
       <div className={Styles.colorContainer}>{ColorPickerList}</div>
     </>
   );

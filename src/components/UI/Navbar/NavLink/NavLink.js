@@ -14,18 +14,18 @@ function NavLink({ text, children, ...props }) {
   if (children) {
     return (
       <li className={Styles.navLink} {...props}>
-        <a href='/#' className={[Styles.link, Styles.downArrow].join(' ')}>
+        <span href='/#' className={[Styles.link, Styles.downArrow].join(' ')}>
           {text}
-        </a>
+        </span>
         {children}
       </li>
     );
   } else {
     return (
       <li className={Styles.navLink}>
-        <a href='/#' className={Styles.link}>
+        <span href='/#' className={Styles.link}>
           {text}
-        </a>
+        </span>
       </li>
     );
   }
@@ -45,10 +45,10 @@ function SubMenuContiainer({ children }) {
 function SubNavLink({ text, shortcut, ...props }) {
   return (
     <li className={Styles.subNavLink} {...props}>
-      <a href='/#' className={Styles.subLink}>
+      <span href='/#' className={Styles.subLink}>
         {text}
         {shortcut && <span className={Styles.shortcut}>{shortcut}</span>}
-      </a>
+      </span>
     </li>
   );
 }
