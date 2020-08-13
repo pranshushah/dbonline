@@ -1,0 +1,32 @@
+{
+  "files": {
+    "main.css": "/dbonline/static/css/main.8464b6a5.chunk.css",
+    "main.js": "/dbonline/static/js/main.7c8ba3a0.chunk.js",
+    "main.js.map": "/dbonline/static/js/main.7c8ba3a0.chunk.js.map",
+    "runtime-main.js": "/dbonline/static/js/runtime-main.bc5c401d.js",
+    "runtime-main.js.map": "/dbonline/static/js/runtime-main.bc5c401d.js.map",
+    "static/css/2.71916e70.chunk.css": "/dbonline/static/css/2.71916e70.chunk.css",
+    "static/js/2.84a99233.chunk.js": "/dbonline/static/js/2.84a99233.chunk.js",
+    "static/js/2.84a99233.chunk.js.map": "/dbonline/static/js/2.84a99233.chunk.js.map",
+    "index.html": "/dbonline/index.html",
+    "precache-manifest.4a68f7114fe7f9b420afe4887164ba97.js": "/dbonline/precache-manifest.4a68f7114fe7f9b420afe4887164ba97.js",
+    "service-worker.js": "/dbonline/service-worker.js",
+    "static/css/2.71916e70.chunk.css.map": "/dbonline/static/css/2.71916e70.chunk.css.map",
+    "static/css/main.8464b6a5.chunk.css.map": "/dbonline/static/css/main.8464b6a5.chunk.css.map",
+    "static/js/2.84a99233.chunk.js.LICENSE.txt": "/dbonline/static/js/2.84a99233.chunk.js.LICENSE.txt",
+    "static/media/DeleteAttrModal.module.scss": "/dbonline/static/media/alert.5a1545d8.svg",
+    "static/media/Check.module.scss": "/dbonline/static/media/cc.82d087e1.svg",
+    "static/media/LeftSidebar.module.scss": "/dbonline/static/media/close.90a4f102.svg",
+    "static/media/NavLink.module.scss": "/dbonline/static/media/down.7838f02a.svg",
+    "static/media/ForeignKeys.module.scss": "/dbonline/static/media/f.4460c32e.svg",
+    "static/media/TableItem.module.scss": "/dbonline/static/media/grid (1).88d7a118.svg",
+    "static/media/PrimaryKeyContainer.module.scss": "/dbonline/static/media/p.a73dfccb.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.bc5c401d.js",
+    "static/css/2.71916e70.chunk.css",
+    "static/js/2.84a99233.chunk.js",
+    "static/css/main.8464b6a5.chunk.css",
+    "static/js/main.7c8ba3a0.chunk.js"
+  ]
+}
