@@ -18,8 +18,6 @@ export const AddObjModal = {
   selectedReferencingTable: '',
   selectedReferencingAttr: '',
   primaryKey: null,
-  checkConstraintExpression: '',
-  checkConstraintExpressionObj: {},
   checkConstraintNameError: false,
   attributeValueError: true,
   selectDataTypeError: true,
@@ -29,15 +27,12 @@ export const AddObjModal = {
   tableLevelUniqueError: false,
   primaryKeyError: false,
   selectedReferencingAttrError: false,
-  checkConstraintExpressionError: false,
   primaryKeyConstraintNameError: false,
   foreignkeyConstraintNameError: false,
   tableLevelUniqueConstraintNameError: false,
-  checkConstraintExpressionObjError: false,
   AddAttributeInputValueDirty: false,
   sizeInputValueDirty: false,
   defaultValueDirty: false,
-  checkConstraintExpressionDirty: false,
   AddAttributeInputValueErrorMessage: '',
   sizeInputValueErrorMessage: '',
   defaultValueErrorMessage: '',
@@ -220,40 +215,6 @@ export function AddAttributeReducer(state, action) {
       return {
         ...state,
         primaryKeyError: false,
-      };
-    }
-    case 'CHECKOBJ_ALL_OK': {
-      return {
-        ...state,
-        checkConstraintExpressionObj: action.payload.ast,
-        checkConstraintExpressionObjError: false,
-      };
-    }
-    case 'CHECKOBJ_ERROR': {
-      return {
-        ...state,
-        checkConstraintExpressionObj: {},
-        checkConstraintExpressionObjError: true,
-      };
-    }
-    case 'CHANGE_CHECK_EXPR': {
-      return {
-        ...state,
-        checkConstraintExpression: action.payload.value,
-        checkConstraintExpressionDirty: true,
-      };
-    }
-    case 'CHECK_EXPR_ERROR': {
-      return {
-        ...state,
-        checkConstraintExpressionError: true,
-        checkConstraintExpressionErrorMessage: "check expression can't be null",
-      };
-    }
-    case 'CHECK_EXPR_NOERROR': {
-      return {
-        ...state,
-        checkConstraintExpressionError: false,
       };
     }
     case 'COLUMNCHECKEDITEMS_DEFAULT_REMOVED': {

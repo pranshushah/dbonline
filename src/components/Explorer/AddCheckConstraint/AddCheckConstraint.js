@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../UI/Modal/Modal';
 import Input from '../../UI/Input/Input';
-
+import { useCheckExpr } from '../../../utils/customHooks/useCheckExpr';
 import Styles from './AddCheckConstraint.module.scss';
 import { randomString } from '../../../utils/helper-function/randomString';
 import { useConstraint } from '../../../utils/customHooks/useConstraint';
@@ -27,35 +27,17 @@ function AddCheckConstraint({
   const [constraintName, setConstraintName, constraintErr] = useConstraint(
     givenTable,
   );
+  const [
+    checkExpr,
+    checkExprError,
+    checkExprErrorMessage,
+    showExprError,
+    checkExpressionHandler,
+    checkExpressionFocusHandler,
+    checkExpressionShowErrorHandler,
+    blurHandler,
+  ] = useCheckExpr();
   const [containerError, setContainerError] = useState(true);
-  const [checkExpr, setCheckExpr] = useState('');
-  const [checkExprDirty, setCheckExprDirty] = useState(false);
-  const [showExprError, setShowExprError] = useState(false);
-  const [checkExprErrorMessage, setCheckExprErrorMessage] = useState('');
-  const [checkExprError, setCheckExprError] = useState(true);
-
-  function checkExpressionHandler(e) {
-    setCheckExpr(e.target.value);
-  }
-
-  useEffect(() => {
-    try {
-      parser.parse(`select * from boom WHERE (${checkExpr})`);
-      setCheckExprError(false);
-    } catch {
-      if (showExprError) {
-        if (checkExpr.length === 0) {
-          setCheckExprError(true);
-          setCheckExprErrorMessage("expression can't be empty");
-        } else {
-          setCheckExprError(true);
-          setCheckExprErrorMessage('invalid expression');
-        }
-      } else {
-        setCheckExprError(true);
-      }
-    }
-  }, [showExprError, checkExpr]);
 
   useEffect(() => {
     if (constraintErr || checkExprError) {
@@ -64,22 +46,6 @@ function AddCheckConstraint({
       setContainerError(false);
     }
   }, [constraintErr, checkExprError]);
-
-  function checkExpressionDirtyHandler() {
-    setCheckExprDirty(true);
-  }
-
-  function checkExpressionShowErrorHandler() {
-    if (checkExprDirty) {
-      setShowExprError(true);
-    } else {
-      setShowExprError(false);
-    }
-  }
-
-  function blurHandler() {
-    setShowExprError(true);
-  }
 
   function modalConfirmHandler() {
     let finalCname;
@@ -130,7 +96,7 @@ function AddCheckConstraint({
             type='text'
             onBlur={blurHandler}
             onMouseLeave={checkExpressionShowErrorHandler}
-            onFocus={checkExpressionDirtyHandler}
+            onFocus={checkExpressionFocusHandler}
             dimension='large'
             errorMessage={checkExprErrorMessage}
           />

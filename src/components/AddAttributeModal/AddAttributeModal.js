@@ -24,6 +24,7 @@ import {
   getTableLevelCheckboxList,
 } from '../../utils/checkedItemsForAddAttr';
 import { oracleBanned } from '../../utils/helper-function/OracleBannedWords';
+import { useCheckExpr } from '../../utils/customHooks/useCheckExpr';
 const parser = require('js-sql-parser');
 
 /** @param {{
@@ -65,6 +66,16 @@ function AddAttributeModal({
     setCheckConstraintName,
     checkConstraintNameError,
   ] = useConstraint(givenTable);
+  const [
+    checkExpr,
+    checkExprError,
+    checkExprErrorMessage,
+    showCheckExprError,
+    checkExpressionHandler,
+    checkExpressionFocusHandler,
+    checkExpressionShowErrorHandler,
+    blurHandler,
+  ] = useCheckExpr();
   const {
     AddAttributeInputValue,
     selectedDataType,
@@ -80,8 +91,6 @@ function AddAttributeModal({
     selectedReferencingTable,
     selectedReferencingAttr,
     primaryKey,
-    checkConstraintExpression,
-    checkConstraintExpressionObj,
     attributeValueError,
     selectDataTypeError,
     sizeInputValueError,
@@ -90,15 +99,11 @@ function AddAttributeModal({
     tableLevelUniqueError,
     primaryKeyError,
     selectedReferencingAttrError,
-    checkConstraintExpressionError,
-    checkConstraintExpressionObjError,
     AddAttributeInputValueErrorMessage,
     sizeInputValueErrorMessage,
     defaultValueErrorMessage,
-    checkConstraintExpressionErrorMessage,
     sizeInputValueDirty,
     defaultValueDirty,
-    checkConstraintExpressionDirty,
     AddAttributeInputValueDirty,
   } = state;
 
@@ -227,7 +232,7 @@ function AddAttributeModal({
           constraintName = randomString();
         }
         addObj['CHECK'] = {
-          AST: checkConstraintExpressionObj,
+          AST: parser.parse(`select * from boom WHERE (${checkExpr})`),
           constraintName,
         };
       }
@@ -416,31 +421,6 @@ function AddAttributeModal({
     }
   }, [tableLevelCheckedItem, primaryKey]);
 
-  // check constrain expression
-
-  function checkConstraintExpressionObjChangeHandler(val) {
-    try {
-      const ast = parser.parse(`select * from boom WHERE (${val})`);
-      dispatch({ type: 'CHECKOBJ_ALL_OK', payload: { ast } });
-    } catch {
-      dispatch({ type: 'CHECKOBJ_ERROR' });
-    }
-  }
-
-  function cehckExpressionChangeHandler(e) {
-    const value = e.target.value;
-    dispatch({ type: 'CHANGE_CHECK_EXPR', payload: { value } });
-    checkConstraintExpressionObjChangeHandler(checkConstraintExpression);
-  }
-
-  useEffect(() => {
-    if (tableLevelCheckedItem['CHECK'] && !checkConstraintExpression) {
-      dispatch({ type: 'CHECK_EXPR_ERROR' });
-    } else {
-      dispatch({ type: 'CHECK_EXPR_NOERROR' });
-    }
-  }, [tableLevelCheckedItem, checkConstraintExpression]);
-
   // when defaultValue check-box changes
 
   function columnLevelCheckBoxChangeHandler(e) {
@@ -491,12 +471,11 @@ function AddAttributeModal({
       !defaultValueError &&
       !tableLevelUniqueError &&
       !primaryKeyError &&
-      !checkConstraintExpressionError &&
       !sizeInputValueError &&
       !primaryKeyConstraintNameError &&
       !foreignkeyConstraintNameError &&
       !tableLevelUniqueConstraintNameError &&
-      !checkConstraintExpressionObjError &&
+      !checkExprError &&
       !checkConstraintNameError
     ) {
       setModalError(false);
@@ -513,11 +492,10 @@ function AddAttributeModal({
     primaryKeyError,
     sizeInputValueError,
     checkConstraintNameError,
-    checkConstraintExpressionError,
     primaryKeyConstraintNameError,
     foreignkeyConstraintNameError,
     tableLevelUniqueConstraintNameError,
-    checkConstraintExpressionObjError,
+    checkExprError,
   ]);
 
   return (
@@ -734,14 +712,14 @@ function AddAttributeModal({
             {tableLevelCheckedItem['CHECK'] && (
               <div className={Styles.checkInputExpr}>
                 <Input
-                  value={checkConstraintExpression}
-                  onChange={cehckExpressionChangeHandler}
-                  error={
-                    checkConstraintExpressionDirty &&
-                    checkConstraintExpressionError
-                  }
+                  value={checkExpr}
+                  onChange={checkExpressionHandler}
+                  error={checkExprError && showCheckExprError}
+                  onBlur={blurHandler}
+                  onMouseLeave={checkExpressionShowErrorHandler}
+                  onFocus={checkExpressionFocusHandler}
                   required
-                  errorMessage={checkConstraintExpressionErrorMessage}
+                  errorMessage={checkExprErrorMessage}
                   type='text'
                   label='check expression'
                   dimension='huge'
