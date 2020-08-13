@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "16d41dd90439c525bc0e42e3fad75add",
+    "revision": "35e1eb5fc4e8a0352cb3ed0555843833",
     "url": "/dbonline/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/dbonline/static/css/2.71916e70.chunk.css"
   },
   {
-    "revision": "9766a82063b05e4718a5",
+    "revision": "d25c1371acd842c17cc4",
     "url": "/dbonline/static/css/main.d1895f0e.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/dbonline/static/js/2.84a99233.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "9766a82063b05e4718a5",
-    "url": "/dbonline/static/js/main.f733b54f.chunk.js"
+    "revision": "d25c1371acd842c17cc4",
+    "url": "/dbonline/static/js/main.a2a9bb5e.chunk.js"
   },
   {
     "revision": "43f0cd9946d4bc3bbe45",
