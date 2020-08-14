@@ -1,8 +1,9 @@
-export const foreignConstraintCheckboxList = [
-  { name: 'CASCADE', label: 'CASCADE' },
-  { name: 'SET-NULL', label: 'SET NULL' },
+export const foreignConstraintRadioList = [
+  { label: 'CASCADE', value: 'CASCADE' },
+  { label: 'SET NULL', value: 'SET-NULL' },
 ];
 
+export const foreignConstraintCheckboxList = [];
 export const columnConstraintCheckboxList = [
   { name: 'NOT-NULL', label: 'NOT NULL' },
   { name: 'UNIQUE', label: 'UNIQUE' },

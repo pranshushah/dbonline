@@ -12,7 +12,6 @@ export const AddObjModal = {
   showprecisionAfterDecimalInput: false,
   tableLevelCheckedItem: {},
   columnLevelCheckedItem: {},
-  foreignCheckedItem: {},
   defaultValue: '',
   tableLevelUnique: null,
   selectedReferencingTable: '',
@@ -143,12 +142,6 @@ export function AddAttributeReducer(state, action) {
         ...state,
         selectedReferencingAttrError: true,
         selectedReferencingTableError: true,
-      };
-    }
-    case 'ONDELETE_FOREIGNKEY_CHECKEDITEMS': {
-      return {
-        ...state,
-        foreignCheckedItem: action.payload.newCheckedItems,
       };
     }
     case 'FOREIGNKEY_REFERENCING_TABLE_SELECTED': {

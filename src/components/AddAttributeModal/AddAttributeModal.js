@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import Modal from '../UI/Modal/Modal';
 import Input from '../UI/Input/Input';
+import Radio from '../UI/Radio/Radio';
 import ConstraintCheckBoxContainer from './constraintCheckboxContainer';
 import DataTypeDropDown from './DataTypeDropDown';
 import TableNameDropDown from './SelectTableDropDown';
@@ -10,6 +11,7 @@ import ConstraintContainer from './ConstriantContainer';
 import Styles from './AddAttribute.module.scss';
 import '../../utils/Types';
 import { useConstraint } from '../../utils/customHooks/useConstraint';
+import { useRadio } from '../../utils/customHooks/useRadio';
 import MultipleUniqueDropDown from './MultipleUniqueDropDown';
 import PrimaryKeyDropDown from './PrimaryDropDown';
 import { randomString } from '../../utils/helper-function/randomString';
@@ -19,7 +21,7 @@ import {
   AddAttributeReducer,
 } from '../../utils/reducers/AddAttributeReducer';
 import {
-  foreignConstraintCheckboxList,
+  foreignConstraintRadioList,
   columnConstraintCheckboxList,
   getTableLevelCheckboxList,
 } from '../../utils/checkedItemsForAddAttr';
@@ -45,6 +47,9 @@ function AddAttributeModal({
   givenTable,
 }) {
   const [state, dispatch] = useReducer(AddAttributeReducer, AddObjModal);
+  const [foreignRadioArray, setForeignRadioArray, radioReset] = useRadio(
+    foreignConstraintRadioList,
+  );
   const [modalError, setModalError] = useState(true);
   const [
     tableLevelUniqueConstraintName,
@@ -86,7 +91,6 @@ function AddAttributeModal({
     showprecisionAfterDecimalInput,
     tableLevelCheckedItem,
     columnLevelCheckedItem,
-    foreignCheckedItem,
     defaultValue,
     tableLevelUnique,
     selectedReferencingTable,
@@ -165,10 +169,20 @@ function AddAttributeModal({
           ReferencingAtt: selectedReferencingAttr,
           constraintName,
         };
-        if (foreignCheckedItem['CASCADE']) {
+        if (
+          foreignRadioArray.findIndex(
+            (foreignObj) =>
+              foreignObj.label === 'CASCADE' && foreignObj.checked,
+          ) !== -1
+        ) {
           addObj['FOREIGNKEY'].cascade = true;
         } else {
-          if (foreignCheckedItem['setNull']) {
+          if (
+            foreignRadioArray.findIndex(
+              (foreignObj) =>
+                foreignObj.label === 'SET NULL' && foreignObj.checked,
+            ) !== -1
+          ) {
             addObj['FOREIGNKEY'].setNull = true;
           }
         }
@@ -315,6 +329,9 @@ function AddAttributeModal({
     } else {
       setCheckExprError(false);
     }
+    if (!newCheckedItems['FOREIGN-KEY']) {
+      radioReset();
+    }
     if (!newCheckedItems['FOREIGN-KEY'] && selectedReferencingTable) {
       dispatch({
         type: 'TABLEVELCHECKEDITEMS_FOREIGNKEY_REMOVED',
@@ -346,18 +363,6 @@ function AddAttributeModal({
     selectedReferencingAttr,
     selectedReferencingTable,
   ]);
-
-  function foreignCheckBoxChangeHandler(e) {
-    e.persist();
-    const newCheckedItems = {
-      ...foreignCheckedItem,
-      [e.target.name]: e.target.checked,
-    };
-    dispatch({
-      type: 'ONDELETE_FOREIGNKEY_CHECKEDITEMS',
-      payload: { newCheckedItems },
-    });
-  }
 
   function referencingTableSelectedHandler(value) {
     dispatch({
@@ -692,10 +697,10 @@ function AddAttributeModal({
               On Delete:
             </h2>
             <div className={Styles.foreignCheckBox}>
-              <ConstraintCheckBoxContainer
-                checkedConstraintObj={foreignCheckedItem}
-                onConstraintChecked={foreignCheckBoxChangeHandler}
-                checkBoxList={foreignConstraintCheckboxList}
+              <Radio
+                valueObjectArray={foreignRadioArray}
+                nameForRadioContainer={'foreign'}
+                onChange={setForeignRadioArray}
               />
             </div>
           </div>
