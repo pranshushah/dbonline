@@ -1,4 +1,5 @@
 @import '../../utils/scss/variables';
+@import '../../utils/scss/spaces';
 .container {
   background-color: $sideBarColor;
   color: $tertiaryColor;
@@ -30,4 +31,8 @@
 
 .resize:hover {
   border-right: 2px solid rgba(60, 60, 60, 0.5);
+}
+.buttonContainer {
+  margin-left: getSpace(6) * 1px;
+  margin-top: getSpace(25) * 1px;
 }

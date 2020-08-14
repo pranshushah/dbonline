@@ -8,6 +8,7 @@ import CreateTableModal from './components/CreateTableModal/CreateTableModal';
 import './utils/Types';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { useLocalStorage } from './utils/customHooks/useLocalStorage';
+import { useRadio } from './utils/customHooks/useRadio';
 import { code } from './utils/helper-function/createCode';
 import { EXPLORERCONSTANT } from './utils/constant/explorer';
 import {
@@ -58,6 +59,7 @@ export default function App() {
     [],
     'tableDndDetails',
   );
+  const [radioArray, setRadioArray, , setInitialRadioArray] = useRadio();
   /**
    *@type {[mainTableDetailsType[],Function]} mainTableDetails
    */
@@ -213,23 +215,24 @@ export default function App() {
             ].name,
           value: itemObj.ReferencingAtt,
         });
+        const radio = [];
         if (itemObj.cascade) {
-          setCheckedItem({ CASCADE: true });
+          radio.push({ label: 'CASCADE', value: 'CASCADE', checked: true });
+          radio.push({ label: 'SET NULL', value: 'SET-NULL' });
         } else {
+          radio.push({ label: 'CASCADE', value: 'CASCADE' });
           if (itemObj.setNull) {
-            setCheckedItem({ 'SET-NULL': true });
+            radio.push({ label: 'SET NULL', value: 'SET-NULL', checked: true });
+          } else {
+            radio.push({ label: 'SET NULL', value: 'SET-NULL' });
           }
         }
+        setInitialRadioArray(radio);
         setTempConstraintName(itemObj.constraintName);
         setShowRightSidebar(true);
         break;
       }
       case EXPLORERCONSTANT.ATTRIBUTE: {
-        //         NOT-NULL: true
-        // UNIQUE: true
-        // AUTO-INCREMENT: true
-        // DEFAULT: true
-
         const tempConstraint = {};
         if (itemObj.isNOTNULL) {
           tempConstraint['NOT-NULL'] = true;
@@ -409,12 +412,9 @@ export default function App() {
 
   useEffect(() => {
     function shortcutHandler(e) {
-      // shift + d (details sidebar toggle)
-      if (!e.altKey && e.which === 68 && !e.ctrlKey && e.shiftKey) {
-        showRightSidebarHandler();
-      }
-      // shift + e (explorer sidebar toggle)
-      if (!e.altKey && e.which === 69 && !e.ctrlKey && e.shiftKey) {
+      console.log(e);
+      // ctrl + b (explorer sidebar toggle)
+      if (!e.altKey && e.which === 66 && e.ctrlKey && !e.shiftKey) {
         showLeftSidebarHandler();
       }
       // alt + g (grid toggle)
@@ -428,10 +428,6 @@ export default function App() {
       // alt + c (get code)
       else if (!e.ctrlKey && e.which === 67 && e.altKey && !e.shiftKey) {
         code(mainTableDetails);
-      }
-      // alt + p (print design)
-      else if (!e.ctrlKey && e.which === 80 && e.altKey && !e.shiftKey) {
-        pdf();
       }
     }
     document.addEventListener('keyup', shortcutHandler);
@@ -464,7 +460,6 @@ export default function App() {
           onModalConfirmed={confirmCreateTableModalHandler}
         />
       )}
-
       <ContextMenuTrigger id='same_unique_identifier' holdToDisplay={-1}>
         <div className='App'>
           {showLeftSidebar && (
@@ -473,6 +468,7 @@ export default function App() {
               toggleSidebar={showLeftSidebarHandler}
               onItemClicked={explorerItemClickHandler}
               onMainTableDetailsChange={mainTableDetailsChangeHandler}
+              onCreateTableButtonClick={newTableCreatedHandler}
             />
           )}
           <MainGround
@@ -530,6 +526,8 @@ export default function App() {
               onRightSideBarAfterConfirmOrDelete={
                 rightSideBarAfterConfirmOrDelete
               }
+              foreignRadio={radioArray}
+              onForeignRadioChange={setRadioArray}
             />
           )}
         </div>
@@ -542,17 +540,17 @@ export default function App() {
           {showGrid ? 'hide grid' : 'show grid'}{' '}
           <span className={'shrotcut'}>alt + g</span>
         </MenuItem>
-        <MenuItem onClick={showRightSidebarHandler} className={'menuItem'}>
-          {showRightSidebar ? 'hide sidebar' : 'show sidebar'}
-          <span className={'shrotcut'}>alt + s</span>
-        </MenuItem>
-        <MenuItem onClick={pdf} className={'menuItem'}>
-          export as pdf
-          <span className={'shrotcut'}>alt + p</span>
-        </MenuItem>
         <MenuItem onClick={() => code(mainTableDetails)} className={'menuItem'}>
           export as code
           <span className={'shrotcut'}>alt + c</span>
+        </MenuItem>
+        <MenuItem onClick={showLeftSidebarHandler} className={'menuItem'}>
+          {showLeftSidebar ? 'hide sidebar' : 'show sidebar'}
+          <span className={'shrotcut'}>ctrl + b</span>
+        </MenuItem>
+        <MenuItem onClick={pdf} className={'menuItem'}>
+          export as pdf
+          <span className={'shrotcut'}>ctrl + p</span>
         </MenuItem>
       </ContextMenu>
     </>

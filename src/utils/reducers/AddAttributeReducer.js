@@ -83,6 +83,9 @@ export function AddAttributeReducer(state, action) {
         showSizeInput: oracleHasSize(action.payload.value),
         showprecisionAfterDecimalInput: oracleHasPre(action.payload.value),
         sizeInputValueError: oracleSizeError(action.payload.value),
+        sizeInputValueDirty: false,
+        sizeInputValue: '',
+        precisionAfterDecimalInputValue: '',
       };
     }
     case 'EMPTY_SIZE_INPUT': {

@@ -5,5 +5,5 @@
 - create table : alt + t .
 - hide/show grid : alt + g .
 - download code : alt + c .
-- print design : alt + p .
-- hide/show explorer : shift + e .
+- print design : ctrl + p .
+- hide/show explorer : ctrl + b .

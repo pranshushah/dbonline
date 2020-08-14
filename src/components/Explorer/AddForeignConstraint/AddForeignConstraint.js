@@ -4,11 +4,12 @@ import Modal from '../../UI/Modal/Modal';
 import Select from 'react-select';
 import Styles from './style.module.scss';
 import { customStyles } from '../../../utils/selectStyle/';
+import { useRadio } from '../../../utils/customHooks/useRadio';
 import { randomString } from '../../../utils/helper-function/randomString';
-import { foreignConstraintCheckboxList } from '../../../utils/checkedItemsForAddAttr';
-import ConstraintCheckBoxContainer from '../../AddAttributeModal/constraintCheckboxContainer';
+import { foreignConstraintRadioList } from '../../../utils/checkedItemsForAddAttr';
 import deepClone from 'clone-deep';
 import { useConstraint } from '../../../utils/customHooks/useConstraint';
+import Radio from '../../UI/Radio/Radio';
 /**
  * @param {{
  * mainTableDetails:mainTableDetailsType[],
@@ -33,7 +34,7 @@ function AddUniqueConstraint({
   const [referencingAtt, setReferencingAtt] = useState(null);
   const [referencingTable, setReferencingTable] = useState(null);
   const [containerError, setContainerError] = useState(true);
-  const [checkedItem, setCheckItem] = useState({});
+  const [foreignRadio, setForeignRadio] = useRadio(foreignConstraintRadioList);
 
   // this error decides if modal can be confirmed or not.
   useEffect(() => {
@@ -69,16 +70,6 @@ function AddUniqueConstraint({
     });
   }
 
-  function foreignCheckBoxChangeHandler(e) {
-    e.persist();
-    setCheckItem((checkedItem) => {
-      return {
-        ...checkedItem,
-        [e.target.name]: e.target.checked,
-      };
-    });
-  }
-
   function ModalconfirmHandler() {
     let finalCname = constraintName ? constraintName : randomString();
 
@@ -93,18 +84,22 @@ function AddUniqueConstraint({
     const referencingAttIndex = newMainTableDetails[
       referencingTableIndex
     ].attributes.findIndex((attrObj) => attrObj.id === referencingAtt.value);
-    // doing this weird thing in cascade because need to add radio buttons later
+    //adding cascade
     newMainTableDetails[referencedIndex].tableLevelConstraint.FOREIGNKEY.push({
       constraintName: finalCname,
       referencedAtt: referencedAtt.value,
       ReferencingAtt: referencingAtt.value,
       ReferencingTable: referencingTable.value,
-      cascade: checkedItem['CASCADE'] ? true : false,
-      setNull: checkedItem['CASCADE']
-        ? false
-        : checkedItem['SET-NULL']
-        ? true
-        : false,
+      cascade:
+        foreignRadio.findIndex(
+          (foreignObj) => foreignObj.label === 'CASCADE' && foreignObj.checked,
+        ) !== -1
+          ? true
+          : false,
+      setNull:
+        foreignRadio.findIndex(
+          (foreignObj) => foreignObj.label === 'SET NULL' && foreignObj.checked,
+        ) !== -1,
     });
     // using array.some because it will end after true.
     newMainTableDetails[referencedIndex].attributes.some((attrObj) => {
@@ -193,10 +188,10 @@ function AddUniqueConstraint({
             On Delete:
           </h2>
           <div className={Styles.foreignCheckBox}>
-            <ConstraintCheckBoxContainer
-              checkedConstraintObj={checkedItem}
-              onConstraintChecked={foreignCheckBoxChangeHandler}
-              checkBoxList={foreignConstraintCheckboxList}
+            <Radio
+              valueObjectArray={foreignRadio}
+              nameForRadioContainer={'add-foreign'}
+              onChange={setForeignRadio}
             />
           </div>
         </div>

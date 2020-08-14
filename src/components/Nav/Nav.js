@@ -22,10 +22,6 @@ import { code } from '../../utils/helper-function/createCode';
  */
 
 function Nav({ mainTableDetails, ...props }) {
-  function createPDf() {
-    window.print();
-  }
-
   return (
     <NavbarContainer>
       <NavLogo text='DB ONLINE' />
@@ -47,24 +43,15 @@ function Nav({ mainTableDetails, ...props }) {
               shortcut={'alt + g'}
             />
             <SubNavLink
-              text={props.showRightSidebar ? 'hide details' : 'show  details'}
-              onClick={props.onRightSideBarClick}
-              shortcut={'shift + D'}
-            />
-            <SubNavLink
               text={props.showLeftSidebar ? 'hide explorer' : 'show explorer'}
               onClick={props.onLeftSideBarClick}
-              shortcut={'shift + E'}
+              shortcut={'ctrl + b'}
             />
           </SubMenuContiainer>
         </NavLink>
         <NavLink text='download'>
           <SubMenuContiainer>
-            <SubNavLink
-              text='export as PDF'
-              onClick={createPDf}
-              shortcut={'alt + p'}
-            />
+            <SubNavLink text='export as PDF' shortcut={'ctrl + p'} />
             <SubNavLink
               text='export as Code'
               onClick={() => code(mainTableDetails)}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
 import '../../utils/Types';
+import Button from '../UI/Button/Button';
 import TableList from '../Explorer/TableList/TableList';
 import Styles from './LeftSidebar.module.scss';
 import TableItem from '../Explorer/TableList/TableItem/TableItem';
@@ -10,6 +11,7 @@ import TableItem from '../Explorer/TableList/TableItem/TableItem';
  * toggleSidebar:Function,
  * onItemClicked:Function,
  * onMainTableDetailsChange:Function,
+ * onCreateTableButtonClick:Function,
  * }} props
  */
 
@@ -18,6 +20,7 @@ function LeftSideBar({
   toggleSidebar,
   onItemClicked,
   onMainTableDetailsChange,
+  onCreateTableButtonClick,
 }) {
   const [width, setWidth] = useState(250);
 
@@ -46,11 +49,17 @@ function LeftSideBar({
       }}>
       <div className={Styles.container}>
         <div className={Styles.close} onClick={toggleSidebar} />
-        <TableList
-          mainTableDetails={mainTableDetails}
-          onMainTableDetailsChange={onMainTableDetailsChange}>
-          {list}
-        </TableList>
+        {mainTableDetails.length === 0 ? (
+          <div className={Styles.buttonContainer}>
+            <Button onClick={onCreateTableButtonClick}>Create Table</Button>
+          </div>
+        ) : (
+          <TableList
+            mainTableDetails={mainTableDetails}
+            onMainTableDetailsChange={onMainTableDetailsChange}>
+            {list}
+          </TableList>
+        )}
       </div>
     </Resizable>
   );

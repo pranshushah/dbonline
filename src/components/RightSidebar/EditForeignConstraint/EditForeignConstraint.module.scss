@@ -32,7 +32,7 @@
 }
 
 .foreignCheckBox {
-  margin-left: 1px;
+  margin-left: getSpace(1) * 1px;
   margin-top: getSpace(1.5) * 1px;
   margin-bottom: getSpace(1) * 1px;
 }

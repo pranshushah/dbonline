@@ -44,7 +44,9 @@ import EditAttribute from './EditAttribute/EditAttribute';
  * onPreInputChange:Function,
  * defaultValue:string,
  * onDefaultValueChange:Function,
- * onRightSideBarAfterConfirmOrDelete:Function
+ * onRightSideBarAfterConfirmOrDelete:Function,
+ * onForeignRadioChange:Function,
+ * foreignRadio:Array
  * }} props
  */
 
@@ -87,6 +89,8 @@ function SideBar({
   defaultValue,
   onDefaultValueChange,
   onRightSideBarAfterConfirmOrDelete,
+  onForeignRadioChange,
+  foreignRadio,
 }) {
   const [width, setWidth] = useState(300);
 
@@ -158,6 +162,8 @@ function SideBar({
             <EditForeignConstraint
               mainTableDetails={mainTableDetails}
               table={table}
+              onForeignRadioChange={onForeignRadioChange}
+              foreignRadio={foreignRadio}
               foreignConstraintName={constraintName}
               onForeignConstraintNameChange={onConstraintNameChange}
               onCancel={onCancel}

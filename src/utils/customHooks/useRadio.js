@@ -20,5 +20,8 @@ export function useRadio(intialState = []) {
   function radioReset() {
     setRadioArray(intialState);
   }
-  return [radioArray, radioChangeHandler, radioReset];
+  function directChangeHandler(arr) {
+    setRadioArray(arr);
+  }
+  return [radioArray, radioChangeHandler, radioReset, directChangeHandler];
 }

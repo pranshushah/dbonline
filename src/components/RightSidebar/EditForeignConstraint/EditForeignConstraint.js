@@ -5,8 +5,7 @@ import Modal from '../../UI/Modal/Modal';
 import Styles from './EditForeignConstraint.module.scss';
 import { constraintError } from '../../../utils/helper-function/constraintError';
 import Select from 'react-select';
-import ConstraintCheckBoxContainer from '../../AddAttributeModal/constraintCheckboxContainer';
-import { foreignConstraintCheckboxList } from '../../../utils/checkedItemsForAddAttr/index';
+import Radio from '../../UI/Radio/Radio';
 import { customStyles } from '../../../utils/selectStyle';
 import cloneDeep from 'clone-deep';
 
@@ -27,6 +26,8 @@ import cloneDeep from 'clone-deep';
  * onForeignCheckedItem:Function,
  * foreignCheckedItem:object,
  * onRightSideBarAfterConfirmOrDelete:Function,
+ * onForeignRadioChange:Function,
+ * foreignRadio:Array,
  * }} props
  */
 
@@ -43,9 +44,9 @@ function EditUniqueConstraint({
   onReferencingAttChange,
   onReferencingTableChange,
   initialForeignConstraintName,
-  onForeignCheckedItem,
-  foreignCheckedItem,
   onRightSideBarAfterConfirmOrDelete,
+  onForeignRadioChange,
+  foreignRadio,
 }) {
   const [foreignConstraintNameError, setForeignConstraintNameError] = useState(
     false,
@@ -125,15 +126,6 @@ function EditUniqueConstraint({
   function referencingTableChangeHandler(obj) {
     onReferencingTableChange(obj);
     onReferencingAttChange(null);
-  }
-
-  function foreignCheckBoxChangeHandler(e) {
-    e.persist();
-    const newCheckedItems = {
-      ...foreignCheckedItem,
-      [e.target.name]: e.target.checked,
-    };
-    onForeignCheckedItem(newCheckedItems);
   }
 
   function deleteForeignConstraintClickHandler() {
@@ -249,8 +241,16 @@ function EditUniqueConstraint({
       ReferencingAtt: referencingAtt.value,
       ReferencingTable: referencingTable.value,
       constraintName: finalConstraintName,
-      cascade: foreignCheckedItem['CASCADE'] ? true : false,
-      setNull: foreignCheckedItem['SET-NULL'] ? true : false,
+      cascade:
+        foreignRadio.findIndex(
+          (foreignObj) => foreignObj.label === 'CASCADE' && foreignObj.checked,
+        ) !== -1
+          ? true
+          : false,
+      setNull:
+        foreignRadio.findIndex(
+          (foreignObj) => foreignObj.label === 'SET NULL' && foreignObj.checked,
+        ) !== -1,
     };
 
     onRightSideBarAfterConfirmOrDelete(newMainTableDetails);
@@ -314,10 +314,10 @@ function EditUniqueConstraint({
           On Delete:
         </h2>
         <div className={Styles.foreignCheckBox}>
-          <ConstraintCheckBoxContainer
-            checkedConstraintObj={foreignCheckedItem}
-            onConstraintChecked={foreignCheckBoxChangeHandler}
-            checkBoxList={foreignConstraintCheckboxList}
+          <Radio
+            valueObjectArray={foreignRadio}
+            nameForRadioContainer={'edit-foreign'}
+            onChange={onForeignRadioChange}
           />
         </div>
       </div>
