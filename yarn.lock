@@ -8882,13 +8882,6 @@ react-transition-group@^2.2.1:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
-react-ui-lib-pranshu@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/react-ui-lib-pranshu/-/react-ui-lib-pranshu-0.0.1.tgz#8b3edb5b0ab8105312b3aeaebdd00310788475df"
-  integrity sha512-ikKxEvKwLDoi4AokwqRqXE9PnKYOzF8JC4PMEEaaStOjnmmNldoI5q9WgyxZQlMhotOKXwLEEOkin8t7u7fLgw==
-  dependencies:
-    styled-components "5.0.1"
-
 react-virtualized@^9.21.2:
   version "9.21.2"
   resolved "https://registry.yarnpkg.com/react-virtualized/-/react-virtualized-9.21.2.tgz#02e6df65c1e020c8dbf574ec4ce971652afca84e"

@@ -44,7 +44,7 @@
 
 .invertedPrimary:hover {
   color: $tertiaryColor;
-  background-color: $primaryColor;
+  background-color: rgba($color: $primaryColor, $alpha: 0.2);
 }
 
 .invertedPrimary:active {

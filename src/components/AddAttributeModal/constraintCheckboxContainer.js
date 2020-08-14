@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from 'react-ui-lib-pranshu';
+import Checkbox from '../UI/CheckBox/CheckBox';
 
 /**
  * @param {{checkedConstraintObj:Object,onConstraintChecked:Function,checkBoxList:Array}} props
@@ -22,8 +22,6 @@ function ConstraintCheckBoxContainer({
         label={item.label}
         key={item.name}
         name={item.name}
-        customFontColor={'rgb(230,230,230)'}
-        customCheckedColor={'rgb(28, 161, 242)'}
         checked={
           checkedConstraintObj[item.name]
             ? checkedConstraintObj[item.name]
