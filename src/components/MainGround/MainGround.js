@@ -4,6 +4,7 @@ import Grid from '../Grid/Grid';
 import { AddAttributeLink } from '../TableComponent/TableComponents';
 import AddAttributeModal from '../AddAttributeModal/AddAttributeModal';
 import '../../utils/Types';
+import { EXPLORERCONSTANT } from '../../utils/constant/explorer';
 import MainTable from '../TableComponent/MainTable';
 import DeleteTableModal from '../DeleteTableModal/DeleteTableModal';
 import EditTableModal from '../EditTableModal/EditTableModal';
@@ -19,6 +20,7 @@ import Tooltip from '../UI/Tooltip/Tooltip';
  * onTableDndDetailsChange:Function,
  * onMainTableDetailsChange:Function,
  * onRowClicked:Function,
+ * onForeignArrowClicked:Function,
  * }} props
  */
 function MainGround({
@@ -28,6 +30,7 @@ function MainGround({
   onRowClicked,
   onTableDndDetailsChange,
   onMainTableDetailsChange,
+  onForeignArrowClicked,
 }) {
   /**
    * @param {tableDndDetailsObj} item
@@ -238,6 +241,13 @@ function MainGround({
               passProps={{
                 cursor: 'pointer',
                 opacity: opacity,
+                onClick: () => {
+                  onForeignArrowClicked(
+                    mainTableDetails[index],
+                    EXPLORERCONSTANT.FOREIGN,
+                    foreignObj,
+                  );
+                },
                 onMouseMove: (e) => {
                   dispatch({
                     type: 'SHOW_TOOLTIP',

@@ -11,4 +11,5 @@
   margin: getSpace(5) * 1px 0;
   line-height: map-get($map: $line-height, $key: 'medium') * 1px;
   color: $primaryColor;
+  font-weight: 300;
 }
