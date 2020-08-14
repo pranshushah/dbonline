@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/dbonline/static/css/main.d1895f0e.chunk.css",
-    "main.js": "/dbonline/static/js/main.a2a9bb5e.chunk.js",
-    "main.js.map": "/dbonline/static/js/main.a2a9bb5e.chunk.js.map",
+    "main.css": "/dbonline/static/css/main.4a9f1d52.chunk.css",
+    "main.js": "/dbonline/static/js/main.7254bafa.chunk.js",
+    "main.js.map": "/dbonline/static/js/main.7254bafa.chunk.js.map",
     "runtime-main.js": "/dbonline/static/js/runtime-main.bc5c401d.js",
     "runtime-main.js.map": "/dbonline/static/js/runtime-main.bc5c401d.js.map",
     "static/css/2.71916e70.chunk.css": "/dbonline/static/css/2.71916e70.chunk.css",
-    "static/js/2.84a99233.chunk.js": "/dbonline/static/js/2.84a99233.chunk.js",
-    "static/js/2.84a99233.chunk.js.map": "/dbonline/static/js/2.84a99233.chunk.js.map",
+    "static/js/2.1c50ebdd.chunk.js": "/dbonline/static/js/2.1c50ebdd.chunk.js",
+    "static/js/2.1c50ebdd.chunk.js.map": "/dbonline/static/js/2.1c50ebdd.chunk.js.map",
     "index.html": "/dbonline/index.html",
-    "precache-manifest.cf947f804ec05641ad1d0492977c6022.js": "/dbonline/precache-manifest.cf947f804ec05641ad1d0492977c6022.js",
+    "precache-manifest.35887d2a572ca29bb9d1f44787161915.js": "/dbonline/precache-manifest.35887d2a572ca29bb9d1f44787161915.js",
     "service-worker.js": "/dbonline/service-worker.js",
     "static/css/2.71916e70.chunk.css.map": "/dbonline/static/css/2.71916e70.chunk.css.map",
-    "static/css/main.d1895f0e.chunk.css.map": "/dbonline/static/css/main.d1895f0e.chunk.css.map",
-    "static/js/2.84a99233.chunk.js.LICENSE.txt": "/dbonline/static/js/2.84a99233.chunk.js.LICENSE.txt",
+    "static/css/main.4a9f1d52.chunk.css.map": "/dbonline/static/css/main.4a9f1d52.chunk.css.map",
+    "static/js/2.1c50ebdd.chunk.js.LICENSE.txt": "/dbonline/static/js/2.1c50ebdd.chunk.js.LICENSE.txt",
     "static/media/DeleteAttrModal.module.scss": "/dbonline/static/media/alert.5a1545d8.svg",
     "static/media/Check.module.scss": "/dbonline/static/media/cc.82d087e1.svg",
     "static/media/LeftSidebar.module.scss": "/dbonline/static/media/close.90a4f102.svg",
@@ -25,8 +25,8 @@
   "entrypoints": [
     "static/js/runtime-main.bc5c401d.js",
     "static/css/2.71916e70.chunk.css",
-    "static/js/2.84a99233.chunk.js",
-    "static/css/main.d1895f0e.chunk.css",
-    "static/js/main.a2a9bb5e.chunk.js"
+    "static/js/2.1c50ebdd.chunk.js",
+    "static/css/main.4a9f1d52.chunk.css",
+    "static/js/main.7254bafa.chunk.js"
   ]
 }

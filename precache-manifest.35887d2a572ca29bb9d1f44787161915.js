@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "35e1eb5fc4e8a0352cb3ed0555843833",
+    "revision": "1e706be7cca9cbf949e559dbab4af04d",
     "url": "/dbonline/index.html"
   },
   {
-    "revision": "79f0bbdf3809090f7a85",
+    "revision": "029094a64042a4aea479",
     "url": "/dbonline/static/css/2.71916e70.chunk.css"
   },
   {
-    "revision": "d25c1371acd842c17cc4",
-    "url": "/dbonline/static/css/main.d1895f0e.chunk.css"
+    "revision": "3d52b82a763a971391a9",
+    "url": "/dbonline/static/css/main.4a9f1d52.chunk.css"
   },
   {
-    "revision": "79f0bbdf3809090f7a85",
-    "url": "/dbonline/static/js/2.84a99233.chunk.js"
+    "revision": "029094a64042a4aea479",
+    "url": "/dbonline/static/js/2.1c50ebdd.chunk.js"
   },
   {
     "revision": "6519c79c5d353aaf778964e0125e54e6",
-    "url": "/dbonline/static/js/2.84a99233.chunk.js.LICENSE.txt"
+    "url": "/dbonline/static/js/2.1c50ebdd.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "d25c1371acd842c17cc4",
-    "url": "/dbonline/static/js/main.a2a9bb5e.chunk.js"
+    "revision": "3d52b82a763a971391a9",
+    "url": "/dbonline/static/js/main.7254bafa.chunk.js"
   },
   {
     "revision": "43f0cd9946d4bc3bbe45",
