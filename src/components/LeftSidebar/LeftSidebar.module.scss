@@ -22,11 +22,21 @@
     transform: scale(1.05);
     opacity: 0.9;
   }
+  @media print {
+    & {
+      display: none;
+    }
+  }
 }
 
 .resize {
   display: flex;
   border-right: 2px solid rgb(60, 60, 60);
+  @media print {
+    & {
+      display: none;
+    }
+  }
 }
 
 .resize:hover {

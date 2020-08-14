@@ -15,3 +15,13 @@
   line-height: map-get($map: $line-height, $key: 'medium') * 1px;
   font-size: getFontSize(6) * 1px;
 }
+
+.colors {
+  width: 10px;
+  padding: 8px;
+  margin: 8px;
+  cursor: pointer;
+  &::first-child {
+    margin-left: 0;
+  }
+}

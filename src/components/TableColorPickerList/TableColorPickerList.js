@@ -1,19 +1,23 @@
 import React, { MouseEvent } from 'react';
-import styled from 'styled-components';
 import TableColor from '../../utils/tableColors';
 import Styles from './TableColorPickerList.module.scss';
 
-const ColorPickerSpan = styled.span`
-  width: 10px;
-  padding: 8px;
-  margin: 8px;
-  cursor: pointer;
-  background-color: ${(props) => props.bgColor};
-  outline: ${(props) => `1px solid ${props.bgColor}`};
-  &::first-child {
-    margin-left: 0;
-  }
-`;
+function ColorPickerSpan({ color, selectedColor, ClickHandler }) {
+  const style =
+    selectedColor === color
+      ? { border: '2px solid #A9A9A9' }
+      : { border: `2px solid ${color}` };
+  return (
+    <span
+      className={Styles.colors}
+      style={{
+        ...style,
+        backgroundColor: color,
+      }}
+      onClick={ClickHandler}
+    />
+  );
+}
 
 /**
  *
@@ -41,11 +45,9 @@ function TableColorPickerList({
     return (
       <ColorPickerSpan
         key={id}
-        style={
-          selectedColor === color ? { outline: '2px solid #A9A9A9' } : null
-        }
-        onClick={ClickHandler}
-        bgColor={color}
+        selectedColor={selectedColor}
+        ClickHandler={ClickHandler}
+        color={color}
       />
     );
   });
