@@ -10,7 +10,7 @@
   padding-left: getSpace(3.5) * 1px;
   position: relative;
   cursor: pointer;
-  color: $tertiaryColor;
+  color: $textColor;
   & + & {
     margin-left: getSpace(2.5) * 1px;
   }

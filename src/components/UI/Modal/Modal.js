@@ -82,7 +82,7 @@ function Modal({
           <Button
             onClick={modalConfirmed ? modalConfirmed : null}
             disabled={confirmDisabled}
-            primary={primary}
+            darkPrimary={primary}
             danger={danger}
             style={{
               marginRight: '16px',

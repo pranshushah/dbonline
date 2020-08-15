@@ -9,7 +9,7 @@
     display: inline-block;
     text-transform: capitalize;
     cursor: pointer;
-    color: $tertiaryColor;
+    color: $textColor;
     text-decoration: none;
     width: 100%;
     font-size: getFontSize(6) * 1px;
@@ -17,7 +17,7 @@
     line-height: map-get($map: $line-height, $key: 'medium') * 1px;
     &:hover {
       background-color: lighten($color: $nav, $amount: 6);
-      color: $tertiaryColor;
+      color: $textColor;
     }
     @include tablet() {
       font-size: getFontSize(4) * 1px;
@@ -43,7 +43,7 @@
         text-align: center;
         width: 250px;
         text-transform: capitalize;
-        color: $tertiaryColor;
+        color: $textColor;
         text-decoration: none;
         width: 100%;
         line-height: map-get($map: $line-height, $key: 'medium') * 1px;
@@ -60,7 +60,7 @@
         }
         &:hover {
           background-color: lighten($color: $nav, $amount: 6);
-          color: $tertiaryColor;
+          color: $textColor;
         }
         @include tablet() {
           width: 220px;

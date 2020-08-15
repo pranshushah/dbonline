@@ -10,7 +10,7 @@
   padding: getSpace(1) * 1px;
   cursor: pointer;
   font-size: 16px;
-  color: $tertiaryColor;
+  color: $textColor;
   &::before {
     content: '\2713';
     border: 1px solid $primaryColor;
@@ -43,8 +43,8 @@
   }
   .inputCheckBox:disabled + &:before {
     transform: scale(1);
-    border-color: $tertiaryColor;
-    background-color: $tertiaryColor;
+    border-color: $textColor;
+    background-color: $textColor;
     pointer-events: none;
   }
 }
@@ -54,7 +54,7 @@
   padding: getSpace(1) * 1px;
   cursor: pointer;
   font-size: 16px;
-  color: $tertiaryColor;
+  color: $textColor;
   &::before {
     content: '\2713';
     border: 1px solid $darkPrimaryColor;
@@ -87,8 +87,8 @@
   }
   .inputCheckBox:disabled + &:before {
     transform: scale(1);
-    border-color: $tertiaryColor;
-    background-color: $tertiaryColor;
+    border-color: $textColor;
+    background-color: $textColor;
     pointer-events: none;
   }
 }

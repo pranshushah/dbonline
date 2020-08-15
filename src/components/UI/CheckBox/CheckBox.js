@@ -23,7 +23,7 @@ function CheckBox({ label, darkPrimary, ...props }) {
       />
       <label
         htmlFor={id}
-        className={darkPrimary ? Styles.checkBox : Styles.checkBoxDark}>
+        className={darkPrimary ? Styles.checkBoxDark : Styles.checkBox}>
         {label}
       </label>
     </div>

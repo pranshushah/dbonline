@@ -7,7 +7,7 @@
   font-size: getFontSize(8) * 1px;
   line-height: map-get($map: $line-height, $key: 'large') * 1px;
   padding: 4px getSpace(4) * 1px;
-  color: $tertiaryColor;
+  color: $textColor;
   @include tablet() {
     font-size: getFontSize(6) * 1px;
     line-height: map-get($map: $line-height, $key: 'medium') * 1px;

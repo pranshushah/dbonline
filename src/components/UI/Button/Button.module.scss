@@ -43,7 +43,7 @@
 }
 
 .invertedPrimary:hover {
-  color: $tertiaryColor;
+  color: $textColor;
   background-color: rgba($color: $primaryColor, $alpha: 0.2);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .invertedDarkPrimary:hover {
-  color: $tertiaryColor;
+  color: $textColor;
   background-color: rgba($color: $darkPrimaryColor, $alpha: 0.2);
 }
 
@@ -124,21 +124,21 @@
 }
 
 .danger {
-  color: $tertiaryColor;
-  background-color: $dangerColor;
+  color: $textColor;
+  background-color: $darkDanger;
 }
 
 .danger:hover {
-  background: darken($color: $dangerColor, $amount: 3)
+  background: darken($color: $darkDanger, $amount: 3)
     radial-gradient(
       circle,
       transparent 1%,
-      darken($color: $dangerColor, $amount: 3) 1%
+      darken($color: $darkDanger, $amount: 3) 1%
     )
     center/15000%;
 }
 .danger:active {
-  background-color: lighten($color: $dangerColor, $amount: 4);
+  background-color: lighten($color: $darkDanger, $amount: 4);
   background-size: 100%;
   transition: background-color 0s;
 }
@@ -150,8 +150,8 @@
 }
 
 .invertedDanger:hover {
-  color: $tertiaryColor;
-  background-color: $dangerColor;
+  color: $textColor;
+  background-color: rgba($color: $dangerColor, $alpha: 0.2);
 }
 
 .invertedDanger:active {

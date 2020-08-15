@@ -350,6 +350,7 @@ function EditCheckConstraint({
       </h2>
       <div className={Styles.foreignCheckBox}>
         <ConstraintCheckBoxContainer
+          dark
           checkedConstraintObj={columnLevelConstraint}
           onConstraintChecked={checkBoxHandler}
           checkBoxList={columnConstraintCheckboxList.slice(0, 2)}
@@ -373,7 +374,7 @@ function EditCheckConstraint({
             error={defaultValueError && defaultValueDirty}
             errorMessage={"this field can't be empty"}
             required
-            label='defaul value'
+            label='Default value'
           />
         </div>
       )}
