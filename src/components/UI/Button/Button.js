@@ -10,6 +10,7 @@ import Styles from './Button.module.scss';
  * @param {{
  * secondary:boolean,
  * primary:boolean,
+ * darkPrimary:boolean,
  * dimension:("small"|"medium"|"large"|"huge"),
  * danger:boolean,
  * inverted:boolean,
@@ -22,6 +23,7 @@ function Button(
     children,
     primary,
     secondary,
+    darkPrimary,
     danger,
     dimension = 'medium',
     inverted,
@@ -60,6 +62,12 @@ function Button(
       classes.push(Styles.invertedDanger);
     } else {
       classes.push(Styles.danger);
+    }
+  } else if (darkPrimary) {
+    if (inverted) {
+      classes.push(Styles.invertedDarkPrimary);
+    } else {
+      classes.push(Styles.darkPrimary);
     }
   } else {
     if (inverted) {

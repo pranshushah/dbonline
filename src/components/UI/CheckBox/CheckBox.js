@@ -7,10 +7,11 @@ import Styles from './CheckBox.module.scss';
 /**
  * @param {{
  * label:string,
+ * darkPrimary:boolean,
  * } & inputProps} props
  */
 
-function CheckBox({ label, ...props }) {
+function CheckBox({ label, darkPrimary, ...props }) {
   const id = label + Math.random();
   return (
     <div className={Styles.container}>
@@ -20,7 +21,9 @@ function CheckBox({ label, ...props }) {
         {...props}
         className={Styles.inputCheckBox}
       />
-      <label htmlFor={id} className={Styles.checkBox}>
+      <label
+        htmlFor={id}
+        className={darkPrimary ? Styles.checkBox : Styles.checkBoxDark}>
         {label}
       </label>
     </div>

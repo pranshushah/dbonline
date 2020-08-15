@@ -17,7 +17,7 @@
 }
 
 .primary {
-  color: #ffffff;
+  color: $textColor;
   background-color: $primaryColor;
 }
 
@@ -50,6 +50,42 @@
 .invertedPrimary:active {
   color: darken($color: $primaryColor, $amount: 10);
   border: 1px solid darken($color: $primaryColor, $amount: 10);
+}
+
+.darkPrimary {
+  color: $textColor;
+  background-color: $darkPrimaryColor;
+}
+
+.darkPrimary:hover {
+  background: darken($color: $darkPrimaryColor, $amount: 3)
+    radial-gradient(
+      circle,
+      transparent 1%,
+      darken($color: $darkPrimaryColor, $amount: 3) 1%
+    )
+    center/15000%;
+}
+.darkPrimary:active {
+  background-color: lighten($color: $darkPrimaryColor, $amount: 3);
+  background-size: 100%;
+  transition: background-color 0s;
+}
+
+.invertedDarkPrimary {
+  background-color: transparent;
+  color: $darkPrimaryColor;
+  border: 1px solid $darkPrimaryColor;
+}
+
+.invertedDarkPrimary:hover {
+  color: $tertiaryColor;
+  background-color: rgba($color: $darkPrimaryColor, $alpha: 0.2);
+}
+
+.invertedDarkPrimary:active {
+  color: darken($color: $darkPrimaryColor, $amount: 10);
+  border: 1px solid darken($color: $darkPrimaryColor, $amount: 10);
 }
 
 .secondary {

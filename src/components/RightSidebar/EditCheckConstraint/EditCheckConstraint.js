@@ -213,6 +213,7 @@ function EditCheckConstraint({
           <Button
             onClick={confirmCheckConstraintClickHandler}
             dimension='small'
+            darkPrimary
             className={Styles.button}
             disabled={containerError}>
             Confirm

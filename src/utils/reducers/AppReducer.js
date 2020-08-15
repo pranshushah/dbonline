@@ -21,6 +21,7 @@ export function rightSidebarReducer(state, action) {
         showForeignConstraint: false,
         showPrimaryConstraint: false,
         showUniqueConstraint: false,
+        showAttribute: false,
       };
     }
     case 'CHECKCONSTRAINT_CONTAINER_SHOW': {

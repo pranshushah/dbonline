@@ -135,6 +135,7 @@ function EditUniqueConstraint({
         <div className={Styles.button}>
           <Button
             dimension='small'
+            darkPrimary
             className={Styles.button}
             onClick={onConfirmUniqueConstraintClick}
             disabled={containerError}>

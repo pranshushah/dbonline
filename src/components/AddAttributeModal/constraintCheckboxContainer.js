@@ -2,13 +2,14 @@ import React from 'react';
 import Checkbox from '../UI/CheckBox/CheckBox';
 
 /**
- * @param {{checkedConstraintObj:Object,onConstraintChecked:Function,checkBoxList:Array}} props
+ * @param {{checkedConstraintObj:Object,onConstraintChecked:Function,checkBoxList:Array,dark:boolean}} props
  */
 
 function ConstraintCheckBoxContainer({
   checkedConstraintObj,
   onConstraintChecked,
   checkBoxList,
+  dark,
 }) {
   const style = {
     display: 'flex',
@@ -22,6 +23,7 @@ function ConstraintCheckBoxContainer({
         label={item.label}
         key={item.name}
         name={item.name}
+        darkPrimary={dark}
         checked={
           checkedConstraintObj[item.name]
             ? checkedConstraintObj[item.name]

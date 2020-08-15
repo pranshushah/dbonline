@@ -51,7 +51,9 @@ function LeftSideBar({
         <div className={Styles.close} onClick={toggleSidebar} />
         {mainTableDetails.length === 0 ? (
           <div className={Styles.buttonContainer}>
-            <Button onClick={onCreateTableButtonClick}>Create Table</Button>
+            <Button onClick={onCreateTableButtonClick} darkPrimary>
+              Create Table
+            </Button>
           </div>
         ) : (
           <TableList

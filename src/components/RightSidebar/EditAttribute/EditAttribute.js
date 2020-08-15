@@ -357,6 +357,7 @@ function EditCheckConstraint({
       </div>
       <div className={Styles.foreignCheckBox}>
         <ConstraintCheckBoxContainer
+          dark
           checkedConstraintObj={columnLevelConstraint}
           onConstraintChecked={checkBoxHandler}
           checkBoxList={columnConstraintCheckboxList.slice(2)}
@@ -392,6 +393,7 @@ function EditCheckConstraint({
             dimension='small'
             onClick={confirmAttributeClickHandler}
             className={Styles.button}
+            darkPrimary
             disabled={containerError}>
             Confirm
           </Button>
