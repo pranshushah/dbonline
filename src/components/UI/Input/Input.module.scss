@@ -16,9 +16,9 @@
   }
 }
 .inputContainerMediumError {
-  @include input(50%, $errorColor, 6);
+  @include input(50%, $dangerColor, 6);
   @include mobile() {
-    @include input(50%, $errorColor, 5);
+    @include input(50%, $dangerColor, 5);
   }
 }
 
@@ -35,9 +35,9 @@
   }
 }
 .inputContainerLargeError {
-  @include input(75%, $errorColor, 6);
+  @include input(75%, $dangerColor, 6);
   @include mobile() {
-    @include input(75%, $errorColor, 5);
+    @include input(75%, $dangerColor, 5);
   }
 }
 
@@ -54,9 +54,9 @@
   }
 }
 .inputContainerSmallError {
-  @include input(30%, $errorColor, 6);
+  @include input(30%, $dangerColor, 6);
   @include mobile() {
-    @include input(30%, $errorColor, 5);
+    @include input(30%, $dangerColor, 5);
   }
 }
 
@@ -73,16 +73,16 @@
   }
 }
 .inputContainerHugeError {
-  @include input(95%, $errorColor, 6);
+  @include input(95%, $dangerColor, 6);
   @include mobile() {
-    @include input(95%, $errorColor, 5);
+    @include input(95%, $dangerColor, 5);
   }
 }
 
 .errorMessage {
   margin-top: 4px;
   margin-left: 2px;
-  color: $errorColor;
+  color: $dangerColor;
   text-align: left;
   font-weight: 400;
   letter-spacing: 1px;

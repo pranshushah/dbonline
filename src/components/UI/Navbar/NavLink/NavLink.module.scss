@@ -16,7 +16,7 @@
     padding: getSpace(2) * 1px getSpace(6) * 1px;
     line-height: map-get($map: $line-height, $key: 'medium') * 1px;
     &:hover {
-      background-color: lighten($color: $nav, $amount: 6);
+      background-color: lighten($color: $darkPrimaryLight, $amount: 6);
       color: $textColor;
     }
     @include tablet() {
@@ -33,7 +33,7 @@
     z-index: 1;
     flex-direction: column;
     padding: 0;
-    background-color: lighten($color: $nav, $amount: 2);
+    background-color: lighten($color: $darkPrimaryLight, $amount: 2);
     .subNavLink {
       display: none;
       .subLink {
@@ -59,7 +59,7 @@
           }
         }
         &:hover {
-          background-color: lighten($color: $nav, $amount: 6);
+          background-color: lighten($color: $darkPrimaryLight, $amount: 6);
           color: $textColor;
         }
         @include tablet() {

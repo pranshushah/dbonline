@@ -31,5 +31,5 @@
 }
 
 .container:hover {
-  background-color: lighten($color: $sideBarColor, $amount: 5);
+  background-color: lighten($color: $darkPrimary, $amount: 5);
 }
