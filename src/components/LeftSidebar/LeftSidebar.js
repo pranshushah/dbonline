@@ -27,10 +27,12 @@ function LeftSideBar({
   function WidthHandler(e, direction, ref, d) {
     setWidth((width) => width + d.width);
   }
-  const list = mainTableDetails.map((table) => (
-    <TableItem key={table.id} table={table} onItemClicked={onItemClicked} />
-  ));
-  return (
+  const list = mainTableDetails
+    ? mainTableDetails.map((table) => (
+        <TableItem key={table.id} table={table} onItemClicked={onItemClicked} />
+      ))
+    : null;
+  return mainTableDetails ? (
     <Resizable
       className={Styles.resize}
       minWidth='15%'
@@ -64,7 +66,7 @@ function LeftSideBar({
         )}
       </div>
     </Resizable>
-  );
+  ) : null;
 }
 
 export default LeftSideBar;

@@ -221,125 +221,134 @@ function MainGround({
 
     dispatch({ type: 'EDIT_MODAL_CONFIRM' });
   }
-
-  const tables = tableDndDetails.map((tableDndDetail) => {
-    //tables in maintableDetails and tableDndDetails may have different Index so finding proper index for color
-    const index = mainTableDetails.findIndex(
-      (tableObj) => tableObj.id === tableDndDetail.id,
-    );
-    let relArrow = [];
-    if (mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.length > 0) {
-      relArrow = mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.map(
-        (foreignObj, i) => {
-          return foreignObj.ReferencingTable === tableDndDetail.id ? null : (
-            <XArrow
-              key={i}
-              start={tableDndDetail.id}
-              end={foreignObj.ReferencingTable}
-              color={tableDndDetail.color}
-              strokeWidth={4}
-              passProps={{
-                cursor: 'pointer',
-                opacity: opacity,
-                onClick: () => {
-                  onForeignArrowClicked(
-                    mainTableDetails[index],
-                    EXPLORERCONSTANT.FOREIGN,
-                    foreignObj,
-                  );
-                },
-                onMouseMove: (e) => {
-                  dispatch({
-                    type: 'SHOW_TOOLTIP',
-                    payload: {
-                      x: e.pageX,
-                      y: e.pageY,
-                      foreignObj,
-                      table: mainTableDetails[index],
-                    },
-                  });
-                  setOpacity(1);
-                },
-                onMouseLeave: () => {
-                  dispatch({ type: 'CLOSE_TOOLTIP' });
-                  setOpacity(0.7);
-                },
-              }}
-            />
-          );
-        },
+  let tables = [];
+  if (mainTableDetails && tableDndDetails) {
+    tables = tableDndDetails.map((tableDndDetail) => {
+      //tables in maintableDetails and tableDndDetails may have different Index so finding proper index for color
+      const index = mainTableDetails.findIndex(
+        (tableObj) => tableObj.id === tableDndDetail.id,
       );
-    }
-    return (
-      <div key={tableDndDetail.id}>
-        <TableContainer
-          id={tableDndDetail.id}
-          moveTable={moveTable}
-          tableDndDetail={tableDndDetail}
-          onEditClick={editTableHandler}
-          onDeleteClick={deleteTableHandler}>
-          <MainTable
-            mainTableDetails={mainTableDetails}
-            tableName={tableDndDetail.tableName}
-            tableDndDetails={tableDndDetails}
-            onRowClicked={onRowClicked}
-          />
-          <AddAttributeLink
+      let relArrow = [];
+      if (
+        index !== -1 &&
+        mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.length > 0
+      ) {
+        relArrow = mainTableDetails[index].tableLevelConstraint.FOREIGNKEY.map(
+          (foreignObj, i) => {
+            return foreignObj.ReferencingTable === tableDndDetail.id ? null : (
+              <XArrow
+                key={i}
+                start={tableDndDetail.id}
+                end={foreignObj.ReferencingTable}
+                color={tableDndDetail.color}
+                strokeWidth={4}
+                passProps={{
+                  cursor: 'pointer',
+                  opacity: opacity,
+                  onClick: () => {
+                    onForeignArrowClicked(
+                      mainTableDetails[index],
+                      EXPLORERCONSTANT.FOREIGN,
+                      foreignObj,
+                    );
+                  },
+                  onMouseMove: (e) => {
+                    dispatch({
+                      type: 'SHOW_TOOLTIP',
+                      payload: {
+                        x: e.pageX,
+                        y: e.pageY,
+                        foreignObj,
+                        table: mainTableDetails[index],
+                      },
+                    });
+                    setOpacity(1);
+                  },
+                  onMouseLeave: () => {
+                    dispatch({ type: 'CLOSE_TOOLTIP' });
+                    setOpacity(0.7);
+                  },
+                }}
+              />
+            );
+          },
+        );
+      }
+      return (
+        <div key={tableDndDetail.id}>
+          <TableContainer
+            id={tableDndDetail.id}
+            moveTable={moveTable}
             tableDndDetail={tableDndDetail}
-            onClick={AddAttributeLinkClickHandler}
-            fontColor={tableDndDetail.color}>
-            Add Attribute
-          </AddAttributeLink>
-        </TableContainer>
-        {relArrow}
-      </div>
+            onEditClick={editTableHandler}
+            onDeleteClick={deleteTableHandler}>
+            <MainTable
+              mainTableDetails={mainTableDetails}
+              tableName={tableDndDetail.tableName}
+              tableDndDetails={tableDndDetails}
+              onRowClicked={onRowClicked}
+            />
+            <AddAttributeLink
+              tableDndDetail={tableDndDetail}
+              onClick={AddAttributeLinkClickHandler}
+              fontColor={tableDndDetail.color}>
+              Add Attribute
+            </AddAttributeLink>
+          </TableContainer>
+          {relArrow}
+        </div>
+      );
+    });
+  }
+  if (mainTableDetails && tableDndDetails) {
+    return (
+      <Grid showGrid={showGrid}>
+        {tables}
+        {addAttributeShowModal && (
+          <AddAttributeModal
+            showModalState={addAttributeShowModal}
+            onModalConfirmed={confirmAddAttributeModalHandler}
+            onModalClosed={cancelAddModalHandler}
+            tableName={selectedTableDndDetailsForAddModal.tableName}
+            allTableDndDetails={tableDndDetails}
+            mainTableDetails={mainTableDetails}
+            givenTable={selectedTableDetailsForAddModal}
+          />
+        )}
+        {showDeleteTableModal && (
+          <DeleteTableModal
+            showModalState={showDeleteTableModal}
+            tableName={selectedTableDndDetailsForDeleteModal.tableName}
+            onModalClosed={deleteTableModalCancelHandler}
+            onModalConfirmed={deleteTableModalConfirmHandler}
+          />
+        )}
+        {showEditTableModal && (
+          <EditTableModal
+            showModalState={showEditTableModal}
+            onModalConfirmed={editTableModalConfirmHandler}
+            onModalClosed={editTableModalCancelHandler}
+            tableColor={editTableColor}
+            tableName={editTableName}
+            onTableColorChange={setEditTableColor}
+            onTableNameChange={setEditTableName}
+            mainTableDetails={mainTableDetails}
+            selectedTable={selectedTableDetailsForEditModal}
+          />
+        )}
+        {showToolTip && (
+          <Tooltip
+            x={x}
+            y={y}
+            dataObj={selectedForeignObj}
+            givenTable={foreignTooltipTable}
+            mainTableDetails={mainTableDetails}
+          />
+        )}
+      </Grid>
     );
-  });
-  return (
-    <Grid showGrid={showGrid}>
-      {tables}
-      {addAttributeShowModal && (
-        <AddAttributeModal
-          showModalState={addAttributeShowModal}
-          onModalConfirmed={confirmAddAttributeModalHandler}
-          onModalClosed={cancelAddModalHandler}
-          tableName={selectedTableDndDetailsForAddModal.tableName}
-          allTableDndDetails={tableDndDetails}
-          mainTableDetails={mainTableDetails}
-          givenTable={selectedTableDetailsForAddModal}
-        />
-      )}
-      {showDeleteTableModal && (
-        <DeleteTableModal
-          showModalState={showDeleteTableModal}
-          tableName={selectedTableDndDetailsForDeleteModal.tableName}
-          onModalClosed={deleteTableModalCancelHandler}
-          onModalConfirmed={deleteTableModalConfirmHandler}
-        />
-      )}
-      {showEditTableModal && (
-        <EditTableModal
-          showModalState={showEditTableModal}
-          onModalConfirmed={editTableModalConfirmHandler}
-          onModalClosed={editTableModalCancelHandler}
-          tableColor={editTableColor}
-          tableName={editTableName}
-          onTableColorChange={setEditTableColor}
-          onTableNameChange={setEditTableName}
-          mainTableDetails={mainTableDetails}
-          selectedTable={selectedTableDetailsForEditModal}
-        />
-      )}
-      {showToolTip && (
-        <Tooltip
-          x={x}
-          y={y}
-          dataObj={selectedForeignObj}
-          givenTable={foreignTooltipTable}
-          mainTableDetails={mainTableDetails}
-        />
-      )}
-    </Grid>
-  );
+  } else {
+    return null;
+  }
 }
 export default MainGround;

@@ -7,7 +7,7 @@ import LeftSideBar from './components/LeftSidebar/LeftSidebar';
 import CreateTableModal from './components/CreateTableModal/CreateTableModal';
 import './utils/Types';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
-import { useLocalStorage } from './utils/customHooks/useLocalStorage';
+import { useIdb } from './utils/customHooks/useIndexDb';
 import { useRadio } from './utils/customHooks/useRadio';
 import { code } from './utils/helper-function/createCode';
 import { EXPLORERCONSTANT } from './utils/constant/explorer';
@@ -55,7 +55,7 @@ export default function App() {
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   const [showModal, updateShowModal] = useState(false);
   const [showLeftSidebar, toogleLeftSidebar] = useState(true);
-  const [tableDndDetails, updateTableDndDetails] = useLocalStorage(
+  const [tableDndDetails, updateTableDndDetails] = useIdb(
     [],
     'tableDndDetails',
   );
@@ -63,7 +63,7 @@ export default function App() {
   /**
    *@type {[mainTableDetailsType[],Function]} mainTableDetails
    */
-  const [mainTableDetails, updateMainTableDetails] = useLocalStorage(
+  const [mainTableDetails, updateMainTableDetails] = useIdb(
     [],
     'mainTableDetails',
   );
@@ -76,10 +76,6 @@ export default function App() {
     updateTableDndDetails(newTableDndDetails);
   }
 
-  function mainTableDetailsChangeHandler(newMainTableDetails) {
-    updateMainTableDetails(newMainTableDetails);
-  }
-
   function newTableCreatedHandler() {
     updateShowModal(true);
   }
@@ -87,16 +83,19 @@ export default function App() {
     updateShowModal(false);
   }
 
+  function mainTableDetailsChangeHandler(newMainTableDetails) {
+    updateMainTableDetails(newMainTableDetails);
+  }
+
   /**
    * @param {tableDndDetailsObj} newTable
    * @param {mainTableDetailsType} newMainTableDetail
    */
   function confirmCreateTableModalHandler(newTable, newMainTableDetail) {
-    updateMainTableDetails((mainTableDetails) => [
-      ...mainTableDetails,
-      newMainTableDetail,
-    ]);
-    updateTableDndDetails((tableDetails) => [...tableDetails, newTable]);
+    const newDetails = [...mainTableDetails, newMainTableDetail];
+    updateMainTableDetails(newDetails);
+    const newDndDetails = [...tableDndDetails, newTable];
+    updateTableDndDetails(newDndDetails);
     updateShowModal(false);
   }
 
@@ -412,7 +411,6 @@ export default function App() {
 
   useEffect(() => {
     function shortcutHandler(e) {
-      console.log(e);
       // ctrl + b (explorer sidebar toggle)
       if (!e.altKey && e.which === 66 && e.ctrlKey && !e.shiftKey) {
         showLeftSidebarHandler();
@@ -435,9 +433,7 @@ export default function App() {
       document.removeEventListener('keyup', shortcutHandler);
     };
   }, [mainTableDetails]);
-
   console.log(mainTableDetails);
-
   return (
     <>
       <Nav

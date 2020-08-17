@@ -2,7 +2,7 @@
 .Tooltip {
   display: block;
   max-width: 320px;
-  background-color: $sideBarColor;
+  background-color: $darkPrimary;
   color: $textColor;
   border-radius: 2px;
   padding: 8px;
@@ -13,7 +13,7 @@
 
 .Tooltip::after {
   border: solid;
-  border-color: $sideBarColor transparent;
+  border-color: $darkPrimary transparent;
   border-width: 12px 6px 0 6px;
   content: '';
   left: 45%;
